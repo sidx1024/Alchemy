@@ -14,7 +14,7 @@ class CreateProgrammeTable extends Migration
     public function up()
     {
         Schema::create('programme', function (Blueprint $table) {
-            $table->smallInteger('id')->unsigned()->increments();
+            $table->tinyInteger('id')->unsigned()->increments();
             $table->primary('id');
             $table->string('name', 128);
             $table->string('alias', 8);

@@ -19,7 +19,7 @@ class CreateDesignationTable extends Migration
             $table->string('name', 32);
             $table->tinyInteger('hours')->unsigned();
             $table->tinyInteger('programme_id')->unsigned();
-            $table->foreign('programme_id')->references('id')->on('department');
+            $table->foreign('programme_id')->references('id')->on('programme');
         });
     }
 

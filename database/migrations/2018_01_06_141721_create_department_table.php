@@ -19,7 +19,7 @@ class CreateDepartmentTable extends Migration
             $table->string('name', 128);
             $table->string('alias', 8);
             $table->tinyInteger('programme_id')->unsigned();
-            $table->foreign('programme_id')->references('id')->on('department');
+            $table->foreign('programme_id')->references('id')->on('programme');
         });
     }
 

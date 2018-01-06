@@ -14,8 +14,14 @@ class CreateCourseOfferedFacultyTable extends Migration
     public function up()
     {
         Schema::create('course_offered_faculty', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
+            $table->smallInteger('profile_id')->unsigned();
+            $table->foreign('profile_id')->references('id')->on('profile');
+
+            $table->integer('course_offered_id')->unsigned();
+            $table->foreign('course_offered_id')->references('id')->on('course_offered');
+
+            $table->smallInteger('faculty_id')->unsigned();
+            $table->foreign('faculty_id')->references('id')->on('faculty');
         });
     }
 
