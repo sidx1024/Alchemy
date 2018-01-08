@@ -14,8 +14,7 @@ class CreateDepartmentTable extends Migration
     public function up()
     {
         Schema::create('department', function (Blueprint $table) {
-            $table->tinyInteger('id')->unsigned()->increments();
-            $table->primary('id');
+            $table->tinyIncrements('id');
             $table->string('name', 128);
             $table->string('alias', 8);
             $table->tinyInteger('programme_id')->unsigned();

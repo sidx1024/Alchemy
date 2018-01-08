@@ -14,8 +14,7 @@ class CreateFacultyTable extends Migration
     public function up()
     {
         Schema::create('faculty', function (Blueprint $table) {
-            $table->smallInteger('id')->unsigned()->increments();
-            $table->primary('id');
+            $table->smallIncrements('id');
             $table->smallInteger('edited_id')->unsigned()->nullable();
             $table->string('name', 128);
             $table->string('alias', 6);

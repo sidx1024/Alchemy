@@ -14,8 +14,7 @@ class CreateInstituteTable extends Migration
     public function up()
     {
         Schema::create('institute', function (Blueprint $table) {
-            $table->tinyInteger('id')->unsigned()->increments();
-            $table->primary('id');
+            $table->tinyIncrements('id');
             $table->string('name', 128);
             $table->string('alias', 8);
         });

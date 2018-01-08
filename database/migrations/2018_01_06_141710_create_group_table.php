@@ -14,8 +14,7 @@ class CreateGroupTable extends Migration
     public function up()
     {
         Schema::create('group', function (Blueprint $table) {
-            $table->smallInteger('id')->unsigned()->increments();
-            $table->primary('id');
+            $table->smallIncrements('id');
             $table->tinyInteger('level')->unsigned();
             $table->tinyInteger('division')->unsigned();
             $table->tinyInteger('user_id')->unsigned();

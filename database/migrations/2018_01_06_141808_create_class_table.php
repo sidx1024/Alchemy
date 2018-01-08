@@ -14,9 +14,9 @@ class CreateClassTable extends Migration
     public function up()
     {
         Schema::create('class', function (Blueprint $table) {
-            $table->tinyInteger('id')->unsigned()->increments();
-            $table->primary('id');            
-            $table->tinyInteger('level')->unsigned();            
+            $table->tinyIncrements('id');
+            $table->tinyInteger('level')->unsigned();
+            $table->tinyInteger('division')->unsigned();
             $table->smallInteger('default_class')->unsigned();
             $table->foreign('default_class')->references('id')->on('location');
             $table->tinyInteger('department_id')->unsigned();

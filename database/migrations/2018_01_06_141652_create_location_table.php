@@ -14,12 +14,11 @@ class CreateLocationTable extends Migration
     public function up()
     {
         Schema::create('location', function (Blueprint $table) {
-            $table->smallInteger('id')->unsigned()->increments();
-            $table->primary('id');
+            $table->smallIncrements('id');
             $table->string('name', 16);
             $table->string('description', 16)->nullable();
             $table->smallInteger('capacity')->unsigned();
-            $table->tinyInteger('type')->unsigned();
+            $table->tinyInteger('type');
         });
     }
 

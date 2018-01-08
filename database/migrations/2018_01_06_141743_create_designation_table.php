@@ -14,8 +14,7 @@ class CreateDesignationTable extends Migration
     public function up()
     {
         Schema::create('designation', function (Blueprint $table) {
-            $table->tinyInteger('id')->unsigned()->increments();
-            $table->primary('id');
+            $table->tinyIncrements('id');
             $table->string('name', 32);
             $table->tinyInteger('hours')->unsigned();
             $table->tinyInteger('programme_id')->unsigned();
