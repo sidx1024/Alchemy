@@ -21,11 +21,10 @@ class CreateHistoryTimeTableTable extends Migration
 
             $table->tinyInteger('from')->unsigned()->nullable();
             $table->tinyInteger('to')->unsigned()->nullable();
-            //$table->tinyInteger('day')->unsigned()->nullable();
             $table->enum('day', array('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'))->nullable();
 
             $table->integer('course_offered_id')->unsigned();
-            $table->foreign('course_offered_id')->references('id')->on('course_offered');
+            $table->foreign('course_offered_id')->references('id')->on('history_course_offered');
         });
     }
 

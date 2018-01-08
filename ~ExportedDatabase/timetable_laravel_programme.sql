@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `timetable_laravel` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `timetable_laravel`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: timetable_laravel
@@ -16,25 +14,6 @@ USE `timetable_laravel`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `programme`
---
-
-DROP TABLE IF EXISTS `programme`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `programme` (
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alias` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `levels` tinyint(3) unsigned NOT NULL,
-  `institute_id` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `programme_institute_id_foreign` (`institute_id`),
-  CONSTRAINT `programme_institute_id_foreign` FOREIGN KEY (`institute_id`) REFERENCES `institute` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `programme`
@@ -55,4 +34,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-08 17:34:15
+-- Dump completed on 2018-01-08 18:04:47

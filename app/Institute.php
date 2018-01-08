@@ -9,7 +9,7 @@ class Institute extends Model
     public $timestamps = false;    
     protected $table = 'institute';
 
-    public function programme()
+    public function Programme()
     {
         return $this->hasMany('App\Programme');
     }

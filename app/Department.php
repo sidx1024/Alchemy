@@ -10,7 +10,7 @@ class Department extends Model
     public $timestamps = false;    
     protected $table = 'department';
 
-    public function programme()
+    public function Programme()
     {
         return $this->belongsTo('App\Programme');
     }

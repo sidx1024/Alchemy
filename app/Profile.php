@@ -10,7 +10,7 @@ class Profile extends Model
     public $timestamps = false;    
     protected $table = 'profile';
 
-    public function programme()
+    public function Programme()
     {
         return $this->belongsTo('App\Programme');
     }

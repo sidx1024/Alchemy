@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `timetable_laravel` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `timetable_laravel`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: timetable_laravel
@@ -18,28 +16,12 @@ USE `timetable_laravel`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `institute`
+-- Dumping data for table `history_course_offered`
 --
 
-DROP TABLE IF EXISTS `institute`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `institute` (
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alias` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `institute`
---
-
-LOCK TABLES `institute` WRITE;
-/*!40000 ALTER TABLE `institute` DISABLE KEYS */;
-INSERT INTO `institute` VALUES (1,'Birla Vishwakarma Mahavidyalaya, Vallabh Vidynagar','BVM');
-/*!40000 ALTER TABLE `institute` ENABLE KEYS */;
+LOCK TABLES `history_course_offered` WRITE;
+/*!40000 ALTER TABLE `history_course_offered` DISABLE KEYS */;
+/*!40000 ALTER TABLE `history_course_offered` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +33,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-08 17:34:13
+-- Dump completed on 2018-01-08 18:04:46

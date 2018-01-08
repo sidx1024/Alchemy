@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `timetable_laravel` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `timetable_laravel`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: timetable_laravel
@@ -16,33 +14,6 @@ USE `timetable_laravel`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `course_offered`
---
-
-DROP TABLE IF EXISTS `course_offered`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `course_offered` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `profile_id` smallint(5) unsigned NOT NULL,
-  `class_id` tinyint(3) unsigned NOT NULL,
-  `batch` tinyint(4) NOT NULL,
-  `course_id` smallint(5) unsigned NOT NULL,
-  `course_type` tinyint(4) NOT NULL,
-  `location_id` smallint(5) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `course_offered_profile_id_foreign` (`profile_id`),
-  KEY `course_offered_class_id_foreign` (`class_id`),
-  KEY `course_offered_course_id_foreign` (`course_id`),
-  KEY `course_offered_location_id_foreign` (`location_id`),
-  CONSTRAINT `course_offered_class_id_foreign` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`),
-  CONSTRAINT `course_offered_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`),
-  CONSTRAINT `course_offered_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `location` (`id`),
-  CONSTRAINT `course_offered_profile_id_foreign` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `course_offered`
@@ -63,4 +34,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-08 17:34:14
+-- Dump completed on 2018-01-08 18:04:47

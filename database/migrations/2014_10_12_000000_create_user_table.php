@@ -15,11 +15,11 @@ class CreateUserTable extends Migration
     {
         Schema::create('user', function (Blueprint $table) {
             $table->tinyIncrements('id');
-            $table->string('name');
+            $table->string('name', 32);
             $table->string('email')->unique();
             $table->string('password');
             $table->rememberToken();
-            $table->tinyInteger('authentication_level')->unsigned()->default('0');
+            $table->tinyInteger('authentication_level')->default('0');
         });
     }
 

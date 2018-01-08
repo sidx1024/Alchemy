@@ -10,7 +10,7 @@ class Designation extends Model
     public $timestamps = false;    
     protected $table = 'designation';
 
-    public function programme()
+    public function Programme()
     {
         return $this->belongsTo('App\Programme');
     }
