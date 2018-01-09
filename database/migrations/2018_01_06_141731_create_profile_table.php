@@ -15,7 +15,7 @@ class CreateProfileTable extends Migration
     {
         Schema::create('profile', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('name', 32);
+            $table->string('name', 32)->unique();
             $table->string('description', 64)->nullable();
             $table->smallInteger('year')->unsigned();
             $table->tinyInteger('semester')->unsigned();

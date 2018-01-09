@@ -14,4 +14,8 @@ class Location extends Model
     {
         return $this->hasMany('App\CourseOffered');
     }
+
+    public function TimeTable() {
+        return $this->hasManyThrough('App\TimeTable', 'App\CourseOffered', 'location_id', 'course_offered_id');
+    }
 }

@@ -19,4 +19,8 @@ class _Class extends Model
     {
         return $this->hasMany('App\CourseOffered', 'class_id');
     }
+
+    public function TimeTable() {
+        return $this->hasManyThrough('App\TimeTable', 'App\CourseOffered', 'class_id', 'course_offered_id');
+    }
 }

@@ -19,4 +19,8 @@ class Faculty extends Model
     {
         return $this->belongsToMany('App\CourseOffered')->using('App\CourseOfferedFaculty');
     }
+
+    public function TimeTable() {
+        return $this->hasManyThrough('App\TimeTable', 'App\CourseOfferedFaculty', 'faculty_id', 'course_offered_id', 'id', 'course_offered_id');
+    }
 }
