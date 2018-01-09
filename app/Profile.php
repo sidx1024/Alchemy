@@ -101,49 +101,46 @@ class Profile extends Model
         return "Profile restored.";        
     }
 
-    public function duplicate($newName) {
+    public function duplicate($new_name) {
         if($this->is_archived === 0) {
             return "Only archived profiles can be duplicated.";
-        }
-        if($newName == NULL) {
-            return "Please enter new profile name.";
         }
 
         DB::beginTransaction();
 
-        $newProfile = $this->replicate();
-        $newProfile->name = $newName;
-        $newProfile->year = date("Y");
-        $newProfile->is_archived = 0;
-        $newProfile->save();
-        $newProfileId = $newProfile->id;
+        $new_profile = $this->replicate();
+        $new_profile->name = $new_name;
+        $new_profile->year = date("Y");
+        $new_profile->is_archived = 0;
+        $new_profile->save();
+        $new_profile_id = $new_profile->id;
 
         $course_offered_array = $this->CourseOffered->toArray();
         $course_offered_faculty_array = $this->CourseOfferedFaculty->toArray();
         $time_table_array = $this->TimeTable->toArray();
 
-        $course_offered_max_id = CourseOffered::max('id');
-        $history_course_offered_max_id = HistoryCourseOffered::max('id');
+        $co_max = max(CourseOffered::max('id'), HistoryCourseOffered::max('id'), 0);
+        $co_min = max($this->CourseOffered->min('id'), 0);
+        $co_offset = ($co_max - $co_min) + 1;
 
-        $course_offered_global_max_id = max($course_offered_max_id, $history_course_offered_max_id, 0);
-        $course_offered_profile_min_id = max($this->CourseOffered->min('id'), 0);
-
-        $insert_id_offset = ($course_offered_global_max_id - $course_offered_profile_min_id) + 1;
+        $tt_max = max(TimeTable::max('id'), HistoryTimeTable::max('id'), 0);
+        $tt_min = max($this->TimeTable->min('id'), 0);
+        $tt_offset = ($tt_max - $tt_min) + 1;
 
         foreach($course_offered_array as &$elem) {
-            $elem['id'] += $insert_id_offset;
-            $elem['profile_id'] = $newProfileId;
+            $elem['id'] += $co_offset;
+            $elem['profile_id'] = $new_profile_id;
         }
 
         foreach($course_offered_faculty_array as &$elem) {
-            $elem['course_offered_id'] += $insert_id_offset;
-            $elem['profile_id'] = $newProfileId;
+            $elem['course_offered_id'] += $co_offset;
+            $elem['profile_id'] = $new_profile_id;
         }
 
         foreach($time_table_array as &$elem) {
-            $elem['course_offered_id'] += $insert_id_offset;
-            $elem['profile_id'] = $newProfileId;
-            unset($elem['id']);            
+            $elem['course_offered_id'] += $co_offset;
+            $elem['profile_id'] = $new_profile_id;
+            $elem['id'] += $tt_offset;
         }
 
         CourseOffered::insert($course_offered_array);
@@ -152,7 +149,7 @@ class Profile extends Model
 
         DB::commit();
 
-        return $newProfile;
+        return $new_profile;
     }
 
     public function wipe() {
