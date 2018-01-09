@@ -10,8 +10,8 @@ class TimeTable extends Model
     public $timestamps = false;    
     protected $table = 'time_table';
 
-    public function CoursesOffered()
+    public function CourseOffered()
     {
-        return $this->hasMany('App\CourseOffered');
+        return $this->belongsTo('App\CourseOffered');
     }
 }

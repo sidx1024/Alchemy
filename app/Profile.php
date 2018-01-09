@@ -14,4 +14,14 @@ class Profile extends Model
     {
         return $this->belongsTo('App\Programme');
     }
+
+    public function Department()
+    {
+        return $this->hasMany('App\Department');
+    }
+
+    public function CourseOffered()
+    {
+        return $this->hasMany('App\CourseOffered');
+    }
 }
