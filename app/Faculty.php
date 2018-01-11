@@ -15,6 +15,11 @@ class Faculty extends Model
         return $this->belongsTo('App\Department');
     }
 
+    public function Designation()
+    {
+        return $this->belongsTo('App\Designation');
+    }
+
     public function CourseOffered()
     {
         return $this->belongsToMany('App\CourseOffered')->using('App\CourseOfferedFaculty');

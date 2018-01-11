@@ -19,6 +19,7 @@ class CreateLocationTable extends Migration
             $table->string('description', 16)->nullable();
             $table->smallInteger('capacity')->unsigned();
             $table->tinyInteger('type');
+            $table->tinyInteger('department_id')->unsigned()->nullable();
         });
     }
 

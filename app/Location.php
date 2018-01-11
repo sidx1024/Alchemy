@@ -18,4 +18,9 @@ class Location extends Model
     public function TimeTable() {
         return $this->hasManyThrough('App\TimeTable', 'App\CourseOffered', 'location_id', 'course_offered_id');
     }
+
+    public function Department()
+    {
+        return $this->belongsTo('App\Department');
+    }
 }

@@ -27,6 +27,11 @@ class Department extends Model
 
     public function Faculty()
     {
-        return $this->hasMany('App\Course');
+        return $this->hasMany('App\Faculty');
+    }
+
+    public function Location()
+    {
+        return $this->hasMany('App\Location');
     }
 }

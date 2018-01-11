@@ -14,4 +14,9 @@ class Designation extends Model
     {
         return $this->belongsTo('App\Programme');
     }
+
+    public function Faculty()
+    {
+        return $this->hasMany('App\Faculty');
+    }
 }
