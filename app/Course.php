@@ -56,9 +56,11 @@ class Course extends Model
         }
         if (!is_null($text) && strlen(trim($text)) > 0) {
             $text = '%' . $text . '%';
-            $query->where('code', 'like', $text)
-                ->orWhere('alias', 'like', $text)
-                ->orWhere('name', 'like', $text);
+            $query->where(function ($sub_query) use ($text) {
+                $sub_query->where('code', 'like', $text)
+                    ->orWhere('name', 'like', $text)
+                    ->orWhere('alias', 'like', $text);
+            });
         }
         return $query;
     }
