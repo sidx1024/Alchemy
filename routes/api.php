@@ -15,8 +15,10 @@ use Illuminate\Http\Request;
 
 $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/', function () use ($router) {
-        return "API is working.";
+        return "Api is working.";
     });
+
+    $router->post('/login', 'LoginController@attemptLogin');
 
     $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('/element', 'ElementController');

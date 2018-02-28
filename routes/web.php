@@ -10,8 +10,9 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+use Illuminate\Support\Facades\Redirect;
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return file_get_contents("main.html");
 });
 
