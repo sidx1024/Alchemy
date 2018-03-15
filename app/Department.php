@@ -17,7 +17,7 @@ class Department extends Model
 
     public function Course()
     {
-        return $this->hasMany('App\Course');
+        return $this->hasMany('App\Department');
     }
 
     public function _Class()

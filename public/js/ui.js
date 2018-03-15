@@ -4,7 +4,8 @@ window.onload = function () {
 };
 
 function initMasterTabs() {
-  const dynamicTabBar = window.dynamicTabBar = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
+  const dynamicTabBar = window.dynamicTabBar = new mdc.tabs.MDCTabBar(
+    document.querySelector('#dynamic-tab-bar'));
   const panels = document.querySelector('.panels');
 
   dynamicTabBar.preventDefaultOnClick = true;
@@ -27,63 +28,67 @@ function initMasterTabs() {
     updatePanel(nthChildIndex);
   });
 }
+
 function initCoursesSection() {
   const AlchemyCourses = document.querySelector('#alchemy-courses');
 
-  if(!AlchemyCourses) {
+  if (!AlchemyCourses) {
     return;
   }
 
   //=================================================================================================================
   const AlchemyCourseFilterSearch = document.querySelector('#alchemy-course-filter--search');
-  if(AlchemyCourseFilterSearch) {
+  if (AlchemyCourseFilterSearch) {
     const searchTextField = mdc.textField.MDCTextField.attachTo(AlchemyCourseFilterSearch);
-    const searchInput = AlchemyCourseFilterSearch.querySelector('#alchemy-course-filter--search-input');
+    const searchInput = AlchemyCourseFilterSearch.querySelector(
+      '#alchemy-course-filter--search-input');
   }
 
 //=================================================================================================================
-  const AlchemyCourseFilterByLevel = document.querySelector('#alchemy-course-filter--by-level');
-  if(AlchemyCourseFilterByLevel) {
-    fixFOUC(AlchemyCourseFilterByLevel);
-    const select = mdc.select.MDCSelect.attachTo(AlchemyCourseFilterByLevel);
-    select.listen('MDCSelect:change', () => {
-      alert(`Selected "${select.selectedOptions[0].textContent}" at index ${select.selectedIndex} ` +
-        `with value "${select.value}"`);
-    });
+
+  const CourseByBranch = {element: document.querySelector('#alchemy-course-filter--by-branch')};
+  CourseByBranch.mdcSelectHandler =
+    MDCSelectHandler
+      .handle(CourseByBranch.element)
+      .clearItems()
+      .init('Select branch', {storeData: true})
+      .disable();
+
+  alchemy.department.all(function (list) {
+    CourseByBranch.mdcSelectHandler
+                  .addItems(list, {assignments: {valueKey: 'name', idKey: 'alias'}})
+                  .setOnChangeListener(onBranchChange)
+                  .enable();
+    function onBranchChange() {
+      console.log(CourseByBranch.mdcSelectHandler.getSelected());
+    }
+  });
+
+  const CourseByLevel = {element: document.querySelector('#alchemy-course-filter--by-level')};
+  CourseByLevel.mdcSelectHandler =
+    MDCSelectHandler
+      .handle(CourseByLevel.element)
+      .clearItems()
+      .init('Select level', {storeData: true})
+      .disable();
+
+  const levels = [
+    {id: 1, level: 1},
+    {id: 2, level: 2},
+    {id: 3, level: 3},
+    {id: 4, level: 4},
+  ];
+
+  CourseByLevel.mdcSelectHandler
+                .addItems(levels, {assignments: {valueKey: 'level', idKey: 'id'}})
+                .setOnChangeListener(onLevelChange)
+                .enable();
+
+  function onLevelChange() {
+    console.log(CourseByLevel.mdcSelectHandler.getSelected());
   }
 
   //=================================================================================================================
-  const AlchemyCourseFilterByBranch = document.querySelector('#alchemy-course-filter--by-branch');
-  if(AlchemyCourseFilterByBranch) {
-    fixFOUC(AlchemyCourseFilterByBranch);
-    const select = mdc.select.MDCSelect.attachTo(AlchemyCourseFilterByBranch);
-    select.listen('MDCSelect:change', () => {
-      alert(`Selected "${select.selectedOptions[0].textContent}" at index ${select.selectedIndex} ` +
-        `with value "${select.value}"`);
-    });
-  }
-
-  //=================================================================================================================
-  var tables = document.querySelectorAll('.mdc-data-table')
+  const tables = document.querySelectorAll('.mdc-data-table');
   Array.prototype.forEach.call(tables, (table) => new MDCDataTable(table));
-}
-
-/*
-* Method to fix MDCSelect bug,
-* where using default selected value ('aria-selected') doesn't float the label.
-*
-* Usage : fixFOUC(document.querySelector('.mdc-select'));
-* Issue link : https://github.com/material-components/material-components-web/issues/1835
-* */
-function fixFOUC(target) {
-  if(!target)
-    return;
-
-  const hasDefaultSelected = ([].filter.call(
-    target.querySelectorAll('li'),
-    (e) => (e.hasAttribute('aria-selected')))
-  ).length > 0;
-  if(hasDefaultSelected) {
-    target.querySelector('.mdc-select__label').classList.add('mdc-select__label--float-above');
-  }
 }

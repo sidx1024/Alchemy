@@ -126,3 +126,7 @@ main {
   margin-top: 16px;
 }
 
+#views {
+  display: none;
+}
+

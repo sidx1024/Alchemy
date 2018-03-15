@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Starter Kit</title>
+  <title>Alchemy - Frontend</title>
 
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
@@ -31,18 +31,10 @@
   <!-- Color the status bar on mobile devices -->
   <meta name="theme-color" content="#2F3BA2">
 
-  <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
-  <!--
-  <link rel="canonical" href="http://www.example.com/">
-  -->
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"/>
-
 
   <!-- Material Design icons -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-
 
   <!-- Material Web Components -->
   <link rel="stylesheet" href="css/material-components-web.css"/>
@@ -55,8 +47,15 @@
 
   <!-- Your styles -->
   <link rel="stylesheet" href="css/ui.css">
+
   <!--<link rel="stylesheet" href="styles/main.css">-->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+
+  <!-- Access Token: TODO: Replace this with an actual solution. -->
+  <script src="js/access-token.js"></script>
+
+  <!-- Custom JS for handling mdc -->
+  <script src="js/mdc-handler.js"></script>
 </head>
 <body class="mdc-typography">
 <header class="mdc-toolbar mdc-toolbar--fixed mdc-theme--primary-bg">
@@ -107,60 +106,24 @@
               <div id="alchemy-course-filter--by-branch" class="mdc-select  mdc-layout-grid__cell--span-4"
                    role="listbox">
                 <div class="mdc-select__surface" tabindex="0">
-                  <div class="mdc-select__label">Pick a Food Group</div>
+                  <div class="mdc-select__label"></div>
                   <div class="mdc-select__selected-text"></div>
                   <div class="mdc-select__bottom-line"></div>
                 </div>
                 <div class="mdc-menu mdc-select__menu">
                   <ul class="mdc-list mdc-menu__items">
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Bread, Cereal, Rice, and Pasta
-                    </li>
-                    <li class="mdc-list-item" role="option" aria-disabled="true" tabindex="0" aria-selected="true">
-                      Vegetables
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Fruit
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Milk, Yogurt, and Cheese
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Meat, Poultry, Fish, Dry Beans, Eggs, and Nuts
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Fats, Oils, and Sweets
-                    </li>
                   </ul>
                 </div>
               </div>
               <div id="alchemy-course-filter--by-level" class="mdc-select  mdc-layout-grid__cell--span-2"
                    role="listbox">
                 <div class="mdc-select__surface" tabindex="0">
-                  <div class="mdc-select__label">Pick a Food Group</div>
+                  <div class="mdc-select__label">Select Level</div>
                   <div class="mdc-select__selected-text"></div>
                   <div class="mdc-select__bottom-line"></div>
                 </div>
                 <div class="mdc-menu mdc-select__menu">
                   <ul class="mdc-list mdc-menu__items">
-                    <li class="mdc-list-item" role="option" tabindex="0" aria-selected="true">
-                      Bread, Cereal, Rice, and Pasta
-                    </li>
-                    <li class="mdc-list-item" role="option" aria-disabled="true" tabindex="0">
-                      Vegetables
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Fruit
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Milk, Yogurt, and Cheese
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Meat, Poultry, Fish, Dry Beans, Eggs, and Nuts
-                    </li>
-                    <li class="mdc-list-item" role="option" tabindex="0">
-                      Fats, Oils, and Sweets
-                    </li>
                   </ul>
                 </div>
               </div>
@@ -177,7 +140,8 @@
                       <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">L</th>
                       <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">P</th>
                       <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">T</th>
-                      <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">Credit</th>
+                      <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">Credit
+                      </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -213,41 +177,6 @@
                   </table>
                 </div>
               </div>
-              <div class="mdc-layout-grid__cell--span-12 mdl-grid--no-spacing">
-                <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-cell--12-col">
-                  <thead>
-                  <tr>
-                    <th>Code</th>
-                    <th>Alias</th>
-                    <th>Name</th>
-                    <th class="mdl-data-table__cell--align-right">L</th>
-                    <th class="mdl-data-table__cell--align-right">P</th>
-                    <th class="mdl-data-table__cell--align-right">T</th>
-                    <th class="mdl-data-table__cell--align-right">Credit</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>CP210</td>
-                    <td>DMBI</td>
-                    <td>Data Mining and Business Intelligence</td>
-                    <td class="mdl-data-table__cell--align-right">4</td>
-                    <td class="mdl-data-table__cell--align-right">1</td>
-                    <td class="mdl-data-table__cell--align-right">2</td>
-                    <td class="mdl-data-table__cell--align-right">7</td>
-                  </tr>
-                  <tr>
-                    <td>CP310</td>
-                    <td>AI</td>
-                    <td>Artificial Intelligence</td>
-                    <td class="mdl-data-table__cell--align-right">4</td>
-                    <td class="mdl-data-table__cell--align-right">2</td>
-                    <td class="mdl-data-table__cell--align-right">0</td>
-                    <td class="mdl-data-table__cell--align-right">8</td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
           </section>
           <!-- ... content ... -->
@@ -279,7 +208,6 @@
       <div class="mdc-layout-grid__inner">
         <div class="mdc-layout-grid__cell--span-12">
           <div class="mdc-card mdc-theme--background">
-
             <section class="mdc-card__primary">
               <h1 class="mdc-card__title mdc-card__title--large">Add new course</h1>
             </section>
@@ -483,7 +411,9 @@
 </script>
 
 <!-- Alchemy -->
-<script src="js/Alchemy.js"></script>
+<script src="js/alchemy/Logger.js"></script>
+<script src="js/alchemy/Model.js"></script>
+<script src="js/alchemy/Alchemy.js"></script>
 
 <!-- build:js scripts/main.min.js -->
 <script src="js/main.js"></script>
@@ -492,22 +422,5 @@
 <!-- scripts for ui manipulation -->
 <script src="js/ui.js"></script>
 
-<!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-<script>
-  (function (i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r;
-    i[r] = i[r] || function () {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date();
-    a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0];
-    a.async = 1;
-    a.src = g;
-    m.parentNode.insertBefore(a, m)
-  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-  ga('create', 'UA-XXXXX-X', 'auto');
-  ga('send', 'pageview');
-</script>
-<!-- Built with love using Web Starter Kit -->
 </body>
 </html>

@@ -22,7 +22,7 @@ class CourseOffered extends Model
 
     public function Course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo('App\Department');
     }
 
     public function Location()

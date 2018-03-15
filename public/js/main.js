@@ -1,1 +1,1 @@
-console.info(Alchemy.course);
+
