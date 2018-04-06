@@ -1,4 +1,14 @@
 /* eslint-disable no-undef,prefer-destructuring */
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy
+|--------------------------------------------------------------------------
+|
+| Essential Class Models
+|
+*/
+
 class Course extends Model {
   search(searchParams, successCallback, failCallback) {
     let url = this.actions.search.path;
