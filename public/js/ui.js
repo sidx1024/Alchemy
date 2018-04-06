@@ -5,9 +5,20 @@
 | User Interface
 |--------------------------------------------------------------------------
 |
-| All DOM Manipulation happens here.
+| DOM initialization & manipulation.
 |
 */
+
+window.alchemy = new Alchemy({
+  onReady: () => {
+    setupTabs();
+    setupCoursesSection();
+    setupTimeTableSection();
+  },
+  onFail: (error) => {
+    Logger.error('Alchemy has crashed due to API communication issues.', error);
+  }
+});
 
 function setupTabs() {
   const dynamicTabBar = window.dynamicTabBar = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
@@ -60,7 +71,6 @@ function setupCoursesSection() {
     const courseFilterSearchByText = document.querySelector('#alchemy-course-filter--search');
     if (courseFilterSearchByText) {
       const searchTextField = mdc.textField.MDCTextField.attachTo(courseFilterSearchByText);
-      console.log(searchTextField);
       const searchInput = searchTextField.input_;
       searchInput.addEventListener('input', onSearchInputChange);
 
@@ -78,11 +88,11 @@ function setupCoursesSection() {
         .init('Select branch', { storeData: true })
         .disable();
 
-    const allBranchItem = [{ id: null, name: 'All', programme_id: 1 }];
+    const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
     alchemy.department.all((list) => {
       courseByBranch.mdcSelectHandler
         .addItems(
-          list.concat(allBranchItem),
+          list.concat([allBranchesItem]),
           { assignments: { valueKey: 'name', idKey: 'alias' } }
         )
         .setOnChangeListener(onBranchChange)
@@ -103,16 +113,12 @@ function setupCoursesSection() {
         .init('Select level', { storeData: true })
         .disable();
 
-    const levels = [
-      { id: 1, level: 1 },
-      { id: 2, level: 2 },
-      { id: 3, level: 3 },
-      { id: 4, level: 4 },
-      { id: null, level: 'All' }
-    ];
+    const { programme } = alchemy.current;
+    const allLevelsItem = { id: null, level: 'All' };
+    const levelsList = alchemy.programme.transform(programme, 'list').concat([allLevelsItem]);
 
     CourseByLevel.mdcSelectHandler
-      .addItems(levels, { assignments: { valueKey: 'level', idKey: 'id' } })
+      .addItems(levelsList, { assignments: { valueKey: 'level', idKey: 'id' } })
       .setOnChangeListener(onLevelChange)
       .enable();
 
@@ -137,7 +143,4 @@ function setupCoursesSection() {
   }
 }
 
-window.addEventListener('load', () => {
-  setupTabs();
-  setupCoursesSection();
-});
+function setupTimeTableSection() {}

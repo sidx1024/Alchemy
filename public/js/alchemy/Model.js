@@ -26,12 +26,6 @@ class Model {
     };
 
     this.headers = this.config.api.headers;
-    this.fetchStatus = (response) => {
-      if (response.status >= 200 && response.status < 300) {
-        return response;
-      }
-      return Promise.reject(response);
-    };
   }
 
   all(successCallback, failCallback) {
@@ -44,7 +38,7 @@ class Model {
     };
 
     return fetch(url, params)
-      .then(this.fetchStatus)
+      .then(fetchStatus)
       .then(response => response.json())
       .then(successCallback || Logger.success)
       .catch(e => (failCallback || this.statusFailure(action.verb, id))(e));
@@ -60,7 +54,7 @@ class Model {
     };
 
     return fetch(url, params)
-      .then(this.fetchStatus)
+      .then(fetchStatus)
       .then(response => response.json())
       .then(successCallback || Logger.success)
       .catch(e => (failCallback || this.statusFailure(action.verb, id))(e));
@@ -75,7 +69,7 @@ class Model {
     };
 
     return fetch(url, params)
-      .then(this.fetchStatus)
+      .then(fetchStatus)
       .then(response => response.json())
       .then(successCallback || Logger.success)
       .catch(failCallback);
@@ -91,7 +85,7 @@ class Model {
     };
 
     return fetch(url, params)
-      .then(this.fetchStatus)
+      .then(fetchStatus)
       .then(response => response.json())
       .then(successCallback || Logger.success)
       .catch(e => (failCallback || this.statusFailure(action.verb))(e));
