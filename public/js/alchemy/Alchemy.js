@@ -24,16 +24,16 @@ class Course extends Model {
     }
     switch (type) {
       case 'table':
-        data.forEach((courseItem) => {
-          const newCourseItem = {};
-          newCourseItem.id = courseItem.id;
-          newCourseItem.code = courseItem.code;
-          newCourseItem.name = courseItem.name;
-          newCourseItem.l = courseItem.scheme[0];
-          newCourseItem.p = courseItem.scheme[1];
-          newCourseItem.t = courseItem.scheme[2];
-          newCourseItem.credit = courseItem.credit;
-          transformedData.push(newCourseItem);
+        data.forEach((_course) => {
+          const course = {};
+          course.id = _course.id;
+          course.code = _course.code;
+          course.name = _course.name;
+          course.l = _course.scheme[0];
+          course.p = _course.scheme[1];
+          course.t = _course.scheme[2];
+          course.credit = _course.credit;
+          transformedData.push(course);
         });
         break;
       default:

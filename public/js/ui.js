@@ -1,6 +1,6 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef,no-underscore-dangle,no-use-before-define */
 
-function initMasterTabs() {
+function setupMasterTabs() {
   const dynamicTabBar = window.dynamicTabBar = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
   const panels = document.querySelector('.panels');
 
@@ -25,10 +25,10 @@ function initMasterTabs() {
   });
 }
 
-function initCoursesSection() {
-  const AlchemyCourses = document.querySelector('#alchemy-courses');
+function setupCoursesSection() {
+  const alchemyCourses = document.querySelector('#alchemy-courses');
 
-  if (!AlchemyCourses) {
+  if (!alchemyCourses) {
     return;
   }
 
@@ -42,34 +42,35 @@ function initCoursesSection() {
     const filteredFilter = filterObject(courseFilter);
     alchemy.course.search(filteredFilter, (data) => {
       const transformedData = alchemy.course.transform(data, 'table');
-      CourseBySearch.mdcDataTableHelper
+      courseBySearch.mdcDataTableHelper
         .setData(transformedData);
     });
   }
 
-  const CourseFilterSearchByText = document.querySelector('#alchemy-course-filter--search');
-  if (CourseFilterSearchByText) {
-    const searchTextField = mdc.textField.MDCTextField.attachTo(CourseFilterSearchByText);
-    const searchInput = CourseFilterSearchByText.querySelector('#alchemy-course-filter--search-input');
-    searchInput.addEventListener('input', onTextChange);
+  const courseFilterSearchByText = document.querySelector('#alchemy-course-filter--search');
+  if (courseFilterSearchByText) {
+    const searchTextField = mdc.textField.MDCTextField.attachTo(courseFilterSearchByText);
+    console.log(searchTextField);
+    const searchInput = searchTextField.input_;
+    searchInput.addEventListener('input', onSearchInputChange);
 
-    function onTextChange(inputEvent) {
+    function onSearchInputChange(inputEvent) {
       courseFilter.text = inputEvent.srcElement.value;
       onFilterChange();
     }
   }
 
-  const CourseByBranch = { element: document.querySelector('#alchemy-course-filter--by-branch') };
-  CourseByBranch.mdcSelectHandler =
+  const courseByBranch = { element: document.querySelector('#alchemy-course-filter--by-branch') };
+  courseByBranch.mdcSelectHandler =
     MDCSelectHandler
-      .handle(CourseByBranch.element)
+      .handle(courseByBranch.element)
       .clearItems()
       .init('Select branch', { storeData: true })
       .disable();
 
   const allBranchItem = [{ id: null, name: 'All', programme_id: 1 }];
   alchemy.department.all((list) => {
-    CourseByBranch.mdcSelectHandler
+    courseByBranch.mdcSelectHandler
       .addItems(
         list.concat(allBranchItem),
         { assignments: { valueKey: 'name', idKey: 'alias' } }
@@ -78,9 +79,8 @@ function initCoursesSection() {
       .enable();
 
     function onBranchChange() {
-      const selectedItem = CourseByBranch.mdcSelectHandler.getSelected();
-      const branchId = selectedItem.data.id;
-      courseFilter.departmentId = branchId;
+      const selectedItem = courseByBranch.mdcSelectHandler.getSelected();
+      courseFilter.departmentId = selectedItem.data.id;
       onFilterChange();
     }
   });
@@ -112,18 +112,17 @@ function initCoursesSection() {
     onFilterChange();
   }
 
-  const CourseBySearch = { element: document.querySelector('#alchemy-course-filter--by-search') };
+  const courseBySearch = { element: document.querySelector('#alchemy-course-filter--by-search') };
   alchemy.course.search({}, (data) => {
     const headers = ['Code', 'Alias', 'Name', 'L', 'P', 'T', 'Credit'];
     const dataTypes = [1, 'Alias', 'Name', 1, 1, 1, 1];
     const transformedData = alchemy.course.transform(data, 'table');
-    CourseBySearch.mdcDataTableHelper =
+    courseBySearch.mdcDataTableHelper =
       MDCDataTableHelper
-        .handle(CourseBySearch.element)
+        .handle(courseBySearch.element)
         .setIdKey('id')
         .setHeaders(headers, dataTypes)
         .setData(transformedData);
-
   });
 }
 
@@ -138,7 +137,7 @@ function filterObject(obj) {
   return filteredObj;
 }
 
-window.onload = () => {
-  initMasterTabs();
-  initCoursesSection();
-};
+window.addEventListener('load', () => {
+  setupMasterTabs();
+  setupCoursesSection();
+});

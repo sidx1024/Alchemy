@@ -42,7 +42,7 @@ class Course extends Model
      */
     public static function Search($department_id = null, $level = null, $text = null)
     {
-        $query = Course::take(self::SEARCH_RESULT_LIMIT);
+        $query = Course::take(self::SEARCH_RESULT_LIMIT)->latest('id');
         if (!is_null($department_id)) {
             $query = $query->where('department_id', $department_id);
         }

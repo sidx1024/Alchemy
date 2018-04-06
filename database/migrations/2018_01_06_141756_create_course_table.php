@@ -15,12 +15,15 @@ class CreateCourseTable extends Migration
     {
         Schema::create('course', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->smallInteger('edited_id')->unsigned()->nullable();
+            $table->tinyInteger('is_elective')->unsigned()->default('0');
             $table->string('name', 128);
             $table->string('alias', 8);
             $table->string('code', 12);
-            $table->string('scheme', 5);
+            $table->tinyInteger('lecture')->unsigned()->default('4');
+            $table->tinyInteger('practical')->unsigned()->default('2');
+            $table->tinyInteger('tutorial')->unsigned()->default('0');
             $table->tinyInteger('credit')->unsigned();
+            $table->tinyInteger('persons')->unsigned()->default('1');
             $table->tinyInteger('department_id')->unsigned();
             $table->foreign('department_id')->references('id')->on('department');
         });
