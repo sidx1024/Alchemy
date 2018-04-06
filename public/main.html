@@ -55,7 +55,7 @@
   <script src="js/access-token.js"></script>
 
   <!-- Custom JS for handling mdc -->
-  <script src="js/mdc-handler.js"></script>
+  <script src="js/vendor/mdc-handler.js"></script>
 </head>
 <body class="mdc-typography">
 <header class="mdc-toolbar mdc-toolbar--fixed mdc-theme--primary-bg">
@@ -130,48 +130,12 @@
             </div>
             <div class="mdc-layout-grid__inner">
               <div class="mdc-layout-grid__cell--span-12">
-                <div class="mdc-data-table">
+                <div id="alchemy-course-filter--by-search" class="mdc-data-table">
                   <table class="mdc-data-table__content">
                     <thead>
-                    <tr>
-                      <th class="mdc-data-table--sortable" aria-label="Test ARIA label">Code</th>
-                      <th class="mdc-data-table--sortable" aria-label="Test ARIA label">Alias</th>
-                      <th class="mdc-data-table--sortable" aria-label="Test ARIA label">Name</th>
-                      <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">L</th>
-                      <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">P</th>
-                      <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">T</th>
-                      <th class="mdc-data-table--sortable mdc-data-table--numeric" aria-label="Test ARIA label">Credit
-                      </th>
-                    </tr>
+
                     </thead>
                     <tbody>
-                    <tr>
-                      <td>C212</td>
-                      <td>DMBI</td>
-                      <td>Data Mining and Business Intelligence</td>
-                      <td class="mdc-data-table--numeric">4</td>
-                      <td class="mdc-data-table--numeric">1</td>
-                      <td class="mdc-data-table--numeric">1</td>
-                      <td class="mdc-data-table--numeric">6</td>
-                    </tr>
-                    <tr>
-                      <td>C311</td>
-                      <td>DBMS</td>
-                      <td>Database Management Systems</td>
-                      <td class="mdc-data-table--numeric">4</td>
-                      <td class="mdc-data-table--numeric">0</td>
-                      <td class="mdc-data-table--numeric">1</td>
-                      <td class="mdc-data-table--numeric">5</td>
-                    </tr>
-                    <tr>
-                      <td>C401</td>
-                      <td>DS</td>
-                      <td>Data Structures</td>
-                      <td class="mdc-data-table--numeric">4</td>
-                      <td class="mdc-data-table--numeric">2</td>
-                      <td class="mdc-data-table--numeric">1</td>
-                      <td class="mdc-data-table--numeric">7</td>
-                    </tr>
 
                     </tbody>
                   </table>
@@ -400,10 +364,10 @@
 </section>
 
 <!-- Material Web Components -->
-<script src="js/material-components-web.min.js"></script>
+<script src="js/vendor/material-components-web.min.js"></script>
 
 <!-- Material Web Components :: Data Table -->
-<script src="js/mdc.data-table.js"></script>
+<script src="js/vendor/mdc.data-table.js"></script>
 
 <!-- auto-instantiation of mdc -->
 <script type="text/javascript">

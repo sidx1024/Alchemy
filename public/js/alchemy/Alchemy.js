@@ -1,41 +1,52 @@
-'use strict';
-
+/* eslint-disable no-undef,prefer-destructuring */
 class Course extends Model {
-  constructor(...args) {
-    super(...args);
-  }
+  search(searchParams, successCallback, failCallback) {
+    let url = this.actions.search.path;
 
-  search(params, successCallback, failCallback) {
-    const url = [this.uri, this.endpoint.get.path].join('/').replace('{id}', id);
-
-    if (!params.department_id || !params.level || !params.query) {
-      Logger.error('')
+    if (searchParams) {
+      if (typeof searchParams.departmentId !== 'undefined') {
+        url += `department_id=${searchParams.departmentId.toString()}&`;
+      }
+      if (typeof searchParams.text !== 'undefined') {
+        url += `text=${searchParams.text.toString()}&`;
+      }
+      if (typeof searchParams.level !== 'undefined') {
+        url += `level=${searchParams.level.toString()}&`;
+      }
     }
 
-    const params = {
-      method: this.endpoint.get.method,
-      headers: this.headers
-    };
-
-    return fetch(url, params)
-      .then(this.fetchStatus)
-      .then((response) => response.json())
-      .then(successCallback)
-      .catch(failCallback)
-      .catch(Logger.error);
+    return super.search(url, successCallback, failCallback);
+  }
+  transform(data, type) {
+    const transformedData = [];
+    if (!data) {
+      return transformedData;
+    }
+    switch (type) {
+      case 'table':
+        data.forEach((courseItem) => {
+          const newCourseItem = {};
+          newCourseItem.id = courseItem.id;
+          newCourseItem.code = courseItem.code;
+          newCourseItem.name = courseItem.name;
+          newCourseItem.l = courseItem.scheme[0];
+          newCourseItem.p = courseItem.scheme[1];
+          newCourseItem.t = courseItem.scheme[2];
+          newCourseItem.credit = courseItem.credit;
+          transformedData.push(newCourseItem);
+        });
+        break;
+      default:
+        Logger.error(`Cannot transform data to type ${type}`);
+    }
+    return transformedData;
   }
 }
 
 class Department extends Model {
-  constructor(...args) {
-    super(...args);
-  }
 }
 
 class Faculty extends Model {
-  constructor(...args) {
-    super(...args);
-  }
 }
 
 class Alchemy {

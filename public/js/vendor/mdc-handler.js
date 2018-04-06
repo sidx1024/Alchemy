@@ -1,9 +1,8 @@
+/* eslint-disable no-restricted-globals */
 class MDCSelectHandler {
   constructor(mdcSelect) {
-    if (!mdcSelect)
-      return;
+    if (!mdcSelect) { return; }
     this.mdcSelect = mdcSelect;
-    return this;
   }
 
   static handle(mdcSelect) {
@@ -12,7 +11,6 @@ class MDCSelectHandler {
 
   init(label, options = {}) {
     this.select = mdc.select.MDCSelect.attachTo(this.mdcSelect);
-    console.log(this.select);
     this.setLabel(label);
     if (typeof options.onChange === 'function') {
       this.setOnChangeListener(options.onChange);
@@ -46,8 +44,7 @@ class MDCSelectHandler {
   }
 
   setLabel(label) {
-    if (!label)
-      return;
+    if (!label) { return; }
     this.mdcSelect.querySelector('.mdc-select__label').innerText = label;
     return this;
   }
@@ -69,11 +66,9 @@ class MDCSelectHandler {
   }
 
   addItems(items, options) {
-    if (!Array.isArray(items))
-      return;
+    if (!Array.isArray(items)) { return; }
 
-    items.forEach(
-      (item, index) => { this.addItem(item, Object.assign({}, options, {index: index})); });
+    items.forEach((item, index) => { this.addItem(item, Object.assign({}, options, { index })); });
     return this;
   }
 
@@ -100,7 +95,7 @@ class MDCSelectHandler {
     mdcListItem.setAttribute('tab-index', '0');
     if (options.attributes) {
       Object.keys(options.attributes)
-            .map((key) => { mdcListItem.setAttribute(key, options.attributes[key]); });
+        .map((key) => { mdcListItem.setAttribute(key, options.attributes[key]); });
     }
     if (options.isSelected) {
       mdcListItem.setAttribute('aria-selected', 'true');
@@ -123,8 +118,7 @@ class MDCSelectHandler {
 
   clearItems() {
     const mdcList = this.mdcSelect.querySelector('.mdc-select__menu .mdc-menu__items');
-    if (!mdcList)
-      return;
+    if (!mdcList) { return; }
     while (mdcList.firstChild) {
       mdcList.removeChild(mdcList.firstChild);
     }
@@ -132,6 +126,90 @@ class MDCSelectHandler {
     const selectLabel = this.mdcSelect.querySelector('.mdc-select__label--float-above');
     if (selectLabel) {
       selectLabel.classList.remove('mdc-select__label--float-above');
+    }
+    return this;
+  }
+}
+
+class MDCDataTableHelper {
+  constructor(mdcDataTable) {
+    if (!mdcDataTable) { return; }
+    this.mdcDataTable = mdcDataTable;
+    this.tableHeader = mdcDataTable.querySelector('thead');
+    this.tableBody = mdcDataTable.querySelector('tbody');
+    this.idKey = false;
+  }
+
+  static handle(mdcDataTable) {
+    return new MDCDataTableHelper(mdcDataTable);
+  }
+
+  setIdKey(idKey) {
+    this.idKey = idKey;
+    return this;
+  }
+
+  setHeaders(headers, dataTypes) {
+    if (!Array.isArray(headers)) {
+      return;
+    }
+    const { tableHeader } = this;
+    while (tableHeader.firstChild) {
+      tableHeader.removeChild(tableHeader.firstChild);
+    }
+
+    const trElement = document.createElement('tr');
+    headers.forEach((header, index) => {
+      if (this.idKey && index < 1) {
+        return;
+      }
+      const thElement = document.createElement('th');
+      thElement.innerText = header;
+      if (dataTypes) {
+        const isNumeric = !isNaN(dataTypes[index]);
+        if (isNumeric) {
+          thElement.classList.add('mdc-data-table--numeric');
+        }
+        thElement.classList.add('mdc-data-table--sortable');
+      }
+      trElement.appendChild(thElement);
+    });
+    tableHeader.appendChild(trElement);
+    return this;
+  }
+
+  setData(data) {
+    if (!Array.isArray(data)) {
+      return;
+    }
+    this.clearData();
+    const { tableBody, idKey } = this;
+    data.forEach((row) => {
+      const trElement = document.createElement('tr');
+      if (row.hasOwnProperty(idKey)) {
+        trElement.setAttribute('data-id', row[idKey]);
+      }
+      Object.values(row).forEach((tuple, index) => {
+        if (this.idKey && index < 1) {
+          return;
+        }
+        const isNumericData = !isNaN(tuple);
+        const tdElement = document.createElement('td');
+        if (isNumericData) {
+          tdElement.classList.add('mdc-data-table--numeric');
+        }
+        tdElement.innerText = tuple;
+        trElement.appendChild(tdElement);
+      });
+      tableBody.appendChild(trElement);
+    });
+    return this;
+  }
+
+  clearData() {
+    const { tableBody } = this;
+    while (tableBody.firstChild) {
+      tableBody.removeChild(tableBody.firstChild);
     }
     return this;
   }

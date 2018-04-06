@@ -6,25 +6,20 @@ class Logger {
       warn: 'background-color: #FFE599; color: #806000',
       info: 'background-color: #B4C6E7; color: #002060'
     };
-  };
-
-  static success(response) {
-    if(response && typeof response.status !== 'undefined') {
-      console.log('%c  Response success  \n', Logger.css.success, response.status, response.statusText,
-        response);
-    } else {
-      console.log('%c  General success  \n', Logger.css.success, response);
-    }
-    throw response;
   }
 
-  static error(response) {
-    if(response && typeof response.status !== 'undefined') {
-      console.log('%c  Response failure  \n', Logger.css.fail, response.status, response.statusText, response);
-    } else {
-      console.log('%c  General failure  \n', Logger.css.fail, response);
+  static success(response) {
+    console.log('%c  General success  \n', Logger.css.success, response);
+    return response;
+  }
+
+  static error(response, error) {
+    console.log('%c  General failure  \n', Logger.css.fail, response);
+    if (error) {
+      console.error(error);
     }
-    throw response;
+    console.trace('\n');
+    return response;
   }
 }
 window.logger = new Logger();
