@@ -11,15 +11,20 @@
 
 window.alchemy = new Alchemy({
   onReady: () => {
+    setupCommon();
     setupTabs();
     setupCoursesSection();
     setupTimeTableSection();
 
+    function setupCommon() {
+      window.alchemyCommon = {};
+    }
+
     function setupTabs() {
-      const dynamicTabBar = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
+      const alchemyTabs = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
       const panels = document.querySelector('.panels');
 
-      dynamicTabBar.preventDefaultOnClick = true;
+      alchemyTabs.preventDefaultOnClick = true;
 
       function updatePanel(index) {
         const activePanel = panels.querySelector('.panel.active');
@@ -32,29 +37,30 @@ window.alchemy = new Alchemy({
         }
       }
 
-      dynamicTabBar.listen('MDCTabBar:change', (t) => {
-        const dynamicTabBar = t.detail;
-        const nthChildIndex = dynamicTabBar.activeTabIndex;
-
+      alchemyTabs.listen('MDCTabBar:change', (t) => {
+        const nthChildIndex = t.detail.activeTabIndex;
         updatePanel(nthChildIndex);
       });
     }
-    function setupCoursesSection() {
-      const alchemyCourses = document.querySelector('#alchemy-courses');
 
-      if (alchemyCourses) {
+    function setupCoursesSection() {
+      const alchemyCourses = {
+        element: document.querySelector('#alchemy-courses'),
+        courseAddButton: { element: document.querySelector('#alchemy-course-add-button') },
+        courseEditButton: { element: document.querySelector('#alchemy-course-edit-button') },
+        courseDeleteButton: { element: document.querySelector('#alchemy-course-delete-button') },
+        courseFilterByText: { element: document.querySelector('#alchemy-course-filter--by-text') },
+        courseFilterByBranch: { element: document.querySelector('#alchemy-course-filter--by-branch') },
+        courseFilterByLevel: { element: document.querySelector('#alchemy-course-filter--by-level') },
+        courseTable: { element: document.querySelector('#alchemy-course-table') }
+      };
+
+      if (alchemyCourses.element) {
         setupCourseViewer();
       }
 
       function setupCourseViewer() {
-        setupFilterByText();
-        setupFilterByLevel();
-        setupFilterByBranch();
-        setupCourseTable();
-
-        const courseTable = {
-          element: document.querySelector('#alchemy-course-filter--by-search')
-        };
+        const { courseTable } = alchemyCourses;
 
         const courseFilter = {
           departmentId: null,
@@ -62,31 +68,38 @@ window.alchemy = new Alchemy({
           level: null
         };
 
-        function onFilterChange() {
+        setupFilterByText();
+        setupFilterByLevel();
+        setupFilterByBranch();
+        setupCourseTable();
+        setupEvents();
+
+        courseTable.refresh = () => {
+          courseTable.deselectCourses();
           const filteredFilter = filterObject(courseFilter);
           alchemy.course.search(filteredFilter, (data) => {
             const transformedData = Course.transform(data, 'table');
             courseTable.mdcDataTableHelper
               .setData(transformedData);
           });
-        }
+        };
 
         function setupFilterByText() {
-          const courseFilterByText = document.querySelector('#alchemy-course-filter--search');
-          if (courseFilterByText) {
-            const searchTextField = mdc.textField.MDCTextField.attachTo(courseFilterByText);
+          const { courseFilterByText } = alchemyCourses;
+          if (courseFilterByText.element) {
+            const searchTextField = mdc.textField.MDCTextField.attachTo(courseFilterByText.element);
             const searchInput = searchTextField.input_;
             searchInput.addEventListener('input', onSearchInputChange);
 
             function onSearchInputChange(inputEvent) {
               courseFilter.text = inputEvent.srcElement.value;
-              onFilterChange();
+              courseTable.refresh();
             }
           }
         }
 
         function setupFilterByBranch() {
-          const courseFilterByBranch = { element: document.querySelector('#alchemy-course-filter--by-branch') };
+          const { courseFilterByBranch } = alchemyCourses;
           courseFilterByBranch.mdcSelectHandler =
             MDCSelectHandler
               .handle(courseFilterByBranch.element)
@@ -107,13 +120,13 @@ window.alchemy = new Alchemy({
             function onBranchChange() {
               const selectedItem = courseFilterByBranch.mdcSelectHandler.getSelected();
               courseFilter.departmentId = selectedItem.data.id;
-              onFilterChange();
+              courseTable.refresh();
             }
           });
         }
 
         function setupFilterByLevel() {
-          const courseFilterByLevel = { element: document.querySelector('#alchemy-course-filter--by-level') };
+          const { courseFilterByLevel } = alchemyCourses;
           courseFilterByLevel.mdcSelectHandler =
             MDCSelectHandler
               .handle(courseFilterByLevel.element)
@@ -133,7 +146,7 @@ window.alchemy = new Alchemy({
           function onLevelChange() {
             const selectedItem = courseFilterByLevel.mdcSelectHandler.getSelected();
             courseFilter.level = selectedItem.data.id;
-            onFilterChange();
+            courseTable.refresh();
           }
         }
 
@@ -150,8 +163,40 @@ window.alchemy = new Alchemy({
                 .setData(transformedData);
           });
         }
+
+        function setupEvents() {
+          const { courseEditButton, courseDeleteButton } = alchemyCourses;
+          courseTable.element.addEventListener('click', (mouseEvent) => {
+            mouseEvent.stopPropagation();
+            courseTable.deselectCourses();
+            const { target } = mouseEvent;
+            if (target.tagName !== 'TD') { return; }
+            const selectedCourse = target.parentNode;
+            selectedCourse.classList.add('selected');
+            courseEditButton.element.removeAttribute('disabled');
+            courseDeleteButton.element.removeAttribute('disabled');
+            window.addEventListener(
+              'click',
+              blurSelection(
+                [selectedCourse, courseEditButton.element, courseDeleteButton.element],
+                courseTable.deselectCourses
+              )
+            );
+          });
+
+          courseTable.deselectCourses = () => {
+            const selectedCourses = courseTable.element.querySelectorAll('tr.selected');
+            courseEditButton.element.setAttribute('disabled', '');
+            courseDeleteButton.element.setAttribute('disabled', '');
+            Array.prototype.forEach.call(
+              selectedCourses,
+              item => (item.classList.remove('selected'))
+            );
+          };
+        }
       }
     }
+
     function setupTimeTableSection() {}
   },
   onFail: (error) => {

@@ -96,7 +96,7 @@
           <section class="mdc-card__primary">
             <h1 class="mdc-typography--headline">Courses</h1>
             <div class="mdc-layout-grid__inner">
-              <div id="alchemy-course-filter--search"
+              <div id="alchemy-course-filter--by-text"
                    class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
                 <i class="material-icons mdc-text-field__icon" tabindex="0">search</i>
                 <input type="text" id="alchemy-course-filter--search-input" class="mdc-text-field__input">
@@ -129,8 +129,17 @@
               </div>
             </div>
             <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-6"></div>
+              <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
+                <button id="alchemy-course-add-button" class="mdc-button mdc-button--compact mdc-card__action mdc-card__action--button">Add</button>
+                <button id="alchemy-course-edit-button" class="mdc-button mdc-button--compact mdc-card__action mdc-card__action--button" disabled>Edit</button>
+                <button id="alchemy-course-delete-button" class="mdc-button mdc-button--compact mdc-card__action mdc-card__action--button" disabled>Delete</button>
+              </div>
+            </div>
+            <br/>
+            <div class="mdc-layout-grid__inner">
               <div class="mdc-layout-grid__cell--span-12">
-                <div id="alchemy-course-filter--by-search" class="mdc-data-table">
+                <div id="alchemy-course-table" class="mdc-data-table">
                   <table class="mdc-data-table__content">
                     <thead>
 
@@ -143,12 +152,6 @@
               </div>
             </div>
           </section>
-          <!-- ... content ... -->
-          <section class="mdc-card__actions mdc-card__actions--full-bleed">
-            <button class="mdc-button mdc-button--compact mdc-card__action"></button>
-            <button class="mdc-button mdc-button--compact mdc-card__action"></button>
-          </section>
-
         </div>
       </div>
       <div class="mdc-layout-grid__inner">

@@ -9,6 +9,19 @@
 |
 */
 
+function blurSelection(exclusions, callback, callbackArguments) {
+  return (mouseEvent) => {
+    mouseEvent.stopPropagation();
+    const { target } = mouseEvent;
+    if (!(exclusions && exclusions.indexOf(target) > -1)) {
+      if (typeof callback === 'function') {
+        callback(callbackArguments);
+      }
+      window.removeEventListener('click', blurSelection);
+    }
+  };
+}
+
 function filterObject(obj) {
   const keys = Object.keys(obj);
   const filteredObj = {};

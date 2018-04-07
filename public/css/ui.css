@@ -53,6 +53,10 @@
   --mdc-theme-text-icon-on-dark: rgba(255, 255, 255, 0.5);
 }
 
+:root {
+  --alchemy-theme-selected: rgba(176, 224, 255, 0.58);
+}
+
 
 .custom-indicator-tab-bar-in-toolbar .mdc-tab:not(.mdc-tab--active),
 .custom-tab-bar-in-toolbar .mdc-tab:not(.mdc-tab--active) {
@@ -130,3 +134,15 @@ main {
   display: none;
 }
 
+.mdc-data-table {
+  font-weight: 500;
+  color: #3a3a3a !important;
+}
+
+#alchemy-course-table table tr {
+  cursor: pointer;
+}
+
+#alchemy-course-table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
