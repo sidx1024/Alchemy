@@ -28,7 +28,7 @@ class Course extends Model {
     return super.search(url, successCallback, failCallback);
   }
 
-  transform(data, type) {
+  static transform(data, type) {
     const transformedData = [];
     if (!data) {
       return transformedData;
@@ -39,6 +39,7 @@ class Course extends Model {
           const course = {};
           course.id = _course.id;
           course.code = _course.code;
+          course.alias = _course.alias;
           course.name = _course.name;
           course.l = _course.scheme[0];
           course.p = _course.scheme[1];
@@ -61,7 +62,7 @@ class Faculty extends Model {
 }
 
 class Programme extends Model {
-  transform(programme, type) {
+  static transform(programme, type) {
     const transformedData = [];
     switch (type) {
       case 'list':
@@ -96,22 +97,6 @@ class Alchemy {
     this.faculty = new Faculty('faculty', this.config);
     this.programme = new Programme('programme', this.config);
     this.pingAPI(this.init.bind(this), this.onFail);
-  }
-
-  department() {
-    return this.department;
-  }
-
-  course() {
-    return this.course;
-  }
-
-  faculty() {
-    return this.faculty;
-  }
-
-  programme() {
-    return this.programme;
   }
 
   init() {

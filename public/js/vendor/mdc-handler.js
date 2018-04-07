@@ -160,7 +160,7 @@ class MDCDataTableHelper {
 
     const trElement = document.createElement('tr');
     headers.forEach((header, index) => {
-      if (this.idKey && index < 1) {
+      if (header === this.idKey) {
         return;
       }
       const thElement = document.createElement('th');

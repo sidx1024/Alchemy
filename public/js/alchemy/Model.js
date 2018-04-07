@@ -24,7 +24,6 @@ class Model {
       delete: { path: `${this.uri}delete`, method: 'DELETE', verb: 'deleting' },
       search: { path: `${this.uri}search?`, method: 'GET', verb: 'searching' }
     };
-
     this.headers = this.config.api.headers;
   }
 
