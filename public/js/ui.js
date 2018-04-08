@@ -76,8 +76,7 @@ window.alchemy = new Alchemy({
 
         courseTable.refresh = () => {
           courseTable.deselectCourses();
-          const filteredFilter = filterObject(courseFilter);
-          alchemy.course.search(filteredFilter, (data) => {
+          alchemy.course.search(filterObject(courseFilter), (data) => {
             const transformedData = Course.transform(data, 'table');
             courseTable.mdcDataTableHelper
               .setData(transformedData);
@@ -152,8 +151,8 @@ window.alchemy = new Alchemy({
 
         function setupCourseTable() {
           alchemy.course.search({}, (data) => {
-            const headers = ['Code', 'Alias', 'Name', 'L', 'P', 'T', 'Credit'];
-            const dataTypes = ['Code', 'Alias', 'Name', 1, 1, 1, 1];
+            const headers = ['Code', 'Alias', 'Name', 'L', 'P', 'T', 'Credit', 'Elective?', 'No. of persons'];
+            const dataTypes = ['Code', 'Alias', 'Name', 1, 1, 1, 1, 1, 1];
             const transformedData = Course.transform(data, 'table');
             courseTable.mdcDataTableHelper =
               MDCDataTableHelper

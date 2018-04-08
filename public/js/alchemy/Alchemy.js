@@ -41,10 +41,12 @@ class Course extends Model {
           course.code = _course.code;
           course.alias = _course.alias;
           course.name = _course.name;
-          course.l = _course.scheme[0];
-          course.p = _course.scheme[1];
-          course.t = _course.scheme[2];
+          course.lecture = _course.lecture;
+          course.practical = _course.practical;
+          course.tutorial = _course.tutorial;
           course.credit = _course.credit;
+          course.is_elective = _course.is_elective ? 'Yes' : '';
+          course.persons = _course.persons;
           transformedData.push(course);
         });
         break;
