@@ -9,7 +9,7 @@ class Course extends Model
     public $timestamps = false;
     protected $table = 'course';
     protected $guarded = ['id']; // Protect field 'id' against mass-assignment.
-    const SEARCH_RESULT_LIMIT = 10;
+    const DEFAULT_SEARCH_RESULT_LIMIT = 10;
 
     public static $rules = [
         'name' => 'required|max:128',
@@ -38,11 +38,15 @@ class Course extends Model
      * @param null $department_id
      * @param null $level
      * @param null $text
+     * @param null $limit
      * @return mixed
      */
-    public static function Search($department_id = null, $level = null, $text = null)
+    public static function Search($department_id = null, $level = null, $text = null, $limit = null)
     {
-        $query = Course::take(self::SEARCH_RESULT_LIMIT)->latest('id');
+        if (is_null($limit)) {
+           $limit = self::DEFAULT_SEARCH_RESULT_LIMIT;
+        }
+        $query = Course::take($limit)->latest('id');
         if (!is_null($department_id)) {
             $query = $query->where('department_id', $department_id);
         }

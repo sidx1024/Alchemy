@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars,no-param-reassign,no-undef */
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +22,15 @@ function blurSelection(exclusions, callback, callbackArguments) {
   };
 }
 
+function scrollTo(element) {
+  if (element && window.scroll) {
+    window.scroll({
+      behavior: 'smooth',
+      top: element.offsetTop - 84
+    });
+  }
+}
+
 function filterObject(obj) {
   const keys = Object.keys(obj);
   const filteredObj = {};
@@ -38,4 +47,12 @@ function fetchStatus(response) {
     return response;
   }
   return Promise.reject(response);
+}
+
+function removeLoadingOverlay() {
+  const element = document.querySelector('#loading-overlay');
+  if (element) {
+    element.parentNode.removeChild(element);
+    window.removeEventListener('load', removeLoadingOverlay);
+  }
 }

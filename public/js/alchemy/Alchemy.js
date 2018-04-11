@@ -15,13 +15,16 @@ class Course extends Model {
 
     if (searchParams) {
       if (typeof searchParams.departmentId !== 'undefined') {
-        url += `department_id=${searchParams.departmentId.toString()}&`;
+        url += `department_id=${encodeURI(searchParams.departmentId.toString())}&`;
       }
       if (typeof searchParams.text !== 'undefined') {
-        url += `text=${searchParams.text.toString()}&`;
+        url += `text=${encodeURI(searchParams.text.toString())}&`;
       }
       if (typeof searchParams.level !== 'undefined') {
-        url += `level=${searchParams.level.toString()}&`;
+        url += `level=${encodeURI(searchParams.level.toString())}&`;
+      }
+      if (typeof searchParams.limit !== 'undefined') {
+        url += `limit=${encodeURI(searchParams.limit.toString())}&`;
       }
     }
 
@@ -45,7 +48,7 @@ class Course extends Model {
           course.practical = _course.practical;
           course.tutorial = _course.tutorial;
           course.credit = _course.credit;
-          course.is_elective = _course.is_elective ? 'Yes' : '';
+          course.is_elective = _course.is_elective ? '*' : '';
           course.persons = _course.persons;
           transformedData.push(course);
         });
@@ -110,6 +113,8 @@ class Alchemy {
 
     this.programme.get(this.keys.programme, onProgrammeReceived.bind(this));
     requestsSent += 1;
+    this.department.all(onDepartmentsReceived.bind(this));
+    requestsSent += 1;
 
     function onRequestReceived(success, response) {
       if (success) {
@@ -134,6 +139,14 @@ class Alchemy {
     function onProgrammeReceived(response) {
       if (response) {
         this.current.programme = response;
+        onRequestReceived(true);
+      } else {
+        onRequestReceived(false, response);
+      }
+    }
+    function onDepartmentsReceived(response) {
+      if (response) {
+        this.current.departments = response;
         onRequestReceived(true);
       } else {
         onRequestReceived(false, response);

@@ -76,7 +76,7 @@
 .mdc-data-table__content {
   width: 100%;
   border-collapse: collapse;
-  /*table-layout: fixed;*/
+  /*table-layout: auto;*/
 }
 .mdc-data-table__content tr:first-child,
 .mdc-data-table__content tr:nth-last-child(n + 2) {

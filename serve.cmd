@@ -1,1 +1,5 @@
-php -S 127.0.0.1:8000 -t ./public
+prompt $g
+taskkill /im php.exe /f
+cls
+php -S 0.0.0.0:80 -t ./public
+pause

@@ -84,6 +84,11 @@
 .mdc-select-scroll-lock {
   overflow: visible !important;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: #f5f5f5;
   font-family: Roboto, sans-serif;
@@ -91,9 +96,32 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+::-webkit-scrollbar { display: none; }
+
+#loading-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: monospace;
+  background-color: var(--mdc-theme-primary);
+  color: var(--mdc-theme-text-primary-on-primary-dark);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top : 0;
+  left: 0;
+  z-index: 100;
+}
+
 main {
   display: flex;
   flex-flow: column;
+}
+
+#dynamic-tab-bar .mdc-tab {
+  min-width: auto;
+  padding: 0 24px 0 24px;
 }
 
 .app-title {
@@ -130,6 +158,10 @@ main {
   margin-top: 16px;
 }
 
+.mdc-layout-grid:last-child {
+  margin-top: 15%;
+}
+
 #views {
   display: none;
 }
@@ -139,10 +171,20 @@ main {
   color: #3a3a3a !important;
 }
 
-#alchemy-course-table table tr {
+#alchemy-course-view__table table tr {
   cursor: pointer;
 }
 
-#alchemy-course-table table tr.selected {
+#alchemy-course-view__table table tr.selected {
   background-color: var(--alchemy-theme-selected);
+}
+
+.alchemy-course--view__table--empty::after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--alchemy-theme-selected);
+  width: 100%;
+  height: 64px;
+  content: "No courses to display."
 }

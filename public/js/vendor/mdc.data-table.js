@@ -12,7 +12,7 @@ const DATATABLE_COLUMNS_SELECTOR = `.mdc-data-table__content thead`,
 
 class MDCDataTable extends MDCComponent {
 
-  static attachTo(root) {
+  static sattachTo(root) {
     return new MDCDataTable(root);
   }
 

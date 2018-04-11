@@ -40,7 +40,7 @@ class Model {
       .then(fetchStatus)
       .then(response => response.json())
       .then(successCallback || Logger.success)
-      .catch(e => (failCallback || this.statusFailure(action.verb, id))(e));
+      .catch(e => (failCallback || this.statusFailure(action.verb))(e));
   }
 
   get(id = 1, successCallback, failCallback) {

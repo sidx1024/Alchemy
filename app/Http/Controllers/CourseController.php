@@ -64,9 +64,10 @@ class CourseController extends Controller
         $filter_department = array_key_exists('department_id', $query) ? $query['department_id'] : null;
         $filter_level = array_key_exists('level', $query) ? $query['level'] : null;
         $filter_text = array_key_exists('text', $query) ? $query['text'] : null;
+        $filter_limit = array_key_exists('limit', $query) ? $query['limit'] : null;
 
         return response(
-            Course::Search($filter_department, $filter_level, $filter_text)->get(),
+            Course::Search($filter_department, $filter_level, $filter_text, $filter_limit)->get(),
             Response::HTTP_OK);
     }
 }

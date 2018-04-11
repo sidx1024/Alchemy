@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals */
+/* eslint-disable no-restricted-globals,no-undef,no-unused-vars */
 class MDCSelectHandler {
   constructor(mdcSelect) {
     if (!mdcSelect) { return; }
@@ -10,7 +10,7 @@ class MDCSelectHandler {
   }
 
   init(label, options = {}) {
-    this.select = mdc.select.MDCSelect.attachTo(this.mdcSelect);
+    this.select = mdc.selects.MDCSelects.attachTo(this.mdcSelect);
     this.setLabel(label);
     if (typeof options.onChange === 'function') {
       this.setOnChangeListener(options.onChange);
@@ -26,7 +26,7 @@ class MDCSelectHandler {
   }
 
   setOnChangeListener(f) {
-    this.select.listen('MDCSelect:change', f);
+    this.select.listen('MDCSelects:change', f);
     return this;
   }
 
@@ -149,7 +149,7 @@ class MDCDataTableHelper {
     return this;
   }
 
-  setHeaders(headers, dataTypes) {
+  setHeaders(headers, dataTypes, widths) {
     if (!Array.isArray(headers)) {
       return;
     }
@@ -171,6 +171,12 @@ class MDCDataTableHelper {
           thElement.classList.add('mdc-data-table--numeric');
         }
         thElement.classList.add('mdc-data-table--sortable');
+      }
+      if (widths) {
+        const width = widths[index];
+        if (!isNaN(width)) {
+          thElement.style.width = `${width}%`;
+        }
       }
       trElement.appendChild(thElement);
     });
@@ -212,5 +218,38 @@ class MDCDataTableHelper {
       tableBody.removeChild(tableBody.firstChild);
     }
     return this;
+  }
+}
+
+class MDCExpansionPanelHelper {
+  static handle(element) {
+    return mdc.expansionPanel.MDCExpansionPanel.attachTo(element);
+  }
+
+  static init(items) {
+    if (items instanceof Array) {
+      return items.map(item => MDCExpansionPanelHelper.handle(item));
+    }
+    if (items instanceof NodeList) {
+      return Array.from(items).map(item => MDCExpansionPanelHelper.handle(item));
+    }
+    return MDCExpansionPanelHelper.handle(items);
+  }
+}
+
+class MDCExpansionPanelAccordionHelper {
+  static handle(element) {
+    console.log('accordian', element);
+    return mdc.expansionPanel.MDCExpansionPanelAccordion.attachTo(element);
+  }
+
+  static init(items) {
+    if (items instanceof Array) {
+      return items.map(item => MDCExpansionPanelAccordionHelper.handle(item));
+    }
+    if (items instanceof NodeList) {
+      return Array.from(items).map(item => MDCExpansionPanelAccordionHelper.handle(item));
+    }
+    return MDCExpansionPanelAccordionHelper.handle(items);
   }
 }
