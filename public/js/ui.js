@@ -50,8 +50,12 @@ window.alchemy = new Alchemy({
           element: document.querySelector('#alchemy-course-view'),
           courseAddButton: { element: document.querySelector('#alchemy-course-view__add-button') },
           courseEditButton: { element: document.querySelector('#alchemy-course-view__edit-button') },
-          courseDeleteButton: { element: document.querySelector('#alchemy-course-view__delete-button') },
-          courseFilterByText: { element: document.querySelector('#alchemy-course-view__filter-by-text') },
+          courseDeleteButton: {
+            element: document.querySelector('#alchemy-course-view__delete-button')
+          },
+          courseFilterByText: {
+            element: document.querySelector('#alchemy-course-view__filter-by-text')
+          },
           courseFilterByBranch: {
             element: document.querySelector('#alchemy-course-view__filter-by-branch')
           },
@@ -69,11 +73,19 @@ window.alchemy = new Alchemy({
         },
         courseAdd: {
           element: document.querySelector('#alchemy-course-add'),
+          courseAddForm: { element: document.querySelector('#alchemy-course-add__form') },
           courseCode: { element: document.querySelector('#alchemy-course-add__course-code') },
           courseName: { element: document.querySelector('#alchemy-course-add__course-name') },
+          courseDepartment: {
+            element: document.querySelector('#alchemy-course-add__course-department')
+          },
+          courseType: { element: document.querySelector('#alchemy-course-add__course-type') },
+          coursePerson: { element: document.querySelector('#alchemy-course-add__course-person') },
           courseAlias: { element: document.querySelector('#alchemy-course-add__course-alias') },
           courseLecture: { element: document.querySelector('#alchemy-course-add__course-lecture') },
-          coursePractical: { element: document.querySelector('#alchemy-course-add__course-practical') },
+          coursePractical: {
+            element: document.querySelector('#alchemy-course-add__course-practical')
+          },
           courseTutorial: { element: document.querySelector('#alchemy-course-add__course-tutorial') },
           courseCredit: { element: document.querySelector('#alchemy-course-add__course-credit') },
           courseAddButton: { element: document.querySelector('#alchemy-course-add__add-button') },
@@ -238,6 +250,7 @@ window.alchemy = new Alchemy({
 
       function setupCourseAdd() {
         const {
+          courseAddForm,
           courseCode,
           courseAlias,
           courseName,
@@ -247,7 +260,8 @@ window.alchemy = new Alchemy({
           courseCredit,
           courseAddButton,
           courseResetButton,
-          courseViewButton
+          courseViewButton,
+          courseDepartment
         } = alchemyCourseSection.courseAdd;
 
         mdc.textField.MDCTextField.attachTo(courseCode.element);
@@ -257,10 +271,45 @@ window.alchemy = new Alchemy({
         mdc.textField.MDCTextField.attachTo(coursePractical.element);
         mdc.textField.MDCTextField.attachTo(courseTutorial.element);
         mdc.textField.MDCTextField.attachTo(courseCredit.element);
+        setupCourseDepartment();
+
+        courseAddButton.element.addEventListener('click', () => {
+          const selectedDepartment = getSelectedDepartment();
+          const isFormValid = courseAddForm.element.checkValidity() && selectedDepartment !== false;
+          if (!isFormValid) { return false; }
+
+          return true;
+        });
+
+        courseResetButton.element.addEventListener('click', () => {
+
+        });
 
         courseViewButton.element.addEventListener('click', () => {
           scrollTo(alchemyCourseSection.courseView.element);
         });
+
+        function setupCourseDepartment() {
+          courseDepartment.mdcSelectHandler =
+            MDCSelectHandler
+              .handle(courseDepartment.element)
+              .clearItems()
+              .init('Select Department', { storeData: true })
+              .disable();
+
+          const { departments } = alchemy.current;
+
+          courseDepartment.mdcSelectHandler
+            .addItems(departments, { assignments: { valueKey: 'name', idKey: 'alias' } })
+            .enable();
+        }
+        function getSelectedDepartment() {
+          const selectedDepartment = courseDepartment.mdcSelectHandler.getSelected();
+          if (selectedDepartment && selectedDepartment.data) {
+            return selectedDepartment.data;
+          }
+          return false;
+        }
       }
     }
 
