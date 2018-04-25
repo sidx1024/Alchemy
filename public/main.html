@@ -91,7 +91,7 @@
 
 <section>
   <main class="mdc-toolbar-fixed-adjust panels">
-    <!-- SECTION -->
+    <!-- SECTION Course-->
     <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-courses"
              role="tabpanel"
              aria-hidden="false">
@@ -427,8 +427,8 @@
         </div>
       </div>
     </section>
-    <!-- SECTION -->
-    <section class="panel" id="panel-2" role="tabpanel" aria-hidden="true">
+    <!-- SECTION Faculty-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="panel-2" role="tabpanel" aria-hidden="true">
       <div class="mdc-layout-grid__inner">
         <div class="mdc-card mdc-theme--background mdc-layout-grid__cell--span-12">
           <div class="mdc-card__actions mdc-card__actions--full-bleed">
@@ -471,11 +471,231 @@
         </div>
       </div>
     </section>
-    <!-- SECTION -->
-    <section class="panel" id="panel-3" role="tabpanel" aria-hidden="true">
+    <!-- SECTION Location-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="panel-3" role="tabpanel" aria-hidden="true">
+      <!--
+    /*
+      |--------------------------------------------------------------------------
+      | Location View
+      |--------------------------------------------------------------------------
+      */
+    -->
+      <div id="alchemy-location-view" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">View Locations</h1>
+            <div class="mdc-layout-grid__inner">
 
+              <div id="alchemy-location-view__filter-by-text"
+                   class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
+                <i class="material-icons mdc-text-field__icon" tabindex="0">search</i>
+                <input type="text" class="mdc-text-field__input">
+                <label class="mdc-floating-label" for="my-text-field">Search</label>
+                <div class="mdc-line-ripple"></div>
+              </div>
+
+              <div id="alchemy-location-view__filter-by-branch" class="mdc-select  mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <div id="alchemy-location-view__filter-by-level" class="mdc-select  mdc-layout-grid__cell--span-2"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label">Select Level</div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-3"></div>
+              <div class="mdc-layout-grid__cell--span-9 mdc-layout-grid--align-right">
+                <button id="alchemy-location-view__add-button"
+                        class="mdc-button">
+                  <i class="material-icons mdc-button__icon">add</i>
+                  Add Location
+                </button>
+                <button id="alchemy-location-view__edit-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">edit</i>
+                  Edit Location
+                </button>
+                <button id="alchemy-location-view__delete-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">clear</i>
+                  Delete Location
+                </button>
+              </div>
+            </div>
+            <br/>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-12">
+                <div id="alchemy-location-view__table" class="mdc-data-table">
+                  <table class="mdc-data-table__content">
+                    <thead>
+
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                  </table>
+                  <div class="empty-table">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!--
+      /*
+        |--------------------------------------------------------------------------
+        | Location Add
+        |--------------------------------------------------------------------------
+        */
+      -->
+      <div id="alchemy-location-add" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">Add Location</h1>
+            <form id="alchemy-location-add__form" class="mdc-layout-grid__inner">
+              <!-- Location Name -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-location-add__location-name"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="text" id="alchemy-location-add__location-name--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=2>
+                  <label for="alchemy-location-add__location-name--input" class="mdc-floating-label">Location Name</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-location-add__location-code--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Location Alias -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-location-add__location-alias"
+                     class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
+                  <input type="text" id="alchemy-location-add__location-alias--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=4>
+                  <label for="alchemy-location-add__location-alias--input" class="mdc-floating-label">Location Alias</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-location-add__location-name--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Location Capacity -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-location-add__location-capacity"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="number" id="alchemy-location-add__location-capacity--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=3>
+                  <label for="alchemy-location-add__location-capacity--input" class="mdc-floating-label">Location Capacity</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-location-add__location-alias--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Location Department -->
+              <div id="alchemy-location-add__location-department" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Location Type -->
+              <div class="mdc-layout-grid__cell--span-5 mdc-layout-grid__cell--align-middle">
+                <span class="mdc-typography--subheading">&nbsp;Location Type:</span>
+                <div class="mdc-form-field">
+                  <div id="alchemy-location-add__location-type--classroom" class="mdc-radio">
+                    <input class="mdc-radio__native-control" type="radio"
+                           id="alchemy-location-add__location-type--radio-classroom"
+                           name="alchemy-location-add__location-type--radio" checked>
+                    <div class="mdc-radio__background">
+                      <div class="mdc-radio__outer-circle"></div>
+                      <div class="mdc-radio__inner-circle"></div>
+                    </div>
+                  </div>
+                  <label id="alchemy-location-add__location-type--label-classroom"
+                         for="alchemy-location-add__location-type--radio-classroom">Classroom</label>
+                </div>
+                <div class="mdc-form-field">
+                  <div id="alchemy-location-add__location-type--laboratory" class="mdc-radio">
+                    <input class="mdc-radio__native-control" type="radio"
+                           id="alchemy-location-add__location-type--radio-laboratory"
+                           name="alchemy-location-add__location-type--radio">
+                    <div class="mdc-radio__background">
+                      <div class="mdc-radio__outer-circle"></div>
+                      <div class="mdc-radio__inner-circle"></div>
+                    </div>
+                  </div>
+                  <label id="alchemy-location-add__location-type--label-laboratory"
+                         for="alchemy-location-add__location-type--radio-laboratory">Laboratory</label>
+                </div>
+              </div>
+
+              <div class="mdc-layout-grid__cell--span-6">
+                <button id="alchemy-location-add__add-button" class="mdc-button mdc-button--raised">
+                  <i class="material-icons mdc-button__icon">done</i>
+                  ADD LOCATION
+                </button>
+                <button id="alchemy-location-add__reset-button" class="mdc-button">
+                  <i class="material-icons mdc-button__icon">undo</i>
+                  RESET FIELDS
+                </button>
+              </div>
+              <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
+                <button id="alchemy-location-add__view-button" class="mdc-button">
+                  <i class="material-icons mdc-button__icon">remove_red_eye</i>
+                  VIEW LOCATIONS
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
 
     </section>
+
   </main>
   <div class="mdc-layout-grid mdc-theme--primary-dark-bg mdc-theme--text-disabled-on-dark">
     <div class="mdc-layout-grid__inner">

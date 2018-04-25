@@ -41,6 +41,18 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->post('/programme/add', 'ProgrammeController@add');
         $router->put('/programme/update/{id}', 'ProgrammeController@update');
         $router->delete('/programme/delete/{id}', 'ProgrammeController@delete');
+        // Location
+        $router->get('/location/get/{id}', 'LocationController@get');
+        $router->get('/location/search', 'LocationController@search');
+        $router->post('/location/add', 'LocationController@add');
+        $router->put('/location/update/{id}', 'LocationController@update');
+        $router->delete('/location/delete/{id}', 'LocationController@delete');
+        // Faculty
+        $router->get('/faculty/get/{id}', 'FacultyController@get');
+        $router->get('/faculty/search', 'FacultyController@search');
+        $router->post('/faculty/add', 'FacultyController@add');
+        $router->put('/faculty/update/{id}', 'FacultyController@update');
+        $router->delete('/faculty/delete/{id}', 'FacultyController@delete');
     });
 });
 

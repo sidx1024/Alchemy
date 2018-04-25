@@ -13,6 +13,7 @@ window.alchemy = new Alchemy({
   onReady: () => {
     setupCommon();
     setupCourseSection();
+    setupLocationSection();
     setupTimeTableSection();
 
     function setupCommon() {
@@ -260,6 +261,196 @@ window.alchemy = new Alchemy({
 
         courseViewButton.element.addEventListener('click', () => {
           scrollTo(alchemyCourseSection.courseView.element);
+        });
+      }
+    }
+
+    function setupLocationSection() {
+      const alchemyLocationSection = {
+        element: document.querySelector('#alchemy-locations'),
+        locationView: {
+          element: document.querySelector('#alchemy-location-view'),
+          locationAddButton: { element: document.querySelector('#alchemy-location-view__add-button') },
+          locationEditButton: { element: document.querySelector('#alchemy-location-view__edit-button') },
+          locationDeleteButton: { element: document.querySelector('#alchemy-location-view__delete-button') },
+          locationFilterByText: { element: document.querySelector('#alchemy-location-view__filter-by-text') },
+          locationFilterByBranch: {
+            element: document.querySelector('#alchemy-location-view__filter-by-branch')
+          },
+          locationTable: {
+            element: document.querySelector('#alchemy-location-view__table'),
+            table: document.querySelector('#alchemy-location-view__table table'),
+            headers: ['Code', 'Alias', 'Name', 'L', 'P', 'T', 'Credit', 'Type', 'Persons'],
+            headersDataTypes: ['Code', 'Alias', 'Name', 1, 1, 1, 1, 1, 1],
+            headersWidth: [9.5, 9.5, 40.5],
+            selectedLocationId: null
+          }
+        },
+        locationAdd: {
+          element: document.querySelector('#alchemy-location-add'),
+          locationName: { element: document.querySelector('#alchemy-location-add__location-name') },
+          locationAlias: { element: document.querySelector('#alchemy-location-add__location-alias') },
+          locationCapacity: {element: document.querySelector('#alchemy-location-add__location-capacity') },
+          locationDepartment: {element: document.querySelector('#alchemy-location-add__location-department') },
+          //  ToDo: Add location Type
+          locationCapacity: {element: document.querySelector('#alchemy-location-add__location-capacity') },
+          locationAddButton: { element: document.querySelector('#alchemy-location-add__add-button') },
+          locationResetButton: { element: document.querySelector('#alchemy-location-add__reset-button') },
+          locationViewButton: { element: document.querySelector('#alchemy-location-add__view-button') }
+        }
+      };
+
+      setupLocationView();
+      setupLocationAdd();
+
+      function setupLocationView() {
+        const { locationTable } = alchemyLocationSection.locationView;
+
+        const locationFilter = {
+          departmentId: null,
+          text: null,
+          limit: null
+        };
+
+        setupLocationTable();
+        setupFilterByText();
+        setupFilterByBranch();
+        setupEvents();
+
+        function setupLocationTable() {
+          const { locationEditButton, locationDeleteButton } = alchemyLocationSection.locationView;
+
+          locationTable.deselectLocations = () => {
+            const selectedLocations = locationTable.element.querySelectorAll('tr.selected');
+            locationEditButton.element.setAttribute('disabled', '');
+            locationDeleteButton.element.setAttribute('disabled', '');
+            Array.prototype.forEach.call(
+              selectedLocations,
+              item => (item.classList.remove('selected'))
+            );
+            locationTable.selectedLocationId = null;
+          };
+
+          locationTable.refresh = () => {
+            locationTable.deselectLocations();
+            alchemy.location.search(filterObject(locationFilter), (data) => {
+              const transformedData = Location.transform(data, 'table');
+              locationTable.mdcDataTableHelper
+                .setData(transformedData);
+              if (!locationTable.element.querySelector('td')) {
+                locationTable.element.classList.add('alchemy-location-table--empty');
+              } else {
+                locationTable.element.classList.remove('alchemy-location-table--empty');
+              }
+            });
+          };
+
+          const { headers, headersDataTypes, headersWidth } = locationTable;
+          locationTable.mdcDataTableHelper =
+            MDCDataTableHelper
+              .handle(locationTable.element)
+              .setIdKey('id')
+              .setHeaders(headers, headersDataTypes, headersWidth);
+          locationTable.refresh();
+        }
+
+        function setupFilterByText() {
+          const { locationFilterByText } = alchemyLocationSection.locationView;
+          if (locationFilterByText.element) {
+            const searchTextField = mdc.textField.MDCTextField.attachTo(locationFilterByText.element);
+            const searchInput = searchTextField.input_;
+            searchInput.addEventListener('input', onSearchInputChange);
+
+            function onSearchInputChange(inputEvent) {
+              locationFilter.text = inputEvent.srcElement.value;
+              locationTable.refresh();
+            }
+          }
+        }
+
+        function setupFilterByBranch() {
+          const { locationFilterByBranch } = alchemyLocationSection.locationView;
+          locationFilterByBranch.mdcSelectHandler =
+            MDCSelectHandler
+              .handle(locationFilterByBranch.element)
+              .clearItems()
+              .init('Select branch', { storeData: true })
+              .disable();
+
+          const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
+          const { departments } = alchemy.current;
+
+          locationFilterByBranch.mdcSelectHandler
+            .addItems(
+              departments.concat([allBranchesItem]),
+              { assignments: { valueKey: 'name', idKey: 'alias' } }
+            )
+            .setOnChangeListener(onBranchChange)
+            .enable();
+
+          function onBranchChange() {
+            const selectedItem = locationFilterByBranch.mdcSelectHandler.getSelected();
+            locationFilter.departmentId = selectedItem.data.id;
+            locationTable.refresh();
+          }
+        }
+
+        function setupEvents() {
+          const {
+            locationAddButton,
+            locationEditButton,
+            locationDeleteButton
+          } = alchemyLocationSection.locationView;
+
+          locationTable.element.addEventListener('click', (mouseEvent) => {
+            mouseEvent.stopPropagation();
+            locationTable.deselectLocations();
+            const { target } = mouseEvent;
+            if (target.tagName !== 'TD') { return; }
+            const selectedLocation = target.parentNode;
+            locationTable.selectedLocationId = selectedLocation.getAttribute('data-id');
+            selectedLocation.classList.add('selected');
+            locationEditButton.element.removeAttribute('disabled');
+            locationDeleteButton.element.removeAttribute('disabled');
+            window.addEventListener(
+              'click',
+              blurSelection(
+                [selectedLocation, locationEditButton.element, locationDeleteButton.element],
+                locationTable.deselectLocations
+              )
+            );
+          });
+
+          locationAddButton.element.addEventListener('click', () => {
+            scrollTo(alchemyLocationSection.locationAdd.element);
+          });
+        }
+      }
+
+      function setupLocationAdd() {
+        const {
+          locationCode,
+          locationAlias,
+          locationName,
+          locationLecture,
+          locationPractical,
+          locationTutorial,
+          locationCredit,
+          locationAddButton,
+          locationResetButton,
+          locationViewButton
+        } = alchemyLocationSection.locationAdd;
+
+        mdc.textField.MDCTextField.attachTo(locationCode.element);
+        mdc.textField.MDCTextField.attachTo(locationAlias.element);
+        mdc.textField.MDCTextField.attachTo(locationName.element);
+        mdc.textField.MDCTextField.attachTo(locationLecture.element);
+        mdc.textField.MDCTextField.attachTo(locationPractical.element);
+        mdc.textField.MDCTextField.attachTo(locationTutorial.element);
+        mdc.textField.MDCTextField.attachTo(locationCredit.element);
+
+        locationViewButton.element.addEventListener('click', () => {
+          scrollTo(alchemyLocationSection.locationView.element);
         });
       }
     }

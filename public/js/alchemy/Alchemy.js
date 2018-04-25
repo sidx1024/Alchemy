@@ -66,6 +66,26 @@ class Department extends Model {
 class Faculty extends Model {
 }
 
+class Location extends Model {
+  search(searchParams, successCallback, failCallback) {
+    let url = this.actions.search.path;
+
+    if (searchParams) {
+      if (typeof searchParams.departmentId !== 'undefined') {
+        url += `department_id=${encodeURI(searchParams.departmentId.toString())}&`;
+      }
+      if (typeof searchParams.text !== 'undefined') {
+        url += `text=${encodeURI(searchParams.text.toString())}&`;
+      }
+      if (typeof searchParams.limit !== 'undefined') {
+        url += `limit=${encodeURI(searchParams.limit.toString())}&`;
+      }
+    }
+
+    return super.search(url, successCallback, failCallback);
+  }
+}
+
 class Programme extends Model {
   static transform(programme, type) {
     const transformedData = [];
@@ -98,6 +118,7 @@ class Alchemy {
     this.onFail = options.onFail;
     this.current = { programme: null };
     this.course = new Course('course', this.config);
+    this.location = new Location('location', this.config);
     this.department = new Department('department', this.config);
     this.faculty = new Faculty('faculty', this.config);
     this.programme = new Programme('programme', this.config);
