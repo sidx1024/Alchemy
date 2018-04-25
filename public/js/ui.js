@@ -69,7 +69,16 @@ window.alchemy = new Alchemy({
         },
         courseAdd: {
           element: document.querySelector('#alchemy-course-add'),
-          courseCode: { element: document.querySelector('#alchemy-course-add__course-code') }
+          courseCode: { element: document.querySelector('#alchemy-course-add__course-code') },
+          courseName: { element: document.querySelector('#alchemy-course-add__course-name') },
+          courseAlias: { element: document.querySelector('#alchemy-course-add__course-alias') },
+          courseLecture: { element: document.querySelector('#alchemy-course-add__course-lecture') },
+          coursePractical: { element: document.querySelector('#alchemy-course-add__course-practical') },
+          courseTutorial: { element: document.querySelector('#alchemy-course-add__course-tutorial') },
+          courseCredit: { element: document.querySelector('#alchemy-course-add__course-credit') },
+          courseAddButton: { element: document.querySelector('#alchemy-course-add__add-button') },
+          courseResetButton: { element: document.querySelector('#alchemy-course-add__reset-button') },
+          courseViewButton: { element: document.querySelector('#alchemy-course-add__view-button') }
         }
       };
 
@@ -224,30 +233,34 @@ window.alchemy = new Alchemy({
           courseAddButton.element.addEventListener('click', () => {
             scrollTo(alchemyCourseSection.courseAdd.element);
           });
-
         }
       }
 
       function setupCourseAdd() {
-        const { courseCode } = alchemyCourseSection.courseAdd;
+        const {
+          courseCode,
+          courseAlias,
+          courseName,
+          courseLecture,
+          coursePractical,
+          courseTutorial,
+          courseCredit,
+          courseAddButton,
+          courseResetButton,
+          courseViewButton
+        } = alchemyCourseSection.courseAdd;
 
-        const tfEl = courseCode.element;
-        // var tfHelperText = document.getElementById('tf-outlined-validation-msg');
-        const tf = new mdc.textField.MDCTextField(tfEl);
-        // var outlinedInputEl = tfEl.querySelector('input');
-        //tf.layout();
+        mdc.textField.MDCTextField.attachTo(courseCode.element);
+        mdc.textField.MDCTextField.attachTo(courseAlias.element);
+        mdc.textField.MDCTextField.attachTo(courseName.element);
+        mdc.textField.MDCTextField.attachTo(courseLecture.element);
+        mdc.textField.MDCTextField.attachTo(coursePractical.element);
+        mdc.textField.MDCTextField.attachTo(courseTutorial.element);
+        mdc.textField.MDCTextField.attachTo(courseCredit.element);
 
-        if (courseCode.element) {
-          // const searchTextField = mdc.textField.MDCTextField.attachTo(courseCode.element);
-          // const searchInput = searchTextField.input_;
-          // console.log('searchTextField', searchTextField);
-          // // searchInput.addEventListener('input', onSearchInputChange);
-          //
-          // function onSearchInputChange() {
-          //   // courseFilter.text = inputEvent.srcElement.value;
-          //   // courseTable.refresh();
-          // }
-        }
+        courseViewButton.element.addEventListener('click', () => {
+          scrollTo(alchemyCourseSection.courseView.element);
+        });
       }
     }
 

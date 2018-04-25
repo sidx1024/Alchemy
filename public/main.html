@@ -44,9 +44,6 @@
   <link rel="stylesheet" href="css/vendor/material-components-web.css"/>
   <link rel="stylesheet" href="css/vendor/text-field.css"/>
 
-  <!-- Material Web Components :: Expansion Panel -->
-  <link rel="stylesheet" href="css/vendor/mdc.expansion-panel.css"/>
-
   <!-- Material Web Components :: Data Table -->
   <link rel="stylesheet" href="css/vendor/mdc.data-table.css"/>
 
@@ -98,13 +95,21 @@
     <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-courses"
              role="tabpanel"
              aria-hidden="false">
+      <!--
+      /*
+        |--------------------------------------------------------------------------
+        | Course View
+        |--------------------------------------------------------------------------
+        */
+      -->
       <div id="alchemy-course-view" class="mdc-layout-grid__inner">
         <div class="mdc-card mdc-layout-grid__cell--span-12">
           <section class="mdc-card__primary">
             <h1 class="mdc-typography--headline">View Courses</h1>
             <div class="mdc-layout-grid__inner">
 
-              <div id="alchemy-course-view__filter-by-text" class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
+              <div id="alchemy-course-view__filter-by-text"
+                   class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
                 <i class="material-icons mdc-text-field__icon" tabindex="0">search</i>
                 <input type="text" id="my-text-field" class="mdc-text-field__input">
                 <label class="mdc-floating-label" for="my-text-field">Search</label>
@@ -140,13 +145,19 @@
               <div class="mdc-layout-grid__cell--span-6"></div>
               <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
                 <button id="alchemy-course-view__add-button"
-                        class="mdc-button mdc-button--compact mdc-card__action mdc-card__action--button">Add
+                        class="mdc-button">
+                  <i class="material-icons mdc-button__icon">add</i>
+                  Add Course
                 </button>
                 <button id="alchemy-course-view__edit-button"
-                        class="mdc-button mdc-button--compact mdc-card__action mdc-card__action--button" disabled>Edit
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">edit</i>
+                  Edit Course
                 </button>
                 <button id="alchemy-course-view__delete-button"
-                        class="mdc-button mdc-button--compact mdc-card__action mdc-card__action--button" disabled>Delete
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">clear</i>
+                  Delete Course
                 </button>
               </div>
             </div>
@@ -171,38 +182,247 @@
         </div>
       </div>
 
+      <!--
+      /*
+        |--------------------------------------------------------------------------
+        | Course Add
+        |--------------------------------------------------------------------------
+        */
+      -->
       <div id="alchemy-course-add" class="mdc-layout-grid__inner">
         <div class="mdc-card mdc-layout-grid__cell--span-12">
           <section class="mdc-card__primary">
             <h1 class="mdc-typography--headline">Add Course</h1>
-            <div class="mdc-layout-grid__inner">
-<!--              <div id="alchemy-course-add__course-code" class="mdc-text-field mdc-layout-grid__cell&#45;&#45;span-3">
-                <input type="text" id="my-text-field" class="mdc-text-field__input">
-                <label class="mdc-floating-label" for="my-text-field">Hint text</label>
-                <div class="mdc-line-ripple"></div>
+            <form id="alchemy-course-add__form" class="mdc-layout-grid__inner">
+              <!-- Course Code -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-course-add__course-code"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="text" id="alchemy-course-add__course-code--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=2>
+                  <label for="alchemy-course-add__course-code--input" class="mdc-floating-label">Course Code</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-course-add__course-code--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Course Name -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-course-add__course-name"
+                     class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
+                  <input type="text" id="alchemy-course-add__course-name--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=4>
+                  <label for="alchemy-course-add__course-alias--input" class="mdc-floating-label">Course Name</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-course-add__course-name--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Course Alias -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-course-add__course-alias"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="text" id="alchemy-course-add__course-alias--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=3>
+                  <label for="alchemy-course-add__course-alias--input" class="mdc-floating-label">Course Alias</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-course-add__course-alias--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Course Department -->
+              <div id="alchemy-course-add__course-department" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Course Type -->
+              <div class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
+                <span class="mdc-typography--subheading">&nbsp;Course Type:</span>
+                <div class="mdc-form-field">
+                  <div id="alchemy-course-add__course-type--normal" class="mdc-radio">
+                    <input class="mdc-radio__native-control" type="radio"
+                           id="alchemy-course-add__course-type--radio-normal"
+                           name="alchemy-course-add__course-type--radio" checked>
+                    <div class="mdc-radio__background">
+                      <div class="mdc-radio__outer-circle"></div>
+                      <div class="mdc-radio__inner-circle"></div>
+                    </div>
+                  </div>
+                  <label id="alchemy-course-add__course-type--label-normal"
+                         for="alchemy-course-add__course-type--radio-normal">Normal</label>
+                </div>
+                <div class="mdc-form-field">
+                  <div id="alchemy-course-add__course-type--elective" class="mdc-radio">
+                    <input class="mdc-radio__native-control" type="radio"
+                           id="alchemy-course-add__course-type--radio-elective"
+                           name="alchemy-course-add__course-type--radio">
+                    <div class="mdc-radio__background">
+                      <div class="mdc-radio__outer-circle"></div>
+                      <div class="mdc-radio__inner-circle"></div>
+                    </div>
+                  </div>
+                  <label id="alchemy-course-add__course-type--label-elective"
+                         for="alchemy-course-add__course-type--radio-elective">Elective</label>
+                </div>
+              </div>
+              <!-- Course Person -->
+              <div class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
+                <span class="mdc-typography--subheading">&nbsp;No. of person:</span>
+                <div class="mdc-form-field">
+                  <div id="alchemy-course-add__course-person--one" class="mdc-radio">
+                    <input class="mdc-radio__native-control" type="radio"
+                           id="alchemy-course-add__course-person--radio-one"
+                           name="alchemy-course-add__course-person--radio" checked>
+                    <div class="mdc-radio__background">
+                      <div class="mdc-radio__outer-circle"></div>
+                      <div class="mdc-radio__inner-circle"></div>
+                    </div>
+                  </div>
+                  <label id="alchemy-course-add__course-person--label-one"
+                         for="alchemy-course-add__course-person--radio-one">One</label>
+                </div>
+                <div class="mdc-form-field">
+                  <div id="alchemy-course-add__course-person--two" class="mdc-radio">
+                    <input class="mdc-radio__native-control" type="radio"
+                           id="alchemy-course-add__course-person--radio-two"
+                           name="alchemy-course-add__course-person--radio">
+                    <div class="mdc-radio__background">
+                      <div class="mdc-radio__outer-circle"></div>
+                      <div class="mdc-radio__inner-circle"></div>
+                    </div>
+                  </div>
+                  <label id="alchemy-course-add__course-person--label-two"
+                         for="alchemy-course-add__course-person--radio-two">Two</label>
+                </div>
+              </div>
+              <!-- Course Lecture -->
+              <div class="mdc-layout-grid__cell--span-3">
+                <div id="alchemy-course-add__course-lecture"
+                     class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-3 mdc-text-field--focused">
+                  <input type="number" id="alchemy-course-add__course-lecture--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required  min="0" step="1" max="12">
+                  <label for="alchemy-course-add__course-lecture--input" class="mdc-floating-label">No. of
+                    Lectures</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-course-add__course-lecture--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Course Practical -->
+              <div class="mdc-layout-grid__cell--span-3">
+                <div id="alchemy-course-add__course-practical"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="number" id="alchemy-course-add__course-practical--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required min="0" step="1" max="12">
+                  <label for="alchemy-course-add__course-practical--input" class="mdc-floating-label">No. of
+                    Practicals</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-course-add__course-practical--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Course Tutorial -->
+              <div class="mdc-layout-grid__cell--span-3">
+                <div id="alchemy-course-add__course-tutorial"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="number" id="alchemy-course-add__course-tutorial--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" value="0" required min="0" step="1" max="12">
+                  <label for="alchemy-course-add__course-tutorial--input"
+                         class="mdc-floating-label mdc-floating-label--float-above">No. of
+                    Tutorials</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-course-add__course-tutorial--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Course Credit -->
+              <div class="mdc-layout-grid__cell--span-3">
+                <div id="alchemy-course-add__course-credit"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="number" id="alchemy-course-add__course-credit--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" value="0" required min="0" step="1" max="24">
+                  <label for="alchemy-course-add__course-tutorial--input"
+                         class="mdc-floating-label mdc-floating-label--float-above">Credit</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-course-add__course-credit--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
               </div>
 
-              <p class="mdc-text-field-helper-text mdc-text-field-helper-text&#45;&#45;validation-msg"
-                 id="name-validation-message">
-                Helper Text (possibly validation message)
-              </p>
--->
-              <div id="alchemy-course-add__course-code" class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-12 mdc-text-field--focused">
-                <input type="text" id="tf-outlined-input" class="mdc-text-field__input"
-                       aria-controls="name-validation-message">
-                <label for="tf-outlined-input" class="mdc-floating-label">Your Name</label>
-                <div class="mdc-notched-outline">
-                  <svg>
-                    <path class="mdc-notched-outline__path"/>
-                  </svg>
-                </div>
-                <div class="mdc-notched-outline__idle"></div>
+              <div class="mdc-layout-grid__cell--span-6">
+                <button id="alchemy-course-add__add-button" class="mdc-button mdc-button--raised">
+                  <i class="material-icons mdc-button__icon">done</i>
+                  ADD COURSE
+                </button>
+                <button id="alchemy-course-add__reset-button" class="mdc-button">
+                  <i class="material-icons mdc-button__icon">undo</i>
+                  RESET FIELDS
+                </button>
               </div>
-              <p class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
-                 id="name-validation-message">
-                Helper Text (possibly validation message)
-              </p>
-            </div>
+              <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
+                <button id="alchemy-course-add__view-button" class="mdc-button">
+                  <i class="material-icons mdc-button__icon">remove_red_eye</i>
+                  VIEW COURSES
+                </button>
+              </div>
+            </form>
           </section>
         </div>
       </div>
@@ -241,161 +461,7 @@
               Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
               consequat.
             </section>
-            <section class="examples">
-              <h2 class="mdc-theme--text-primary-on-background">Expansion Panel (Single)</h2>
-              <div id="demo-single">
-                <div data-mdc-auto-init="MDCExpansionPanel" class="mdc-expansion-panel mdc-expansion-panel--collapsed">
-                  <div class="mdc-expansion-panel__header">
-                    <!-- Summary Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--summary mdc-expansion-panel__header__section">done_all</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--summary mdc-expansion-panel__header__section">Title</span>
-                    <!-- Details Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--details mdc-expansion-panel__header__section">home</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--details mdc-expansion-panel__header__section">Expanded Title</span>
-                    <!-- Static Content -->
-                    <i class="material-icons mdc-expansion-panel__expansion-icon"></i>
-                  </div>
-                  <div class="mdc-expansion-panel__body">
-                    <p class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Body</p>
-                  </div>
-                  <div class="mdc-expansion-panel__footer">
-                    <span class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Footer</span>
-                    <div class="mdc-expansion-panel__footer__button-bar">
-                      <button class="mdc-button mdc-expansion-panel--no-click">cancel</button>
-                      <button class="mdc-button mdc-expansion-panel--no-click">accept</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              <h2 class="mdc-theme--text-primary-on-background">Expansion Panel (Accordion)</h2>
-              <div data-mdc-auto-init="MDCExpansionPanelAccordion" class="mdc-expansion-panel-accordion">
-                <div data-mdc-auto-init="MDCExpansionPanel" class="mdc-expansion-panel mdc-expansion-panel--collapsed">
-                  <div class="mdc-expansion-panel__header">
-                    <!-- Summary Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--summary mdc-expansion-panel__header__section">done_all</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--summary mdc-expansion-panel__header__section">Title</span>
-                    <!-- Details Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--details mdc-expansion-panel__header__section">home</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--details mdc-expansion-panel__header__section">Expanded Title</span>
-                    <!-- Static Content -->
-                    <i class="material-icons mdc-expansion-panel__expansion-icon"></i>
-                  </div>
-                  <div class="mdc-expansion-panel__body">
-                    <p class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Body</p>
-                  </div>
-                  <div class="mdc-expansion-panel__footer">
-                    <span class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Footer</span>
-                    <div class="mdc-expansion-panel__footer__button-bar">
-                      <button class="mdc-button mdc-expansion-panel--no-click">cancel</button>
-                      <button class="mdc-button mdc-expansion-panel--no-click">accept</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div data-mdc-auto-init="MDCExpansionPanel" class="mdc-expansion-panel mdc-expansion-panel--collapsed">
-                  <div class="mdc-expansion-panel__header">
-                    <!-- Summary Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--summary mdc-expansion-panel__header__section">done_all</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--summary mdc-expansion-panel__header__section">Title</span>
-                    <!-- Details Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--details mdc-expansion-panel__header__section">home</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--details mdc-expansion-panel__header__section">Expanded Title</span>
-                    <!-- Static Content -->
-                    <i class="material-icons mdc-expansion-panel__expansion-icon"></i>
-                  </div>
-                  <div class="mdc-expansion-panel__body">
-                    <p class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Body</p>
-                  </div>
-                  <div class="mdc-expansion-panel__footer">
-                    <span class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Footer</span>
-                    <div class="mdc-expansion-panel__footer__button-bar">
-                      <button class="mdc-button mdc-expansion-panel--no-click">cancel</button>
-                      <button class="mdc-button mdc-expansion-panel--no-click">accept</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div data-mdc-auto-init="MDCExpansionPanel" class="mdc-expansion-panel mdc-expansion-panel--collapsed">
-                  <div class="mdc-expansion-panel__header">
-                    <!-- Summary Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--summary mdc-expansion-panel__header__section">done_all</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--summary mdc-expansion-panel__header__section">Title</span>
-                    <!-- Details Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--details mdc-expansion-panel__header__section">home</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--details mdc-expansion-panel__header__section">Expanded Title</span>
-                    <!-- Static Content -->
-                    <i class="material-icons mdc-expansion-panel__expansion-icon"></i>
-                  </div>
-                  <div class="mdc-expansion-panel__body">
-                    <p class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Body</p>
-                  </div>
-                  <div class="mdc-expansion-panel__footer">
-                    <span class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Footer</span>
-                    <div class="mdc-expansion-panel__footer__button-bar">
-                      <button class="mdc-button mdc-expansion-panel--no-click">cancel</button>
-                      <button class="mdc-button mdc-expansion-panel--no-click">accept</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div data-mdc-auto-init="MDCExpansionPanel"
-                     class="mdc-expansion-panel mdc-expansion-panel--collapsed mdc-expansion-panel-accordion--excluded">
-                  <div class="mdc-expansion-panel__header">
-                    <!-- Summary Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--summary mdc-expansion-panel__header__section">done_all</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--summary mdc-expansion-panel__header__section">Title</span>
-                    <!-- Details Content -->
-                    <i
-                      class="mdc-expansion-panel__icon material-icons mdc-expansion-panel--details mdc-expansion-panel__header__section">home</i>
-                    <span
-                      class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click mdc-expansion-panel--details mdc-expansion-panel__header__section">Expanded Title</span>
-                    <!-- Static Content -->
-                    <i class="material-icons mdc-expansion-panel__expansion-icon"></i>
-                    <span
-                      class=" mdc-expansion-panel__header__section mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">You can exclude a panel from the accordion</span>
-                  </div>
-                  <div class="mdc-expansion-panel__body">
-                    <p class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Body</p>
-                  </div>
-                  <div class="mdc-expansion-panel__footer">
-                    <span class="mdc-expansion-panel__text-primary mdc-expansion-panel--no-click">Footer</span>
-                    <div class="mdc-expansion-panel__footer__button-bar">
-                      <button class="mdc-button mdc-expansion-panel--no-click">cancel</button>
-                      <button class="mdc-button mdc-expansion-panel--no-click">accept</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-            <!--<div role="progressbar" class="mdc-linear-progress mdc-linear-progress&#45;&#45;indeterminate">-->
-            <!--<div class="mdc-linear-progress__buffering-dots"></div>-->
-            <!--<div class="mdc-linear-progress__buffer"></div>-->
-            <!--<div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">-->
-            <!--<span class="mdc-linear-progress__bar-inner"></span>-->
-            <!--</div>-->
-            <!--<div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">-->
-            <!--<span class="mdc-linear-progress__bar-inner"></span>-->
-            <!--</div>-->
-            <!--</div>-->
             <section class="mdc-card__actions">
 
               <button class="mdc-button mdc-button--compact mdc-card__action">Action 1</button>
@@ -429,14 +495,6 @@
 
 <!-- Material Web Components :: Data Table -->
 <script src="js/vendor/mdc.data-table.js"></script>
-
-<!-- Material Web Components :: Expansion Panel -->
-<script src="js/vendor/mdc.expansionPanel.js"></script>
-
-<script>
-  MDCExpansionPanelHelper.init(document.querySelectorAll('.mdc-expansion-panel'));
-  MDCExpansionPanelAccordionHelper.init(document.querySelectorAll('.mdc-expansion-panel-accordion'));
-</script>
 
 <!-- Utility Functions -->
 <script src="js/utils.js"></script>
