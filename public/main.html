@@ -193,7 +193,7 @@
         <div class="mdc-card mdc-layout-grid__cell--span-12">
           <section class="mdc-card__primary">
             <h1 class="mdc-typography--headline">Add Course</h1>
-            <form id="alchemy-course-add__form" class="mdc-layout-grid__inner">
+            <form id="alchemy-course-add__form" class="mdc-layout-grid__inner" onsubmit=" ">
               <!-- Course Code -->
               <div class="mdc-layout-grid__cell--span-4">
                 <div id="alchemy-course-add__course-code"
@@ -265,7 +265,7 @@
                 </div>
               </div>
               <!-- Course Type -->
-              <div class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
+              <div id="alchemy-course-add__course-type" class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
                 <span class="mdc-typography--subheading">&nbsp;Course Type:</span>
                 <div class="mdc-form-field">
                   <div id="alchemy-course-add__course-type--normal" class="mdc-radio">
@@ -295,7 +295,7 @@
                 </div>
               </div>
               <!-- Course Person -->
-              <div class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
+              <div id="alchemy-course-add__course-person" class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
                 <span class="mdc-typography--subheading">&nbsp;No. of person:</span>
                 <div class="mdc-form-field">
                   <div id="alchemy-course-add__course-person--one" class="mdc-radio">
@@ -407,17 +407,17 @@
               </div>
 
               <div class="mdc-layout-grid__cell--span-6">
-                <button id="alchemy-course-add__add-button" class="mdc-button mdc-button--raised">
+                <button id="alchemy-course-add__add-button" class="mdc-button mdc-button--raised" type="button">
                   <i class="material-icons mdc-button__icon">done</i>
                   ADD COURSE
                 </button>
-                <button id="alchemy-course-add__reset-button" class="mdc-button">
+                <button id="alchemy-course-add__reset-button" class="mdc-button" type="reset">
                   <i class="material-icons mdc-button__icon">undo</i>
                   RESET FIELDS
                 </button>
               </div>
               <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
-                <button id="alchemy-course-add__view-button" class="mdc-button">
+                <button id="alchemy-course-add__view-button" class="mdc-button" type="button">
                   <i class="material-icons mdc-button__icon">remove_red_eye</i>
                   VIEW COURSES
                 </button>
