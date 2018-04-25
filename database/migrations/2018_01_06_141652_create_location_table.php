@@ -15,8 +15,8 @@ class CreateLocationTable extends Migration
     {
         Schema::create('location', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('name', 16);
-            $table->string('description', 16)->nullable();
+            $table->string('alias', 8);
+            $table->string('name', 24)->nullable();
             $table->smallInteger('capacity')->unsigned();
             $table->tinyInteger('type');
             $table->tinyInteger('department_id')->unsigned()->nullable();
