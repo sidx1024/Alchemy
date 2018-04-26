@@ -18,6 +18,8 @@ window.alchemy = new Alchemy({
     function setupCommon() {
       window.alchemyCommon = {};
       setupTabs();
+      setupToast();
+      setupDialog();
 
       function setupTabs() {
         const alchemyTabs = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
@@ -40,6 +42,51 @@ window.alchemy = new Alchemy({
           const nthChildIndex = t.detail.activeTabIndex;
           updatePanel(nthChildIndex);
         });
+      }
+      function setupToast() {
+        const toast = { element: document.querySelector('#alchemy-toast') };
+        toast.mdc = mdc.snackbar.MDCSnackbar.attachTo(toast.element);
+        alchemyCommon.toast = (data) => {
+          toast.mdc.show(data);
+        };
+      }
+      function setupDialog() {
+        const dialog = {
+          element: document.querySelector('#alchemy-dialog'),
+          header: document.querySelector('#alchemy-dialog .mdc-dialog__header__title'),
+          body: document.querySelector('#alchemy-dialog .mdc-dialog__body'),
+          accept: document.querySelector('#alchemy-dialog .mdc-dialog__footer__button--accept'),
+          cancel: document.querySelector('#alchemy-dialog .mdc-dialog__footer__button--cancel')
+        };
+        dialog.mdc = mdc.dialog.MDCDialog.attachTo(dialog.element);
+        const defaultOptions = {
+          header: 'What is your decision?',
+          body: 'You can either accept or cancel.',
+          accept: 'Accept',
+          cancel: 'Cancel',
+          onAccept: () => { console.log('You accepted.'); },
+          onCancel: () => { console.log('You cancelled.'); }
+        };
+        dialog.ask = (options_) => {
+          const options = Object.assign({}, defaultOptions, options_);
+          dialog.header.innerHTML = options.header;
+          dialog.body.innerHTML = options.body;
+          dialog.accept.innerText = options.accept;
+          dialog.cancel.innerText = options.cancel;
+          dialog.cancel.style.display = 'block';
+          dialog.mdc.listen('MDCDialog:accept', options.onAccept);
+          dialog.mdc.listen('MDCDialog:cancel', options.onCancel);
+          return dialog.mdc;
+        };
+        dialog.info = (options_) => {
+          const options = Object.assign({}, defaultOptions, options_);
+          options.onCancel = options.onAccept;
+          options.accept = 'OK';
+          dialog.ask(options);
+          dialog.cancel.style.display = 'none';
+          return dialog.mdc;
+        };
+        alchemyCommon.dialog = dialog;
       }
     }
 
@@ -261,23 +308,39 @@ window.alchemy = new Alchemy({
           courseAddButton,
           courseResetButton,
           courseViewButton,
-          courseDepartment
+          courseDepartment,
+          courseType,
+          coursePerson
         } = alchemyCourseSection.courseAdd;
 
-        mdc.textField.MDCTextField.attachTo(courseCode.element);
-        mdc.textField.MDCTextField.attachTo(courseAlias.element);
-        mdc.textField.MDCTextField.attachTo(courseName.element);
-        mdc.textField.MDCTextField.attachTo(courseLecture.element);
-        mdc.textField.MDCTextField.attachTo(coursePractical.element);
-        mdc.textField.MDCTextField.attachTo(courseTutorial.element);
-        mdc.textField.MDCTextField.attachTo(courseCredit.element);
+        courseCode.mdc = mdc.textField.MDCTextField.attachTo(courseCode.element);
+        courseAlias.mdc = mdc.textField.MDCTextField.attachTo(courseAlias.element);
+        courseName.mdc = mdc.textField.MDCTextField.attachTo(courseName.element);
+        courseLecture.mdc = mdc.textField.MDCTextField.attachTo(courseLecture.element);
+        coursePractical.mdc = mdc.textField.MDCTextField.attachTo(coursePractical.element);
+        courseTutorial.mdc = mdc.textField.MDCTextField.attachTo(courseTutorial.element);
+        courseCredit.mdc = mdc.textField.MDCTextField.attachTo(courseCredit.element);
         setupCourseDepartment();
 
         courseAddButton.element.addEventListener('click', () => {
-          const selectedDepartment = getSelectedDepartment();
-          const isFormValid = courseAddForm.element.checkValidity() && selectedDepartment !== false;
+          const department = getSelectedDepartment();
+          const type = courseType.element.querySelector(':checked').getAttribute('value');
+          const person = coursePerson.element.querySelector(':checked').getAttribute('value');
+          const isFormValid = courseAddForm.element.checkValidity() && department !== false;
           if (!isFormValid) { return false; }
-
+          const course = {
+            alias: courseAlias.mdc.input_.value,
+            name: courseName.mdc.input_.value,
+            code: courseCode.mdc.input_.value,
+            lecture: Number(courseLecture.mdc.input_.value),
+            practical: Number(coursePractical.mdc.input_.value),
+            tutorial: Number(courseTutorial.mdc.input_.value),
+            credit: Number(courseCredit.mdc.input_.value),
+            department_id: Number(department.id),
+            is_elective: Number(type),
+            persons: Number(person)
+          };
+          console.log('course', course);
           return true;
         });
 

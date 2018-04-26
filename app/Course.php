@@ -15,9 +15,13 @@ class Course extends Model
         'name' => 'required|max:128',
         'alias' => 'required|max:8',
         'code' => 'required|max:12',
-        'scheme' => 'required|max:5',
+        'lecture' => 'required',
+        'practical' => 'required',
+        'tutorial' => 'required',
         'credit' => 'required',
         'department_id' => 'required',
+        'persons' => 'required',
+        'is_elective' => 'required'
     ];
 
     protected static $messages = [

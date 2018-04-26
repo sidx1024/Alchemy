@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use App\Course;
+use Illuminate\Support\Facades\Log;
 
 class CourseController extends Controller
 {
@@ -29,11 +30,7 @@ class CourseController extends Controller
     public function add(Request $request)
     {
         $this->validate($request, Course::$rules);
-        return response()->json(
-            Course::create(
-                $request->all(),
-                Response::HTTP_CREATED)
-        );
+        return response()->json(Course::create($request->all(), Response::HTTP_CREATED));
     }
 
     public function update(Request $request, $id)

@@ -59,19 +59,21 @@ class Model {
       .catch(e => (failCallback || this.statusFailure(action.verb, id))(e));
   }
 
-  add(successCallback, failCallback) {
-    const url = [this.uri, this.actions.get.path].join('/').replace('{id}', id);
+  add(object, successCallback, failCallback) {
+    const action = this.actions.add;
+    const url = action.path;
 
     const params = {
-      method: this.actions.get.method,
-      headers: this.headers
+      method: action.method,
+      headers: this.headers,
+      body: object
     };
 
     return fetch(url, params)
       .then(fetchStatus)
       .then(response => response.json())
       .then(successCallback || Logger.success)
-      .catch(failCallback);
+      .catch(e => (failCallback || this.statusFailure(action.verb))(e));
   }
 
   search(parametrizedUrl, successCallback, failCallback) {
@@ -97,6 +99,7 @@ class Model {
     }
     return (e) => {
       Logger.error(errorMessage, e);
+      e.json().then(console.log);
     };
   }
 }

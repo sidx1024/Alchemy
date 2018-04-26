@@ -88,7 +88,8 @@ class Alchemy {
       api: {
         path: './api',
         headers: {
-          Authorization: window.accessToken
+          Authorization: window.accessToken,
+          'Content-Type': 'application/json'
         }
       }
     };

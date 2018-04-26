@@ -23,10 +23,10 @@ class Logger {
     return response;
   }
 
-  static error(response, error) {
+  static error(response, error, extra) {
     console.log('%c  General failure  \n', Logger.css.fail, response);
     if (error) {
-      console.error(error);
+      console.error(error, extra);
     }
     console.trace('\n');
     return response;
