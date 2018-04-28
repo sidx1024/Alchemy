@@ -182,3 +182,11 @@ main {
 #alchemy-course-add .mdc-text-field {
   width: 100%;
 }
+
+#alchemy-toast {
+  flex-direction: column;
+}
+
+#alchemy-toast .alchemy-toast__extra {
+  color: var(--mdc-theme-text-secondary-on-primary);
+}

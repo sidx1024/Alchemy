@@ -9,6 +9,8 @@
 |
 */
 
+const PERSISTENT_TOAST_TIME = 9999999;
+
 function blurSelection(exclusions, callback, callbackArguments) {
   return (mouseEvent) => {
     mouseEvent.stopPropagation();
@@ -29,6 +31,19 @@ function scrollTo(element) {
       top: element.offsetTop - 84
     });
   }
+}
+
+function arrayToHtml(arr) {
+  if (!Array.isArray(arr)) return '';
+  let html = '';
+  arr.forEach((text, i) => {
+    if (i === 0) {
+      html += `${text}`;
+    } else {
+      html += `<br/>${text}`;
+    }
+  });
+  return html;
 }
 
 function filterObject(obj) {

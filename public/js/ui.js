@@ -11,6 +11,7 @@
 
 window.alchemy = new Alchemy({
   onReady: () => {
+    console.clear();
     setupCommon();
     setupCourseSection();
     setupTimeTableSection();
@@ -43,13 +44,26 @@ window.alchemy = new Alchemy({
           updatePanel(nthChildIndex);
         });
       }
+
       function setupToast() {
-        const toast = { element: document.querySelector('#alchemy-toast') };
+        const toast = {
+          element: document.querySelector('#alchemy-toast'),
+          extra: document.querySelector('#alchemy-toast .alchemy-toast__extra')
+        };
         toast.mdc = mdc.snackbar.MDCSnackbar.attachTo(toast.element);
-        alchemyCommon.toast = (data) => {
+        alchemyCommon.toast = (data, extra) => {
           toast.mdc.show(data);
+          if (extra) {
+            toast.extra.innerHTML = extra;
+            toast.extra.style.display = 'block';
+          } else {
+            toast.extra.innerHTML = '';
+            toast.extra.style.display = 'none';
+          }
+          return toast.mdc;
         };
       }
+
       function setupDialog() {
         const dialog = {
           element: document.querySelector('#alchemy-dialog'),
@@ -59,9 +73,22 @@ window.alchemy = new Alchemy({
           cancel: document.querySelector('#alchemy-dialog .mdc-dialog__footer__button--cancel')
         };
         dialog.mdc = mdc.dialog.MDCDialog.attachTo(dialog.element);
+
+        dialog.mdc.listen('MDCDialog:accept', (arg) => {
+          if (typeof dialog.onAccept === 'function') {
+            dialog.onAccept(arg);
+          }
+        });
+
+        dialog.mdc.listen('MDCDialog:cancel', (arg) => {
+          if (typeof dialog.onCancel === 'function') {
+            dialog.onCancel(arg);
+          }
+        });
+
         const defaultOptions = {
           header: 'What is your decision?',
-          body: 'You can either accept or cancel.',
+          body: '',
           accept: 'Accept',
           cancel: 'Cancel',
           onAccept: () => { console.log('You accepted.'); },
@@ -74,8 +101,8 @@ window.alchemy = new Alchemy({
           dialog.accept.innerText = options.accept;
           dialog.cancel.innerText = options.cancel;
           dialog.cancel.style.display = 'block';
-          dialog.mdc.listen('MDCDialog:accept', options.onAccept);
-          dialog.mdc.listen('MDCDialog:cancel', options.onCancel);
+          dialog.onAccept = options.onAccept;
+          dialog.onCancel = options.onCancel;
           return dialog.mdc;
         };
         dialog.info = (options_) => {
@@ -113,7 +140,7 @@ window.alchemy = new Alchemy({
             element: document.querySelector('#alchemy-course-view__table'),
             table: document.querySelector('#alchemy-course-view__table table'),
             headers: ['Code', 'Alias', 'Name', 'L', 'P', 'T', 'Credit', 'Type', 'Persons'],
-            headersDataTypes: ['Code', 'Alias', 'Name', 1, 1, 1, 1, 1, 1],
+            headersDataTypes: ['Code', 'Alias', 'Name', 1, 1, 1, 1, 'Type', 1],
             headersWidth: [9.5, 9.5, 40.5],
             selectedCourseId: null
           }
@@ -340,7 +367,34 @@ window.alchemy = new Alchemy({
             is_elective: Number(type),
             persons: Number(person)
           };
-          console.log('course', course);
+
+          alchemy.course.add(JSON.stringify(course), onCourseAddSuccess, onCourseAddFail);
+
+          function onCourseAddSuccess(addedCourse) {
+            const message = 'Course added successfully.';
+            const extra = Course.transform(addedCourse, 'short-info');
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onCourseAddFail(error) {
+            if (typeof error.json !== 'function') {
+              console.error(error);
+            } else {
+              error.json().then((body) => {
+                console.log('add fail', error, body);
+                const message = `Error ${error.status}: ${error.statusText}`;
+                const extra = arrayToHtml(Object.values(body));
+                alchemyCommon.toast({
+                  message,
+                  multiline: true,
+                  timeout: PERSISTENT_TOAST_TIME,
+                  actionText: 'OK',
+                  actionOnBottom: true,
+                  actionHandler() {}
+                }, extra);
+              });
+            }
+          }
           return true;
         });
 
@@ -366,6 +420,7 @@ window.alchemy = new Alchemy({
             .addItems(departments, { assignments: { valueKey: 'name', idKey: 'alias' } })
             .enable();
         }
+
         function getSelectedDepartment() {
           const selectedDepartment = courseDepartment.mdcSelectHandler.getSelected();
           if (selectedDepartment && selectedDepartment.data) {

@@ -34,10 +34,10 @@ class Course extends Model {
   static transform(data, type) {
     const transformedData = [];
     if (!data) {
-      return transformedData;
+      return [];
     }
     switch (type) {
-      case 'table':
+      case 'table': {
         data.forEach((_course) => {
           const course = {};
           course.id = _course.id;
@@ -53,8 +53,15 @@ class Course extends Model {
           transformedData.push(course);
         });
         break;
-      default:
+      }
+      case 'short-info': {
+        const course = data[0];
+        transformedData.html = arrayToHtml([course.id, course.code, course.alias, course.name]);
+        break;
+      }
+      default: {
         Logger.error(`Cannot transform data to type ${type}`);
+      }
     }
     return transformedData;
   }
@@ -82,6 +89,7 @@ class Programme extends Model {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 class Alchemy {
   constructor(options) {
     this.config = {
