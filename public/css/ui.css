@@ -154,14 +154,6 @@ main {
   padding: var(--mdc-layout-grid-gutter-desktop, 24px);
 }
 
-#alchemy-course-view .mdc-select {
-  margin-top: 16px;
-}
-
-.mdc-layout-grid:last-child {
-  margin-top: 15%;
-}
-
 #views {
   display: none;
 }
@@ -169,6 +161,15 @@ main {
 .mdc-data-table {
   font-weight: 500;
   color: #3a3a3a !important;
+}
+/*
+|--------------------------------------------------------------------------
+| Alchemy Course
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-course-view .mdc-select {
+  margin-top: 16px;
 }
 
 #alchemy-course-view__table table tr {
@@ -180,6 +181,28 @@ main {
 }
 
 #alchemy-course-add .mdc-text-field {
+  width: 100%;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Location
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-location-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-location-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-location-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-location-add .mdc-text-field {
   width: 100%;
 }
 
