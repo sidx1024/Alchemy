@@ -43,6 +43,42 @@ class MDCSelectHandler {
     return selectedOptionData;
   }
 
+  setSelected(id) {
+    const items = Array.from(this.mdcSelect.querySelectorAll('li'));
+    if (items.length > 0) {
+      const matchingItemIndex = items.findIndex(item => (+item.getAttribute('data-id') === id));
+      if (matchingItemIndex > -1) {
+        this.select.selectedIndex = matchingItemIndex;
+        this.floatLabelAbove();
+      }
+    }
+  }
+
+  clearSelection() {
+    const items = Array.from(this.mdcSelect.querySelectorAll('li'));
+    if (items.length > 0) {
+      items.forEach((item) => {
+        item.removeAttribute('aria-selected');
+      });
+    }
+    this.floatLabelAbove(true); // remove floating label
+  }
+
+  floatLabelAbove(remove) {
+    const mdcLabel = this.mdcSelect.querySelector('.mdc-select__label');
+    if (mdcLabel) {
+      if (remove) {
+        mdcLabel.classList.remove('mdc-select__label--float-above');
+        const selectedText = this.mdcSelect.querySelector('.mdc-select__selected-text');
+        if (selectedText) {
+          selectedText.innerText = '';
+        }
+      } else {
+        mdcLabel.classList.add('mdc-select__label--float-above');
+      }
+    }
+  }
+
   setLabel(label) {
     if (!label) { return; }
     this.mdcSelect.querySelector('.mdc-select__label').innerText = label;
@@ -95,7 +131,7 @@ class MDCSelectHandler {
     mdcListItem.setAttribute('tab-index', '0');
     if (options.attributes) {
       Object.keys(options.attributes)
-        .map((key) => { mdcListItem.setAttribute(key, options.attributes[key]); });
+        .forEach((key) => { mdcListItem.setAttribute(key, options.attributes[key]); });
     }
     if (options.isSelected) {
       mdcListItem.setAttribute('aria-selected', 'true');

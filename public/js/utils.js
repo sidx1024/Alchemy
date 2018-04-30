@@ -57,6 +57,57 @@ function filterObject(obj) {
   return filteredObj;
 }
 
+function notchOutline(element) {
+  const outline = element.querySelector('.mdc-notched-outline');
+  if (outline) {
+    outline.classList.add('mdc-notched-outline--notched');
+  }
+}
+
+function setTextFieldInput(entity, value) {
+  const { element, mdc } = entity;
+  const inputElement = Array.from(element.querySelectorAll('input'));
+  if (inputElement.length === 0) {
+    console.error('No text field input found in the element', element);
+    return;
+  }
+  const textField = inputElement[0];
+  textField.value = value;
+  mdc.getDefaultFoundation().inputBlurHandler_();
+}
+
+function setRadioInput(element, value) {
+  const inputElements = Array.from(element.querySelectorAll('input[type=radio]'));
+  if (inputElements.length === 0) {
+    console.error('No radio inputs found in the element', element);
+    return;
+  }
+  inputElements.forEach((radio) => {
+    radio.checked = false;
+    // eslint-disable-next-line eqeqeq
+    if (radio.value == value) {
+      radio.checked = true;
+    }
+  });
+}
+
+function setSelectedItem(table, id) {
+  if (!table || !table.element) {
+    throw new Error('Table or table element is null.');
+  }
+  const selectedItem = table.element.querySelector('tr.selected');
+  if (selectedItem) {
+    selectedItem.removeAttribute('selected');
+  }
+  // eslint-disable-next-line eqeqeq
+  const targetItem = Array.from(table.element.querySelectorAll('tr')).find(d => +d.getAttribute('data-id') === id);
+  if (targetItem) {
+    targetItem.classList.add('selected');
+  } else {
+    console.log('Target item was not found in the table.', id);
+  }
+}
+
 function fetchStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;

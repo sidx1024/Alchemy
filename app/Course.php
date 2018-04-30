@@ -71,4 +71,10 @@ class Course extends Model
         }
         return $query;
     }
+
+    public function usages() {
+      $course_offered_usages = CourseOffered::where('course_id', $this->id)->get()->all();
+      $history_course_offered_usages = HistoryCourseOffered::where('course_id', $this->id)->get()->all();
+      return array_merge($course_offered_usages, $history_course_offered_usages);
+    }
 }

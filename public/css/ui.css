@@ -208,8 +208,10 @@ main {
 
 #alchemy-toast {
   flex-direction: column;
+  align-items: flex-start;
 }
 
 #alchemy-toast .alchemy-toast__extra {
   color: var(--mdc-theme-text-secondary-on-primary);
+  margin-bottom: 24px;
 }

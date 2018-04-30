@@ -1,4 +1,4 @@
-/* eslint-disable no-undef,no-underscore-dangle,no-use-before-define,no-inner-declarations,no-restricted-globals */
+/* eslint-disable no-undef,no-underscore-dangle,no-use-before-define,no-inner-declarations,no-restricted-globals,no-trailing-spaces */
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +14,7 @@ window.alchemy = new Alchemy({
     console.clear();
     setupCommon();
     setupCourseSection();
-    setupLocationSection();
+    // setupLocationSection();
     setupTimeTableSection();
 
     function setupCommon() {
@@ -52,7 +52,12 @@ window.alchemy = new Alchemy({
           extra: document.querySelector('#alchemy-toast .alchemy-toast__extra')
         };
         toast.mdc = mdc.snackbar.MDCSnackbar.attachTo(toast.element);
+        console.log(toast.mdc);
+        toast.mdc.getDefaultFoundation().cleanup_();
         alchemyCommon.toast = (data, extra) => {
+          if (!data.timeout) {
+            data.timeout = 2750;
+          }
           toast.mdc.show(data);
           if (extra) {
             toast.extra.innerHTML = extra;
@@ -143,13 +148,18 @@ window.alchemy = new Alchemy({
             headers: ['Code', 'Alias', 'Name', 'L', 'P', 'T', 'Credit', 'Type', 'Persons'],
             headersDataTypes: ['Code', 'Alias', 'Name', 1, 1, 1, 1, 'Type', 1],
             headersWidth: [9.5, 9.5, 40.5],
-            selectedCourseId: null
+            selectedId: null
           }
         },
         courseAdd: {
           element: document.querySelector('#alchemy-course-add'),
+          mode: 'add',
+          heading: document.querySelector('#alchemy-course-add h1'),
           courseAddForm: { element: document.querySelector('#alchemy-course-add__form') },
-          courseCode: { element: document.querySelector('#alchemy-course-add__course-code') },
+          courseCode: {
+            element: document.querySelector('#alchemy-course-add__course-code'),
+            input: document.querySelector('#alchemy-course-add__course-code input')
+          },
           courseName: { element: document.querySelector('#alchemy-course-add__course-name') },
           courseDepartment: {
             element: document.querySelector('#alchemy-course-add__course-department')
@@ -157,12 +167,22 @@ window.alchemy = new Alchemy({
           courseType: { element: document.querySelector('#alchemy-course-add__course-type') },
           coursePerson: { element: document.querySelector('#alchemy-course-add__course-person') },
           courseAlias: { element: document.querySelector('#alchemy-course-add__course-alias') },
-          courseLecture: { element: document.querySelector('#alchemy-course-add__course-lecture') },
-          coursePractical: {
-            element: document.querySelector('#alchemy-course-add__course-practical')
+          courseLecture: {
+            element: document.querySelector('#alchemy-course-add__course-lecture'),
+            input: document.querySelector('#alchemy-course-add__course-lecture input')
           },
-          courseTutorial: { element: document.querySelector('#alchemy-course-add__course-tutorial') },
-          courseCredit: { element: document.querySelector('#alchemy-course-add__course-credit') },
+          coursePractical: {
+            element: document.querySelector('#alchemy-course-add__course-practical'),
+            input: document.querySelector('#alchemy-course-add__course-practical input')
+          },
+          courseTutorial: {
+            element: document.querySelector('#alchemy-course-add__course-tutorial'),
+            input: document.querySelector('#alchemy-course-add__course-tutorial input')
+          },
+          courseCredit: {
+            element: document.querySelector('#alchemy-course-add__course-credit'),
+            input: document.querySelector('#alchemy-course-add__course-credit input')
+          },
           courseAddButton: { element: document.querySelector('#alchemy-course-add__add-button') },
           courseResetButton: { element: document.querySelector('#alchemy-course-add__reset-button') },
           courseViewButton: { element: document.querySelector('#alchemy-course-add__view-button') }
@@ -199,7 +219,7 @@ window.alchemy = new Alchemy({
               selectedCourses,
               item => (item.classList.remove('selected'))
             );
-            courseTable.selectedCourseId = null;
+            courseTable.selectedId = null;
           };
 
           courseTable.refresh = () => {
@@ -223,6 +243,42 @@ window.alchemy = new Alchemy({
               .setIdKey('id')
               .setHeaders(headers, headersDataTypes, headersWidth);
           courseTable.refresh();
+
+          courseDeleteButton.element.addEventListener('click', () => {
+            if (!courseDeleteButton.element.hasAttribute('disabled')) {
+              alchemy.course.delete(
+                courseTable.selectedId,
+                onCourseDeleteSuccess,
+                onCourseDeleteFail
+              );
+            }
+          });
+        }
+
+        function onCourseDeleteSuccess(deletedCourse) {
+          const message = 'Course deleted successfully.';
+          const extra = Course.transform(deletedCourse, 'short-info');
+          courseTable.refresh();
+          alchemyCommon.toast({ message }, extra);
+        }
+
+        function onCourseDeleteFail(error) {
+          if (typeof error.json !== 'function') {
+            console.error(error);
+          } else {
+            error.json().then((body) => {
+              const message = `Error ${error.status}: ${error.statusText}`;
+              const extra = arrayToHtml(Object.values(body));
+              alchemyCommon.toast({
+                message,
+                multiline: true,
+                timeout: PERSISTENT_TOAST_TIME,
+                actionText: 'OK',
+                actionOnBottom: true,
+                actionHandler() {}
+              }, extra);
+            });
+          }
         }
 
         function setupFilterByText() {
@@ -254,7 +310,7 @@ window.alchemy = new Alchemy({
           courseFilterByBranch.mdcSelectHandler
             .addItems(
               departments.concat([allBranchesItem]),
-              { assignments: { valueKey: 'name', idKey: 'alias' } }
+              { assignments: { valueKey: 'name', idKey: 'id' } }
             )
             .setOnChangeListener(onBranchChange)
             .enable();
@@ -304,7 +360,7 @@ window.alchemy = new Alchemy({
             const { target } = mouseEvent;
             if (target.tagName !== 'TD') { return; }
             const selectedCourse = target.parentNode;
-            courseTable.selectedCourseId = selectedCourse.getAttribute('data-id');
+            courseTable.selectedId = selectedCourse.getAttribute('data-id');
             selectedCourse.classList.add('selected');
             courseEditButton.element.removeAttribute('disabled');
             courseDeleteButton.element.removeAttribute('disabled');
@@ -317,13 +373,22 @@ window.alchemy = new Alchemy({
             );
           });
 
+          const { courseAdd } = alchemyCourseSection;
+
           courseAddButton.element.addEventListener('click', () => {
-            scrollTo(alchemyCourseSection.courseAdd.element);
+            scrollTo(courseAdd.element);
+            courseAdd.switchMode.add();
+          });
+
+          courseEditButton.element.addEventListener('click', () => {
+            scrollTo(courseAdd.element);
+            courseAdd.switchMode.edit(courseTable.selectedId);
           });
         }
       }
 
       function setupCourseAdd() {
+        const { courseAdd } = alchemyCourseSection;
         const {
           courseAddForm,
           courseCode,
@@ -339,7 +404,7 @@ window.alchemy = new Alchemy({
           courseDepartment,
           courseType,
           coursePerson
-        } = alchemyCourseSection.courseAdd;
+        } = courseAdd;
 
         courseCode.mdc = mdc.textField.MDCTextField.attachTo(courseCode.element);
         courseAlias.mdc = mdc.textField.MDCTextField.attachTo(courseAlias.element);
@@ -348,14 +413,69 @@ window.alchemy = new Alchemy({
         coursePractical.mdc = mdc.textField.MDCTextField.attachTo(coursePractical.element);
         courseTutorial.mdc = mdc.textField.MDCTextField.attachTo(courseTutorial.element);
         courseCredit.mdc = mdc.textField.MDCTextField.attachTo(courseCredit.element);
+
+        courseAdd.switchMode = {
+          add: () => {
+            courseAdd.editMode = false;
+            courseAdd.heading.innerText = 'Add Course';
+            courseAddButton.element.innerText = 'ADD COURSE';
+            delete courseAdd.editItemId;
+          },
+          edit: (id) => {
+            courseAdd.editMode = true;
+            courseAdd.heading.innerText = 'Edit Course';
+            courseAddButton.element.innerText = 'UPDATE COURSE';
+
+            alchemy.course.get(id, onCourseGetSuccess, onCourseGetFail);
+
+            function onCourseGetSuccess(course) {
+              courseAdd.heading.innerText += ` (ID: ${course.id})`;
+              courseAdd.editItemId = course.id;
+              setTextFieldInput(courseCode, course.code);
+              setTextFieldInput(courseAlias, course.alias);
+              setTextFieldInput(courseName, course.name);
+              setTextFieldInput(courseLecture, course.lecture);
+              setTextFieldInput(coursePractical, course.practical);
+              setTextFieldInput(courseTutorial, course.tutorial);
+              setTextFieldInput(courseCredit, course.credit);
+              setRadioInput(courseType.element, course.is_elective);
+              setRadioInput(coursePerson.element, course.persons);
+              courseDepartment.mdcSelectHandler.setSelected(course.department_id);
+            }
+
+            function onCourseGetFail(error) {
+              if (typeof error.json !== 'function') {
+                console.error(error);
+              } else {
+                error.json().then((body) => {
+                  const message = `Error ${error.status}: ${error.statusText}`;
+                  const extra = arrayToHtml(Object.values(body));
+                  alchemyCommon.toast({ message }, extra);
+                });
+              }
+            }
+          }
+        };
+
         setupCourseDepartment();
+        setupCourseAutoFill();
+
+        courseViewButton.element.addEventListener('click', () => {
+          scrollTo(alchemyCourseSection.courseView.element);
+        });
 
         courseAddButton.element.addEventListener('click', () => {
-          const department = getSelectedDepartment();
           const type = courseType.element.querySelector(':checked').getAttribute('value');
+          const department = getSelectedDepartment();
           const person = coursePerson.element.querySelector(':checked').getAttribute('value');
+
           const isFormValid = courseAddForm.element.checkValidity() && department !== false;
-          if (!isFormValid) { return false; }
+          if (!isFormValid) {
+            const message = 'Please fill out the form properly.';
+            alchemyCommon.toast({ message });
+            return false;
+          }
+
           const course = {
             alias: courseAlias.mdc.input_.value,
             name: courseName.mdc.input_.value,
@@ -369,43 +489,57 @@ window.alchemy = new Alchemy({
             persons: Number(person)
           };
 
-          alchemy.course.add(JSON.stringify(course), onCourseAddSuccess, onCourseAddFail);
-
-          function onCourseAddSuccess(addedCourse) {
-            const message = 'Course added successfully.';
-            const extra = Course.transform(addedCourse, 'short-info');
-            alchemyCommon.toast({ message }, extra);
-          }
-
-          function onCourseAddFail(error) {
-            if (typeof error.json !== 'function') {
-              console.error(error);
-            } else {
-              error.json().then((body) => {
-                console.log('add fail', error, body);
-                const message = `Error ${error.status}: ${error.statusText}`;
-                const extra = arrayToHtml(Object.values(body));
-                alchemyCommon.toast({
-                  message,
-                  multiline: true,
-                  timeout: PERSISTENT_TOAST_TIME,
-                  actionText: 'OK',
-                  actionOnBottom: true,
-                  actionHandler() {}
-                }, extra);
-              });
-            }
+          const { editMode } = courseAdd;
+          if (editMode) {
+            course.id = courseAdd.editItemId;
+            alchemy.course.update(course.id, JSON.stringify(course), onCourseUpdateSuccess, onCourseAddFail);
+          } else {
+            alchemy.course.add(JSON.stringify(course), onCourseAddSuccess, onCourseAddFail);
           }
           return true;
         });
 
-        courseResetButton.element.addEventListener('click', () => {
+        function onCourseUpdateSuccess(updatedCourse) {
+          const { courseView } = alchemyCourseSection;
+          const { courseTable } = courseView;
+          courseTable.refresh();
+          courseAddForm.element.reset();
+          courseDepartment.mdcSelectHandler.clearSelection();
+          courseAdd.switchMode.add();
+          scrollTo(courseView.element);
+          const extra = Course.transform(updatedCourse, 'short-info');
+          const message = 'Course updated successfully.';
+          alchemyCommon.toast({ message }, extra);
+        }
 
-        });
+        function onCourseAddSuccess(addedCourse) {
+          const { courseTable } = alchemyCourseSection.courseView;
+          courseTable.refresh();
+          courseAddForm.element.reset();
+          courseDepartment.mdcSelectHandler.clearSelection();
+          const extra = Course.transform(addedCourse, 'short-info');
+          const message = 'Course added successfully.';
+          alchemyCommon.toast({ message }, extra);
+        }
 
-        courseViewButton.element.addEventListener('click', () => {
-          scrollTo(alchemyCourseSection.courseView.element);
-        });
+        function onCourseAddFail(error) {
+          if (typeof error.json !== 'function') {
+            console.error(error);
+          } else {
+            error.json().then((body) => {
+              const message = `Error ${error.status}: ${error.statusText}`;
+              const extra = arrayToHtml(Object.values(body));
+              alchemyCommon.toast({
+                message,
+                multiline: true,
+                timeout: PERSISTENT_TOAST_TIME,
+                actionText: 'OK',
+                actionOnBottom: true,
+                actionHandler() {}
+              }, extra);
+            });
+          }
+        }
 
         function setupCourseDepartment() {
           courseDepartment.mdcSelectHandler =
@@ -418,8 +552,40 @@ window.alchemy = new Alchemy({
           const { departments } = alchemy.current;
 
           courseDepartment.mdcSelectHandler
-            .addItems(departments, { assignments: { valueKey: 'name', idKey: 'alias' } })
+            .addItems(departments, { assignments: { valueKey: 'name', idKey: 'id' } })
             .enable();
+        }
+
+        function setupCourseAutoFill() {
+          // auto-fill department on blur event of course code
+          courseCode.input.addEventListener('blur', onCourseCodeBlur);
+          courseCredit.input.addEventListener('focus', onCourseCreditFocus);
+
+          function onCourseCodeBlur() {
+            const inputValue = courseCode.input.value;
+            if (inputValue.length >= 2) {
+              const firstTwoLetters = inputValue.slice(0, 2);
+              const department =
+                alchemy.current.departments.find(d => (d.alias === firstTwoLetters));
+              courseDepartment.mdcSelectHandler.setSelected(department.id);
+            }
+          }
+
+          function onCourseCreditFocus() {
+            const credit = Number(courseCredit.input.value);
+            if (Number.isNaN(credit) || credit !== 0) {
+              return;
+            }
+            const lecture = Number(courseLecture.input.value);
+            const practical = Number(coursePractical.input.value);
+            const tutorial = Number(courseTutorial.input.value);
+
+            if (!Number.isNaN(lecture) && !Number.isNaN(practical) && !Number.isNaN(tutorial)) {
+              const { ONE_PRACTICAL_CREDIT } = alchemy.current;
+              const totalCredits = lecture + (practical * ONE_PRACTICAL_CREDIT) + tutorial;
+              courseCredit.input.value = Number(totalCredits);
+            }
+          }
         }
 
         function getSelectedDepartment() {
@@ -437,8 +603,12 @@ window.alchemy = new Alchemy({
         element: document.querySelector('#alchemy-locations'),
         locationView: {
           element: document.querySelector('#alchemy-location-view'),
-          locationAddButton: { element: document.querySelector('#alchemy-location-view__add-button') },
-          locationEditButton: { element: document.querySelector('#alchemy-location-view__edit-button') },
+          locationAddButton: {
+            element: document.querySelector('#alchemy-location-view__add-button')
+          },
+          locationEditButton: {
+            element: document.querySelector('#alchemy-location-view__edit-button')
+          },
           locationDeleteButton: {
             element: document.querySelector('#alchemy-location-view__delete-button')
           },
@@ -462,12 +632,20 @@ window.alchemy = new Alchemy({
           locationAddForm: { element: document.querySelector('#alchemy-location-add__form') },
           locationName: { element: document.querySelector('#alchemy-location-add__location-name') },
           locationAlias: { element: document.querySelector('#alchemy-location-add__location-alias') },
-          locationCapacity: { element: document.querySelector('#alchemy-location-add__location-capacity') },
-          locationDepartment: { element: document.querySelector('#alchemy-location-add__location-department') },
+          locationCapacity: {
+            element: document.querySelector('#alchemy-location-add__location-capacity')
+          },
+          locationDepartment: {
+            element: document.querySelector('#alchemy-location-add__location-department')
+          },
           locationType: { element: document.querySelector('#alchemy-location-add__location-type') },
           locationAddButton: { element: document.querySelector('#alchemy-location-add__add-button') },
-          locationResetButton: { element: document.querySelector('#alchemy-location-add__reset-button') },
-          locationViewButton: { element: document.querySelector('#alchemy-location-add__view-button') }
+          locationResetButton: {
+            element: document.querySelector('#alchemy-location-add__reset-button')
+          },
+          locationViewButton: {
+            element: document.querySelector('#alchemy-location-add__view-button')
+          }
         }
       };
 
@@ -625,7 +803,8 @@ window.alchemy = new Alchemy({
 
         locationAddButton.element.addEventListener('click', () => {
           const selectedDepartment = getSelectedDepartment();
-          const isFormValid = locationAddForm.element.checkValidity() && selectedDepartment !== false;
+          const isFormValid = locationAddForm.element.checkValidity() && selectedDepartment !==
+            false;
           if (!isFormValid) { return false; }
 
           return true;
@@ -650,9 +829,13 @@ window.alchemy = new Alchemy({
           const { departments } = alchemy.current;
 
           locationDepartment.mdcSelectHandler
-            .addItems(departments, { assignments: { valueKey: 'name', idKey: 'alias' } })
+            .addItems(
+              departments,
+              { assignments: { valueKey: 'name', idKey: 'alias' } }
+            )
             .enable();
         }
+
         function getSelectedDepartment() {
           const selectedDepartment = locationDepartment.mdcSelectHandler.getSelected();
           if (selectedDepartment && selectedDepartment.data) {

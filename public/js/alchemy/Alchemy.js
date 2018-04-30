@@ -32,12 +32,12 @@ class Course extends Model {
   }
 
   static transform(data, type) {
-    const transformedData = [];
     if (!data) {
       return [];
     }
     switch (type) {
       case 'table': {
+        let transformedData = [];
         data.forEach((_course) => {
           const course = {};
           course.id = _course.id;
@@ -52,12 +52,14 @@ class Course extends Model {
           course.persons = _course.persons;
           transformedData.push(course);
         });
-        break;
+        return transformedData;
       }
       case 'short-info': {
-        const course = data[0];
-        transformedData.html = arrayToHtml([course.id, course.code, course.alias, course.name]);
-        break;
+        let course = data;
+        if (Array.isArray(data)) {
+          course = data[0];
+        }
+        return arrayToHtml([course.id, course.code, course.alias, course.name]);
       }
       default: {
         Logger.error(`Cannot transform data to type ${type}`);
@@ -125,7 +127,7 @@ class Alchemy {
     this.ready = false;
     this.onReady = options.onReady;
     this.onFail = options.onFail;
-    this.current = { programme: null };
+    this.current = { programme: null, departments: null, ONE_PRACTICAL_CREDIT: 1 };
     this.course = new Course('course', this.config);
     this.location = new Location('location', this.config);
     this.department = new Department('department', this.config);

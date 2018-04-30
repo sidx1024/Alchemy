@@ -21,7 +21,7 @@ class Model {
       get: { path: `${this.uri}get/{id}`, method: 'GET', verb: 'getting' },
       add: { path: `${this.uri}add`, method: 'POST', verb: 'adding' },
       update: { path: `${this.uri}update/{id}`, method: 'PUT', verb: 'modifying' },
-      delete: { path: `${this.uri}delete`, method: 'DELETE', verb: 'deleting' },
+      delete: { path: `${this.uri}delete/{id}`, method: 'DELETE', verb: 'deleting' },
       search: { path: `${this.uri}search?`, method: 'GET', verb: 'searching' }
     };
     this.headers = this.config.api.headers;
@@ -74,6 +74,39 @@ class Model {
       .then(response => response.json())
       .then(successCallback || Logger.success)
       .catch(e => (failCallback || this.statusFailure(action.verb))(e));
+  }
+
+  update(id, object, successCallback, failCallback) {
+    const action = this.actions.update;
+    const url = action.path.replace('{id}', id.toString());
+
+    const params = {
+      method: action.method,
+      headers: this.headers,
+      body: object
+    };
+
+    return fetch(url, params)
+      .then(fetchStatus)
+      .then(response => response.json())
+      .then(successCallback || Logger.success)
+      .catch(e => (failCallback || this.statusFailure(action.verb))(e));
+  }
+
+  delete(id = 1, successCallback, failCallback) {
+    const action = this.actions.delete;
+    const url = action.path.replace('{id}', id.toString());
+
+    const params = {
+      method: action.method,
+      headers: this.headers
+    };
+
+    return fetch(url, params)
+      .then(fetchStatus)
+      .then(response => response.json())
+      .then(successCallback || Logger.success)
+      .catch(e => (failCallback || this.statusFailure(action.verb, id))(e));
   }
 
   search(parametrizedUrl, successCallback, failCallback) {
