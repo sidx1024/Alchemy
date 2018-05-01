@@ -10,6 +10,7 @@
 */
 
 const PERSISTENT_TOAST_TIME = 9999999;
+const HEADER_HEIGHT_OFFSET = 84;
 
 function blurSelection(exclusions, callback, callbackArguments) {
   return (mouseEvent) => {
@@ -28,7 +29,7 @@ function scrollTo(element) {
   if (element && window.scroll) {
     window.scroll({
       behavior: 'smooth',
-      top: element.offsetTop - 84
+      top: element.offsetTop - HEADER_HEIGHT_OFFSET
     });
   }
 }
@@ -91,6 +92,14 @@ function setRadioInput(element, value) {
   });
 }
 
+// Convert name to alias (Data Mining and Business Intelligence --> D.M.B.I.)
+function getAliasFromName(name) {
+  return `${name.split(' ') // Split string by space and return an array of words
+    .filter(c => c !== 'and') // remove the word 'and'
+    .map(c => c[0]) // Take the first letter of each word
+    .join('.')}.`; // join letters by dot and append dot at the end.
+}
+
 function setSelectedItem(table, id) {
   if (!table || !table.element) {
     throw new Error('Table or table element is null.');
@@ -100,7 +109,8 @@ function setSelectedItem(table, id) {
     selectedItem.removeAttribute('selected');
   }
   // eslint-disable-next-line eqeqeq
-  const targetItem = Array.from(table.element.querySelectorAll('tr')).find(d => +d.getAttribute('data-id') === id);
+  const targetItem = Array.from(table.element.querySelectorAll('tr'))
+    .find(d => +d.getAttribute('data-id') === id);
   if (targetItem) {
     targetItem.classList.add('selected');
   } else {

@@ -52,7 +52,6 @@ window.alchemy = new Alchemy({
           extra: document.querySelector('#alchemy-toast .alchemy-toast__extra')
         };
         toast.mdc = mdc.snackbar.MDCSnackbar.attachTo(toast.element);
-        console.log(toast.mdc);
         toast.mdc.getDefaultFoundation().cleanup_();
         alchemyCommon.toast = (data, extra) => {
           if (!data.timeout) {
@@ -160,13 +159,19 @@ window.alchemy = new Alchemy({
             element: document.querySelector('#alchemy-course-add__course-code'),
             input: document.querySelector('#alchemy-course-add__course-code input')
           },
-          courseName: { element: document.querySelector('#alchemy-course-add__course-name') },
+          courseName: {
+            element: document.querySelector('#alchemy-course-add__course-name'),
+            input: document.querySelector('#alchemy-course-add__course-name input')
+          },
           courseDepartment: {
             element: document.querySelector('#alchemy-course-add__course-department')
           },
           courseType: { element: document.querySelector('#alchemy-course-add__course-type') },
           coursePerson: { element: document.querySelector('#alchemy-course-add__course-person') },
-          courseAlias: { element: document.querySelector('#alchemy-course-add__course-alias') },
+          courseAlias: {
+            element: document.querySelector('#alchemy-course-add__course-alias'),
+            input: document.querySelector('#alchemy-course-add__course-alias input')
+          },
           courseLecture: {
             element: document.querySelector('#alchemy-course-add__course-lecture'),
             input: document.querySelector('#alchemy-course-add__course-lecture input')
@@ -499,6 +504,10 @@ window.alchemy = new Alchemy({
           return true;
         });
 
+        courseResetButton.element.addEventListener('click', () => {
+          courseDepartment.mdcSelectHandler.clearSelection();
+        });
+
         function onCourseUpdateSuccess(updatedCourse) {
           const { courseView } = alchemyCourseSection;
           const { courseTable } = courseView;
@@ -560,6 +569,7 @@ window.alchemy = new Alchemy({
           // auto-fill department on blur event of course code
           courseCode.input.addEventListener('blur', onCourseCodeBlur);
           courseCredit.input.addEventListener('focus', onCourseCreditFocus);
+          courseAlias.input.addEventListener('focus', onCourseAliasFocus);
 
           function onCourseCodeBlur() {
             const inputValue = courseCode.input.value;
@@ -584,6 +594,15 @@ window.alchemy = new Alchemy({
               const { ONE_PRACTICAL_CREDIT } = alchemy.current;
               const totalCredits = lecture + (practical * ONE_PRACTICAL_CREDIT) + tutorial;
               courseCredit.input.value = Number(totalCredits);
+            }
+          }
+
+          function onCourseAliasFocus() {
+            const courseAliasIsEmpty = courseAlias.input.value.length === 0;
+            const name = courseName.input.value;
+            const courseNameIsFilled = name.length > 0;
+            if (courseAliasIsEmpty && courseNameIsFilled) {
+              courseAlias.input.value = getAliasFromName(name);
             }
           }
         }
