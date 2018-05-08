@@ -600,52 +600,48 @@ window.alchemy = new Alchemy({
 
     function setupLocationSection() {
       const alchemyLocationSection = {
-        element: document.querySelector('#alchemy-locations'),
+        element: document.querySelector('#alchemy-location'),
         locationView: {
           element: document.querySelector('#alchemy-location-view'),
-          locationAddButton: {
-            element: document.querySelector('#alchemy-location-view__add-button')
-          },
-          locationEditButton: {
-            element: document.querySelector('#alchemy-location-view__edit-button')
-          },
+          locationAddButton: { element: document.querySelector('#alchemy-location-view__add-button') },
+          locationEditButton: { element: document.querySelector('#alchemy-location-view__edit-button') },
           locationDeleteButton: {
             element: document.querySelector('#alchemy-location-view__delete-button')
           },
-          locationFilterByText: {
-            element: document.querySelector('#alchemy-location-view__filter-by-text')
+          locationFilterByType:{
+            element: document.querySelector('#alchemy-location-view__filter-by-type')
           },
-          locationFilterByBranch: {
-            element: document.querySelector('#alchemy-location-view__filter-by-branch')
+          locationFilterByDepartmentId:{
+            element: document.querySelector('#alchemy-location-view__filter-by-department_id')
           },
           locationTable: {
             element: document.querySelector('#alchemy-location-view__table'),
             table: document.querySelector('#alchemy-location-view__table table'),
-            headers: ['Alias', 'Name', 'Capacity', 'Department', 'Type'],
-            headersDataTypes: ['Alias', 'Name', 1, 'Department', 1],
-            headersWidth: [9.5, 40.5],
-            selectedLocationId: null
+            headers: ['id','name','alias','capacity', 'type', 'department_id'],
+            headersDataTypes: [1,'name', 'alias', 1, 1, 1],
+            headersWidth: [9.5, 9.5, 40.5],
+            selectedId: null
           }
         },
         locationAdd: {
           element: document.querySelector('#alchemy-location-add'),
+          mode: 'add',
+          heading: document.querySelector('#alchemy-location-add h1'),
           locationAddForm: { element: document.querySelector('#alchemy-location-add__form') },
-          locationName: { element: document.querySelector('#alchemy-location-add__location-name') },
-          locationAlias: { element: document.querySelector('#alchemy-location-add__location-alias') },
-          locationCapacity: {
-            element: document.querySelector('#alchemy-location-add__location-capacity')
+          locationCode: {
+            element: document.querySelector('#alchemy-location-add__location-code'),
+            input: document.querySelector('#alchemy-location-add__location-code input')
           },
+          locationName: { element: document.querySelector('#alchemy-location-add__location-name') },
           locationDepartment: {
             element: document.querySelector('#alchemy-location-add__location-department')
           },
           locationType: { element: document.querySelector('#alchemy-location-add__location-type') },
+          locationDepartmentId: { element: document.querySelector('#alchemy-location-add__location-department_id') },
+          locationAlias: { element: document.querySelector('#alchemy-location-add__location-alias') },
           locationAddButton: { element: document.querySelector('#alchemy-location-add__add-button') },
-          locationResetButton: {
-            element: document.querySelector('#alchemy-location-add__reset-button')
-          },
-          locationViewButton: {
-            element: document.querySelector('#alchemy-location-add__view-button')
-          }
+          locationResetButton: { element: document.querySelector('#alchemy-location-add__reset-button') },
+          locationViewButton: { element: document.querySelector('#alchemy-location-add__view-button') }
         }
       };
 
@@ -657,13 +653,12 @@ window.alchemy = new Alchemy({
 
         const locationFilter = {
           departmentId: null,
-          text: null,
-          limit: null
+          type: null
         };
 
         setupLocationTable();
-        setupFilterByText();
-        setupFilterByBranch();
+        setupFilterByType();
+        setupFilterByDepartmentId();
         setupEvents();
 
         function setupLocationTable() {
@@ -677,7 +672,7 @@ window.alchemy = new Alchemy({
               selectedLocations,
               item => (item.classList.remove('selected'))
             );
-            locationTable.selectedLocationId = null;
+            locationTable.selectedId = null;
           };
 
           locationTable.refresh = () => {
@@ -685,7 +680,7 @@ window.alchemy = new Alchemy({
             alchemy.location.search(filterObject(locationFilter), (data) => {
               const transformedData = Location.transform(data, 'table');
               locationTable.mdcDataTableHelper
-                .setData(transformedData);
+              .setData(transformedData);
               if (!locationTable.element.querySelector('td')) {
                 locationTable.element.classList.add('alchemy-location-table--empty');
               } else {
@@ -697,13 +692,49 @@ window.alchemy = new Alchemy({
           const { headers, headersDataTypes, headersWidth } = locationTable;
           locationTable.mdcDataTableHelper =
             MDCDataTableHelper
-              .handle(locationTable.element)
-              .setIdKey('id')
-              .setHeaders(headers, headersDataTypes, headersWidth);
+            .handle(locationTable.element)
+            .setIdKey('id')
+            .setHeaders(headers, headersDataTypes, headersWidth);
           locationTable.refresh();
+
+          locationDeleteButton.element.addEventListener('click', () => {
+            if (!locationDeleteButton.element.hasAttribute('disabled')) {
+              alchemy.location.delete(
+                locationTable.selectedId,
+                onLocationDeleteSuccess,
+                onLocationDeleteFail
+              );
+            }
+          });
         }
 
-        function setupFilterByText() {
+        function onLocationDeleteSuccess(deletedLocation) {
+          const message = 'Location deleted successfully\\.';
+          const extra = Location.transform(deletedLocation, 'short-info');
+          locationTable.refresh();
+          alchemyCommon.toast({ message }, extra);
+        }
+
+        function onLocationDeleteFail(error) {
+          if (typeof error.json !== 'function') {
+            console.error(error);
+          } else {
+            error.json().then((body) => {
+              const message = `Error ${error.status}: ${error.statusText}`;
+              const extra = arrayToHtml(Object.values(body));
+              alchemyCommon.toast({
+                message,
+                multiline: true,
+                timeout: PERSISTENT_TOAST_TIME,
+                actionText: 'OK',
+                actionOnBottom: true,
+                actionHandler() {}
+              }, extra);
+            });
+          }
+        }
+
+        function setupFilterByType() {
           const { locationFilterByText } = alchemyLocationSection.locationView;
           if (locationFilterByText.element) {
             const searchTextField = mdc.textField.MDCTextField.attachTo(locationFilterByText.element);
@@ -717,25 +748,25 @@ window.alchemy = new Alchemy({
           }
         }
 
-        function setupFilterByBranch() {
+        function setupFilterByDepartmentId() {
           const { locationFilterByBranch } = alchemyLocationSection.locationView;
           locationFilterByBranch.mdcSelectHandler =
             MDCSelectHandler
-              .handle(locationFilterByBranch.element)
-              .clearItems()
-              .init('Select branch', { storeData: true })
-              .disable();
+            .handle(locationFilterByBranch.element)
+            .clearItems()
+            .init('Select branch', { storeData: true })
+            .disable();
 
           const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
           const { departments } = alchemy.current;
 
           locationFilterByBranch.mdcSelectHandler
-            .addItems(
-              departments.concat([allBranchesItem]),
-              { assignments: { valueKey: 'name', idKey: 'alias' } }
-            )
-            .setOnChangeListener(onBranchChange)
-            .enable();
+          .addItems(
+            departments.concat([allBranchesItem]),
+            { assignments: { valueKey: 'name', idKey: 'id' } }
+          )
+          .setOnChangeListener(onBranchChange)
+          .enable();
 
           function onBranchChange() {
             const selectedItem = locationFilterByBranch.mdcSelectHandler.getSelected();
@@ -757,7 +788,7 @@ window.alchemy = new Alchemy({
             const { target } = mouseEvent;
             if (target.tagName !== 'TD') { return; }
             const selectedLocation = target.parentNode;
-            locationTable.selectedLocationId = selectedLocation.getAttribute('data-id');
+            locationTable.selectedId = selectedLocation.getAttribute('data-id');
             selectedLocation.classList.add('selected');
             locationEditButton.element.removeAttribute('disabled');
             locationDeleteButton.element.removeAttribute('disabled');
@@ -770,70 +801,152 @@ window.alchemy = new Alchemy({
             );
           });
 
+          const { locationAdd } = alchemyLocationSection;
+
           locationAddButton.element.addEventListener('click', () => {
-            scrollTo(alchemyLocationSection.locationAdd.element);
+            scrollTo(locationAdd.element);
+            locationAdd.switchMode.add();
+          });
+
+          locationEditButton.element.addEventListener('click', () => {
+            scrollTo(locationAdd.element);
+            locationAdd.switchMode.edit(locationTable.selectedId);
           });
         }
       }
 
       function setupLocationAdd() {
+        const { locationAdd } = alchemyLocationSection;
         const {
           locationAddForm,
-          locationCode,
-          locationAlias,
           locationName,
-          locationLecture,
-          locationPractical,
-          locationTutorial,
-          locationCredit,
-          locationAddButton,
-          locationResetButton,
-          locationViewButton,
-          locationDepartment
-        } = alchemyLocationSection.locationAdd;
+          locationAlias,
+          locationCapacity,
+          locationType,
+          locationDepartmentId
+        } = locationAdd;
 
-        mdc.textField.MDCTextField.attachTo(locationCode.element);
-        mdc.textField.MDCTextField.attachTo(locationAlias.element);
-        mdc.textField.MDCTextField.attachTo(locationName.element);
-        mdc.textField.MDCTextField.attachTo(locationLecture.element);
-        mdc.textField.MDCTextField.attachTo(locationPractical.element);
-        mdc.textField.MDCTextField.attachTo(locationTutorial.element);
-        mdc.textField.MDCTextField.attachTo(locationCredit.element);
+        locationName.mdc = mdc.textField.MDCTextField.attachTo(locationCode.element);
+        locationAlias.mdc = mdc.textField.MDCTextField.attachTo(locationAlias.element);
+        locationCapacity.mdc = mdc.textField.MDCTextField.attachTo(locationName.element);
+        locationType.mdc = mdc.textField.MDCTextField.attachTo(locationLecture.element);
+        locationDepartmentId.mdc = mdc.textField.MDCTextField.attachTo(locationPractical.element);
+
+        locationAdd.switchMode = {
+          add: () => {
+            locationAdd.editMode = false;
+            locationAdd.heading.innerText = 'Add Location';
+            locationAddButton.element.innerText = 'ADD LOCATION';
+            delete locationAdd.editItemId;
+          },
+          edit: (id) => {
+            locationAdd.editMode = true;
+            locationAdd.heading.innerText = 'Edit Location';
+            locationAddButton.element.innerText = 'UPDATE LOCATION';
+
+            alchemy.location.get(id, onLocationGetSuccess, onLocationGetFail);
+
+            function onLocationGetSuccess(location) {
+              locationAdd.heading.innerText += ` (ID: ${location.id})`;
+              locationAdd.editItemId = location.id;
+              setTextFieldInput(locationName, location.name);
+              setTextFieldInput(locationAlias, location.alias);
+              setTextFieldInput(locationCapacity, location.capacity);
+              setTextFieldInput(locationType, location.type);
+
+              function onLocationGetFail(error) {
+                if (typeof error.json !== 'function') {
+                  console.error(error);
+                } else {
+                  error.json().then((body) => {
+                    const message = `Error ${error.status}: ${error.statusText}`;
+                    const extra = arrayToHtml(Object.values(body));
+                    alchemyCommon.toast({ message }, extra);
+                  });
+                }
+              }
+            }
+          }
+        };
+
         setupLocationDepartment();
-
-        locationAddButton.element.addEventListener('click', () => {
-          const selectedDepartment = getSelectedDepartment();
-          const isFormValid = locationAddForm.element.checkValidity() && selectedDepartment !==
-            false;
-          if (!isFormValid) { return false; }
-
-          return true;
-        });
-
-        locationResetButton.element.addEventListener('click', () => {
-
-        });
+        setupLocationAutoFill();
 
         locationViewButton.element.addEventListener('click', () => {
           scrollTo(alchemyLocationSection.locationView.element);
         });
 
-        function setupLocationDepartment() {
-          locationDepartment.mdcSelectHandler =
-            MDCSelectHandler
-              .handle(locationDepartment.element)
-              .clearItems()
-              .init('Select Department', { storeData: true })
-              .disable();
+        locationAddButton.element.addEventListener('click', () => {
+          const type = locationType.element.querySelector(':checked').getAttribute('value');
+          const department = getSelectedDepartment();
+          const person = locationPerson.element.querySelector(':checked').getAttribute('value');
 
-          const { departments } = alchemy.current;
+          const isFormValid = locationAddForm.element.checkValidity() && department !== false;
+          if (!isFormValid) {
+            const message = 'Please fill out the form properly.';
+            alchemyCommon.toast({ message });
+            return false;
+          }
 
-          locationDepartment.mdcSelectHandler
-            .addItems(
-              departments,
-              { assignments: { valueKey: 'name', idKey: 'alias' } }
-            )
-            .enable();
+          const location = {
+            alias: locationAlias.mdc.input_.value,
+            name: locationName.mdc.input_.value,
+            code: locationCode.mdc.input_.value,
+            capacity: Number(locationCode.mdc.input_.value),
+            type: Number(locationType.mdc.input_.value),
+            department_id: Number(locationDepartmentId.mdc.input_.value),
+          };
+
+          const { editMode } = locationAdd;
+          if (editMode) {
+            location.id = locationAdd.editItemId;
+            alchemy.location.update(location.id, JSON.stringify(location), onLocationUpdateSuccess, onLocationAddFail);
+          } else {
+            alchemy.location.add(JSON.stringify(location), onLocationAddSuccess, onLocationAddFail);
+          }
+          return true;
+        });
+
+        function onLocationUpdateSuccess(updatedLocation) {
+          const { locationView } = alchemyLocationSection;
+          const { locationTable } = locationView;
+          locationTable.refresh();
+          locationAddForm.element.reset();
+          locationDepartmentId.mdcSelectHandler.clearSelection();
+          locationAdd.switchMode.add();
+          scrollTo(locationView.element);
+          const extra = Location.transform(updatedLocation, 'short-info');
+          const message = 'Location updated successfully.';
+          alchemyCommon.toast({ message }, extra);
+        }
+
+        function onLocationAddSuccess(addedLocation) {
+          const { locationTable } = alchemyLocationSection.locationView;
+          locationTable.refresh();
+          locationAddForm.element.reset();
+          locationDepartmentId.mdcSelectHandler.clearSelection();
+          const extra = Location.transform(addedLocation, 'short-info');
+          const message = 'Location added successfully.';
+          alchemyCommon.toast({ message }, extra);
+        }
+
+        function onLocationAddFail(error) {
+          if (typeof error.json !== 'function') {
+            console.error(error);
+          } else {
+            error.json().then((body) => {
+              const message = `Error ${error.status}: ${error.statusText}`;
+              const extra = arrayToHtml(Object.values(body));
+              alchemyCommon.toast({
+                message,
+                multiline: true,
+                timeout: PERSISTENT_TOAST_TIME,
+                actionText: 'OK',
+                actionOnBottom: true,
+                actionHandler() {}
+              }, extra);
+            });
+          }
         }
 
         function getSelectedDepartment() {
@@ -845,6 +958,380 @@ window.alchemy = new Alchemy({
         }
       }
     }
+
+    function setupFacultySection() {
+      const alchemyFacultySection = {
+        element: document.querySelector('#alchemy-faculty'),
+        facultyView: {
+          element: document.querySelector('#alchemy-faculty-view'),
+          facultyAddButton: {
+            element: document.querySelector('#alchemy-faculty-view__add-button')
+          },
+          facultyEditButton: {
+            element: document.querySelector('#alchemy-faculty-view__edit-button')
+          },
+          facultyDeleteButton: {
+            element: document.querySelector('#alchemy-faculty-view__delete-button')
+          },
+          facultyFilterByDepartmentId: {
+            element: document.querySelector(
+              '#alchemy-faculty-view__filter-by-department_id')
+          },
+          facultyTable: {
+            element: document.querySelector('#alchemy-faculty-view__table'),
+            table: document.querySelector('#alchemy-faculty-view__table table'),
+            headers: [
+              'id',
+              'alias',
+              'code',
+              'name',
+              'designation_id',
+              'department_id'],
+            headersDataTypes: [1, 'alias', 'code', 'name', 1, 1],
+            headersWidth: [9.5, 9.5, 40.5],
+            selectedId: null
+          }
+        },
+
+        facultyAdd: {
+          element: document.querySelector('#alchemy-faculty-add'),
+          mode: 'add',
+          heading: document.querySelector('#alchemy-faculty-add h1'),
+          facultyAddForm: {
+            element: document.querySelector('#alchemy-faculty-add__form')
+          },
+          facultyAlias: {
+            element: document.querySelector('#alchemy-faculty-add__faculty-alias')
+          },
+          facultyCode: {
+            element: document.querySelector('#alchemy-faculty-add__faculty-code'),
+            input: document.querySelector(
+              '#alchemy-faculty-add__faculty-code input')
+          },
+          facultyName: {
+            element: document.querySelector('#alchemy-faculty-add__faculty-name')
+          },
+          facultyDesignationId: {
+            element: document.querySelector(
+              '#alchemy-faculty-add__faculty-designation_id')
+          },
+          facultyDepartmentId: {
+            element: document.querySelector(
+              '#alchemy-faculty-add__faculty-department_id')
+          },
+
+          facultyAddButton: {
+            element: document.querySelector('#alchemy-faculty-add__add-button')
+          },
+          facultyResetButton: {
+            element: document.querySelector('#alchemy-faculty-add__reset-button')
+          },
+          facultyViewButton: {
+            element: document.querySelector('#alchemy-faculty-add__view-button')
+          }
+        }
+      };
+
+      setupFacultyView();
+      setupFacultyAdd();
+
+      function setupFacultyView () {
+        const {facultyTable} = alchemyFacultySection.facultyView;
+
+        const facultyFilter = {
+          departmentId: null,
+          type: null
+        };
+
+        setupFacultyTable();
+        setupFilterByDepartmentId();
+        setupEvents();
+
+        function setupFacultyTable () {
+          const {facultyEditButton, facultyDeleteButton} = alchemyFacultySection.facultyView;
+
+          facultyTable.deselectFaculty = () => {
+            const selectedFaculty = facultyTable.element.querySelectorAll(
+              'tr.selected');
+            facultyEditButton.element.setAttribute('disabled', '');
+            facultyDeleteButton.element.setAttribute('disabled', '');
+            Array.prototype.forEach.call(
+              selectedFacultys,
+              item => (item.classList.remove('selected'))
+            );
+            facultyTable.selectedId = null;
+          };
+
+          facultyTable.refresh = () => {
+            facultyTable.deselectFacultys();
+            alchemy.faculty.search(filterObject(facultyFilter), (data) => {
+              const transformedData = Faculty.transform(data, 'table');
+              facultyTable.mdcDataTableHelper.setData(transformedData);
+              if (!facultyTable.element.querySelector('td')) {
+                facultyTable.element.classList.add('alchemy-faculty-table--empty');
+              } else {
+                facultyTable.element.classList.remove(
+                  'alchemy-faculty-table--empty');
+              }
+            });
+          };
+
+          const {headers, headersDataTypes, headersWidth} = facultyTable;
+          facultyTable.mdcDataTableHelper =
+            MDCDataTableHelper.handle(facultyTable.element).
+              setIdKey('id').
+              setHeaders(headers, headersDataTypes, headersWidth);
+          facultyTable.refresh();
+
+          facultyDeleteButton.element.addEventListener('click', () => {
+            if (!facultyDeleteButton.element.hasAttribute('disabled')) {
+              alchemy.faculty.delete(
+                facultyTable.selectedId,
+                onFacultyDeleteSuccess,
+                onFacultyDeleteFail
+              );
+            }
+          });
+        }
+
+        function onFacultyDeleteSuccess (deletedFaculty) {
+          const message = 'Faculty deleted successfully\\.';
+          const extra = Faculty.transform(deletedFaculty, 'short-info');
+          facultyTable.refresh();
+          alchemyCommon.toast({message}, extra);
+        }
+
+        function onFacultyDeleteFail (error) {
+          if (typeof error.json !== 'function') {
+            console.error(error);
+          } else {
+            error.json().then((body) => {
+              const message = `Error ${error.status}: ${error.statusText}`;
+              const extra = arrayToHtml(Object.values(body));
+              alchemyCommon.toast({
+                message,
+                multiline: true,
+                timeout: PERSISTENT_TOAST_TIME,
+                actionText: 'OK',
+                actionOnBottom: true,
+                actionHandler () {}
+              }, extra);
+            });
+          }
+        }
+
+        function setupFilterByDepartmentId () {
+          const {facultyFilterByBranch} = alchemyFacultySection.facultyView;
+          facultyFilterByBranch.mdcSelectHandler =
+            MDCSelectHandler.handle(facultyFilterByBranch.element).
+              clearItems().
+              init('Select branch', {storeData: true}).
+              disable();
+
+          const allBranchesItem = {
+            id: null,
+            name: 'All',
+            programme_id: alchemy.keys.programme
+          };
+          const {departments} = alchemy.current;
+
+          facultyFilterByBranch.mdcSelectHandler.addItems(
+            departments.concat([allBranchesItem]),
+            {assignments: {valueKey: 'name', idKey: 'id'}}
+          ).setOnChangeListener(onBranchChange).enable();
+
+          function setupEvents () {
+            const {
+              facultyAddButton,
+              facultyEditButton,
+              facultyDeleteButton
+            } = alchemyFacultySection.facultyView;
+
+            facultyTable.element.addEventListener('click', (mouseEvent) => {
+              mouseEvent.stopPropagation();
+              facultyTable.deselectFacultys();
+              const {target} = mouseEvent;
+              if (target.tagName !== 'TD') { return; }
+              const selectedFaculty = target.parentNode;
+              facultyTable.selectedId = selectedFaculty.getAttribute('data-id');
+              selectedFaculty.classList.add('selected');
+              facultyEditButton.element.removeAttribute('disabled');
+              facultyDeleteButton.element.removeAttribute('disabled');
+              window.addEventListener(
+                'click',
+                blurSelection(
+                  [
+                    selectedFaculty,
+                    facultyEditButton.element,
+                    facultyDeleteButton.element],
+                  facultyTable.deselectFacultys
+                )
+              );
+            });
+
+            const {facultyAdd} = alchemyFacultySection;
+
+            facultyAddButton.element.addEventListener('click', () => {
+              scrollTo(facultyAdd.element);
+              facultyAdd.switchMode.add();
+            });
+
+            facultyEditButton.element.addEventListener('click', () => {
+              scrollTo(facultyAdd.element);
+              facultyAdd.switchMode.edit(facultyTable.selectedId);
+            });
+          }
+        }
+
+        function setupFacultyAdd () {
+          const {facultyAdd} = alchemyFacultySection;
+          const {
+            facultyAddForm,
+            facultyName,
+            facultyAlias,
+            facultyCode,
+            facultyDesignationId,
+            facultyDepartmentId
+          } = facultyAdd;
+
+          facultyName.mdc = mdc.textField.MDCTextField.attachTo(
+            facultyCode.element);
+          facultyAlias.mdc = mdc.textField.MDCTextField.attachTo(
+            facultyAlias.element);
+          facultyCode.mdc = mdc.textField.MDCTextField.attachTo(
+            facultyCode.element);
+          facultyDesignationId.mdc = mdc.textField.MDCTextField.attachTo(
+            facultyDesignationId.element);
+          facultyDepartmentId.mdc = mdc.textField.MDCTextField.attachTo(
+            facultyDepartmentId.element);
+
+          facultyAdd.switchMode = {
+            add: () => {
+              facultyAdd.editMode = false;
+              facultyAdd.heading.innerText = 'Add Faculty';
+              facultyAddButton.element.innerText = 'ADD FACULTY';
+              delete facultyAdd.editItemId;
+            },
+            edit: (id) => {
+              facultyAdd.editMode = true;
+              facultyAdd.heading.innerText = 'Edit Faculty';
+              facultyAddButton.element.innerText = 'UPDATE FACULTY';
+
+              alchemy.faculty.get(id, onFacultyGetSuccess, onFacultyGetFail);
+
+              function onFacultyGetSuccess (faculty) {
+                facultyAdd.heading.innerText += ` (ID: ${faculty.id})`;
+                facultyAdd.editItemId = faculty.id;
+                setTextFieldInput(facultyName, faculty.name);
+                setTextFieldInput(facultyAlias, faculty.alias);
+                setTextFieldInput(facultyCode, faculty.code);
+                setTextFieldInput(facultyDesignationId, faculty.designation_id);
+                setTextFieldInput(facultyDepartmentId, faculty.department_id);
+
+                function onFacultyGetFail (error) {
+                  if (typeof error.json !== 'function') {
+                    console.error(error);
+                  } else {
+                    error.json().then((body) => {
+                      const message = `Error ${error.status}: ${error.statusText}`;
+                      const extra = arrayToHtml(Object.values(body));
+                      alchemyCommon.toast({message}, extra);
+                    });
+                  }
+                }
+              }
+            }
+          }
+        };
+
+        setupFacultyDepartment();
+        setupFacultyAutoFill();
+
+        facultyViewButton.element.addEventListener('click', () => {
+          scrollTo(alchemyFacultySection.facultyView.element);
+        });
+
+        facultyAddButton.element.addEventListener('click', () => {
+          const type = facultyType.element.querySelector(':checked').
+            getAttribute('value');
+          const department = getSelectedDepartment();
+          const person = facultyPerson.element.querySelector(':checked').
+            getAttribute('value');
+
+          const isFormValid = facultyAddForm.element.checkValidity() &&
+            department !== false;
+          if (!isFormValid) {
+            const message = 'Please fill out the form properly.';
+            alchemyCommon.toast({message});
+            return false;
+          }
+
+          const faculty = {
+            alias: facultyAlias.mdc.input_.value,
+            name: facultyName.mdc.input_.value,
+            code: facultyCode.mdc.input_.value,
+            designation_id: Number(facultyDesignationId.mdc.input_.value),
+            department_id: Number(facultyDepartmentId.mdc.input_.value),
+          };
+
+          const {editMode} = facultyAdd;
+          if (editMode) {
+            faculty.id = facultyAdd.editItemId;
+            alchemy.faculty.update(faculty.id, JSON.stringify(faculty),
+              onFacultyUpdateSuccess, onFacultyAddFail);
+          } else {
+            alchemy.faculty.add(JSON.stringify(faculty), onFacultyAddSuccess,
+              onFacultyAddFail);
+          }
+          return true;
+        });
+
+        function onFacultyUpdateSuccess (updatedFaculty) {
+          const {facultyView} = alchemyFacultySection;
+          const {facultyTable} = facultyView;
+          facultyTable.refresh();
+          facultyAddForm.element.reset();
+          facultyDepartmentId.mdcSelectHandler.clearSelection();
+          facultyAdd.switchMode.add();
+          scrollTo(facultyView.element);
+          const extra = Faculty.transform(updatedFaculty, 'short-info');
+          const message = 'Faculty updated successfully.';
+          alchemyCommon.toast({message}, extra);
+        }
+
+        function onFacultyAddSuccess (addedFaculty) {
+          const {facultyTable} = alchemyFacultySection.facultyView;
+          facultyTable.refresh();
+          facultyAddForm.element.reset();
+          facultyDepartmentId.mdcSelectHandler.clearSelection();
+          const extra = Faculty.transform(addedFaculty, 'short-info');
+          const message = 'Faculty added successfully.';
+          alchemyCommon.toast({message}, extra);
+        }
+
+        function onFacultyAddFail (error) {
+          if (typeof error.json !== 'function') {
+            console.error(error);
+          } else {
+            error.json().then((body) => {
+              const message = `Error ${error.status}: ${error.statusText}`;
+              const extra = arrayToHtml(Object.values(body));
+              alchemyCommon.toast({
+                message,
+                multiline: true,
+                timeout: PERSISTENT_TOAST_TIME,
+                actionText: 'OK',
+                actionOnBottom: true,
+                actionHandler () {}
+              }, extra);
+            });
+          }
+        }
+      }
+    }
+
+
+
 
     function setupTimeTableSection() {}
   },
