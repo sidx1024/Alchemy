@@ -118,7 +118,10 @@ class Alchemy {
       api: {
         path: './api',
         headers: {
-          Authorization: window.accessToken,
+          /**
+           * @return {string}
+           */
+          get Authorization() { return `Bearer ${accessControl.getAccessToken()}`; },
           'Content-Type': 'application/json'
         }
       }

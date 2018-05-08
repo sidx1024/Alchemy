@@ -122,7 +122,39 @@ function fetchStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
+  if (response.status === 401) {
+    accessControl.logout();
+    alchemyCommon.dialog.info({
+      header: 'Unauthorized',
+      body: 'You are logged out because your access token is invalid.',
+      accept: 'Reload',
+      // eslint-disable-next-line no-restricted-globals
+      onAccept: () => (location.reload())
+    }).show();
+  }
   return Promise.reject(response);
+}
+
+function handleResponse(response, callback) {
+  const isJSON = response.headers.get('content-type').indexOf('json') > -1;
+  if (isJSON) {
+    response.json().then(callback);
+  } else {
+    response.text().then(callback);
+  }
+}
+
+function onEnterKey(target, callback, once = false) {
+  if (!target) throw new Error('Target is null or undefined.');
+  target.addEventListener('keydown', function onKeyDown(e) {
+    e.preventDefault();
+    if (e.keyCode === 13) {
+      callback();
+      if (once) {
+        target.removeEventListener('keydown', onKeyDown);
+      }
+    }
+  });
 }
 
 function removeLoadingOverlay() {
