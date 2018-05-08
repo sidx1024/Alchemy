@@ -1,4 +1,4 @@
-/* eslint-disable no-undef,prefer-destructuring,no-use-before-define */
+/* eslint-disable no-undef,prefer-destructuring,no-use-before-define,no-underscore-dangle */
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class Course extends Model {
     }
     switch (type) {
       case 'table': {
-        let transformedData = [];
+        const transformedData = [];
         data.forEach((_course) => {
           const course = {};
           course.id = _course.id;
@@ -111,6 +111,30 @@ class Programme extends Model {
   }
 }
 
+class Class_ extends Model {
+  static transform(classes, type) {
+    const transformedData = [];
+    switch (type) {
+      case 'list':
+        console.log('classes', classes);
+        classes.forEach((class_) => {
+          const classItem = Object.assign({}, class_);
+          const { division: div } = classItem;
+          // Convert division to string
+          // (3 -> D03, 15 -> D15)
+          const divs = div < 10 ? `${'0'}${div}` : `${div}`;
+          classItem.name = `${classItem.level}D${divs}`;
+          transformedData.push(classItem);
+        });
+        break;
+      default:
+        Logger.error(`Cannot transform data to type ${type}`);
+    }
+    console.log('transformed', transformedData);
+    return transformedData;
+  }
+}
+
 // eslint-disable-next-line no-unused-vars
 class Alchemy {
   constructor(options) {
@@ -130,12 +154,15 @@ class Alchemy {
     this.ready = false;
     this.onReady = options.onReady;
     this.onFail = options.onFail;
-    this.current = { programme: null, departments: null, ONE_PRACTICAL_CREDIT: 1 };
+    this.current = {
+      programme: null, departments: null, classes: null, ONE_PRACTICAL_CREDIT: 1
+    };
     this.course = new Course('course', this.config);
     this.location = new Location('location', this.config);
     this.department = new Department('department', this.config);
     this.faculty = new Faculty('faculty', this.config);
     this.programme = new Programme('programme', this.config);
+    this.class_ = new Class_('class', this.config);
     this.pingAPI(this.init.bind(this), this.onFail);
   }
 
@@ -149,6 +176,8 @@ class Alchemy {
     this.programme.get(this.keys.programme, onProgrammeReceived.bind(this));
     requestsSent += 1;
     this.department.all(onDepartmentsReceived.bind(this));
+    requestsSent += 1;
+    this.class_.all(onClassesReceived.bind(this));
     requestsSent += 1;
 
     function onRequestReceived(success, response) {
@@ -171,6 +200,7 @@ class Alchemy {
         }
       }
     }
+
     function onProgrammeReceived(response) {
       if (response) {
         this.current.programme = response;
@@ -179,9 +209,19 @@ class Alchemy {
         onRequestReceived(false, response);
       }
     }
+
     function onDepartmentsReceived(response) {
       if (response) {
         this.current.departments = response;
+        onRequestReceived(true);
+      } else {
+        onRequestReceived(false, response);
+      }
+    }
+
+    function onClassesReceived(response) {
+      if (response) {
+        this.current.classes = response;
         onRequestReceived(true);
       } else {
         onRequestReceived(false, response);

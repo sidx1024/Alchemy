@@ -183,6 +183,7 @@ function bootAlchemy() {
       setupTabs();
       setupCourseSection();
       // setupLocationSection();
+      setupCourseOfferedSection();
       setupTimeTableSection();
       function setupTabs() {
         const alchemyTabs = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
@@ -368,8 +369,7 @@ function bootAlchemy() {
           function setupFilterByText() {
             const { courseFilterByText } = alchemyCourseSection.courseView;
             if (courseFilterByText.element) {
-              const searchTextField = mdc.textField.MDCTextField.attachTo(
-                courseFilterByText.element);
+              const searchTextField = mdc.textField.MDCTextField.attachTo(courseFilterByText.element);
               const searchInput = searchTextField.input_;
               searchInput.addEventListener('input', onSearchInputChange);
 
@@ -941,6 +941,41 @@ function bootAlchemy() {
               return selectedDepartment.data;
             }
             return false;
+          }
+        }
+      }
+
+      function setupCourseOfferedSection() {
+        const alchemyCourseOfferedSection = {
+          classSelect: {
+            element: document.querySelector('#alchemy-course-offered__class')
+          }
+        };
+
+        setupClassSelect();
+
+        function setupClassSelect() {
+          const { classSelect } = alchemyCourseOfferedSection;
+          classSelect.mdcSelectHandler =
+            MDCSelectHandler
+              .handle(classSelect.element)
+              .clearItems()
+              .init('Select class', { storeData: true })
+              .disable();
+
+          const { classes } = alchemy.current;
+          const classesList = Class_.transform(classes, 'list');
+
+          classSelect.mdcSelectHandler
+            .addItems(classesList, { assignments: { valueKey: 'name', idKey: 'id' } })
+            .setOnChangeListener(onClassChange)
+            .enable();
+
+          function onClassChange() {
+            const selectedItem = classSelect.mdcSelectHandler.getSelected();
+            console.log('selected', selectedItem);
+            // courseFilter.level = selectedItem.data.id;
+            // courseTable.refresh();
           }
         }
       }

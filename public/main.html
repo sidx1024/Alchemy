@@ -96,13 +96,13 @@
     <div class="mdc-toolbar__section--align-start my-modified-toolbar-section">
       <nav id="dynamic-tab-bar" class="mdc-tab-bar custom-indicator-tab-bar-in-toolbar" role="tablist">
         <a role="tab" aria-controls="courses"
-           class="mdc-tab mdc-tab--active">Course</a>
+           class="mdc-tab">Course</a>
         <a role="tab" aria-controls="panel-2"
            class="mdc-tab">Faculty</a>
         <a role="tab" aria-controls="panel-2"
            class="mdc-tab">Location</a>
-        <a role="tab" aria-controls="panel-3"
-           class="mdc-tab">Course Offered</a>
+        <a role="tab" aria-controls="panel-4"
+           class="mdc-tab mdc-tab--active">Course Offered</a>
         <a role="tab" aria-controls="panel-3"
            class="mdc-tab">Time Table</a>
         <a role="tab" aria-controls="panel-3"
@@ -119,7 +119,7 @@
 <section id="alchemy-body" style="display: none;">
   <main class="mdc-toolbar-fixed-adjust panels">
     <!-- SECTION Course-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-courses"
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-courses"
              role="tabpanel"
              aria-hidden="false">
       <!--
@@ -730,6 +730,33 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- SECTION Course Offered-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="panel-4" role="tabpanel">
+      <div class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <h1 class="mdc-typography--headline">Course Offered</h1>
+          <div class="mdc-layout-grid__inner">
+            <div id="alchemy-course-offered__class" class="mdc-select mdc-layout-grid__cell--span-4"
+                 role="listbox">
+              <div class="mdc-select__surface" tabindex="0">
+                <div class="mdc-select__label"></div>
+                <div class="mdc-select__selected-text"></div>
+                <div class="mdc-select__bottom-line"></div>
+              </div>
+              <div class="mdc-menu mdc-select__menu">
+                <ul class="mdc-list mdc-menu__items">
+                </ul>
+              </div>
+            </div>
+            <button id="alchemy-course-offered__view-button" class="mdc-button mdc-button--raised mdc-layout-grid__cell--span-2 mdc-layout-grid__cell--align-middle">View Courses</button>
+          </div>
+          <div class="mdc-layout-grid__inner">
+
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>

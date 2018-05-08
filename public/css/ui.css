@@ -134,6 +134,7 @@ main {
 
 .panel.active {
   display: block;
+  min-height: 500px;
 }
 
 .my-modified-toolbar-section {
