@@ -112,9 +112,6 @@ function setupCommon() {
     toast.mdc = mdc.snackbar.MDCSnackbar.attachTo(toast.element);
     toast.mdc.getDefaultFoundation().cleanup_();
     alchemyCommon.toast = (data, extra) => {
-      if (!data.timeout) {
-        data.timeout = 2750;
-      }
       toast.mdc.show(data);
       if (extra) {
         toast.extra.innerHTML = extra;
@@ -359,16 +356,11 @@ function bootAlchemy() {
               console.error(error);
             } else {
               error.json().then((body) => {
-                const message = `Error ${error.status}: ${error.statusText}`;
-                const extra = arrayToHtml(Object.values(body));
-                alchemyCommon.toast({
-                  message,
-                  multiline: true,
-                  timeout: PERSISTENT_TOAST_TIME,
-                  actionText: 'OK',
-                  actionOnBottom: true,
-                  actionHandler() {}
-                }, extra);
+                alchemyCommon.dialog.info({
+                  header: `Error ${error.status}: ${error.statusText}`,
+                  body: arrayToHtml(Object.values(body)),
+                  accept: 'Okay'
+                }).show();
               });
             }
           }
@@ -629,16 +621,11 @@ function bootAlchemy() {
               console.error(error);
             } else {
               error.json().then((body) => {
-                const message = `Error ${error.status}: ${error.statusText}`;
-                const extra = arrayToHtml(Object.values(body));
-                alchemyCommon.toast({
-                  message,
-                  multiline: true,
-                  timeout: PERSISTENT_TOAST_TIME,
-                  actionText: 'OK',
-                  actionOnBottom: true,
-                  actionHandler() {}
-                }, extra);
+                alchemyCommon.dialog.info({
+                  header: `Error ${error.status}: ${error.statusText}`,
+                  body: arrayToHtml(Object.values(body)),
+                  accept: 'Okay'
+                }).show();
               });
             }
           }
