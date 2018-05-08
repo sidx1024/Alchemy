@@ -21,6 +21,9 @@ function setupLoginSection() {
     loginButton: {
       element: document.querySelector('#alchemy-login__login-button')
     },
+    logoutButton: {
+      element: document.querySelector('#alchemy-login__logout-button')
+    },
     errorText: {
       element: document.querySelector('#alchemy-login__error h2')
     }
@@ -30,11 +33,14 @@ function setupLoginSection() {
 
   function setupLoginEvents() {
     const {
-      usernameInput, passwordInput, loginButton, errorText
+      usernameInput, passwordInput, loginButton, logoutButton, errorText
     } = alchemyLoginSection;
     usernameInput.mdc = mdc.textField.MDCTextField.attachTo(usernameInput.element);
     passwordInput.mdc = mdc.textField.MDCTextField.attachTo(passwordInput.element);
     loginButton.element.addEventListener('click', onLoginPress);
+    logoutButton.element.addEventListener('click', onLogoutPress);
+    focusListener(passwordInput.input, 'Enter', onLoginPress);
+
     onEnterKey(loginButton.element, onLoginPress);
 
     function onLoginPress() {
@@ -43,8 +49,18 @@ function setupLoginSection() {
       const password = passwordInput.input.value;
       // TODO: Validate fields
       accessControl.login(username, password, onLogin, (error) => {
-        errorText.element.innerHTML = error.message;
+        errorText.element.innerHTML = (error && error.message) || error;
       });
+    }
+
+    function onLogoutPress() {
+      alchemyCommon.dialog.ask({
+        header: 'Logout',
+        body: 'Are you sure you want to logout?',
+        accept: 'Logout',
+        cancel: 'Cancel',
+        onAccept: () => { onLogout(); location.reload(); }
+      }).show();
     }
 
     function onLogin() {
@@ -53,6 +69,7 @@ function setupLoginSection() {
     }
 
     function onLogout() {
+      accessControl.logout();
       alchemyCommon.logoutState();
     }
 

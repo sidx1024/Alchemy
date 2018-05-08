@@ -144,9 +144,29 @@ function handleResponse(response, callback) {
   }
 }
 
+function focusListener(element, key, callback) {
+  function onKeyDown(e) {
+    if (e.key === key) {
+      callback();
+    }
+  }
+
+  function onFocus() {
+    window.addEventListener('keydown', onKeyDown);
+  }
+
+  function onBlur() {
+    window.removeEventListener('keydown', onKeyDown);
+  }
+
+  element.addEventListener('focus', onFocus);
+  element.addEventListener('blur', onBlur);
+}
+
 function onEnterKey(target, callback, once = false) {
   if (!target) throw new Error('Target is null or undefined.');
   target.addEventListener('keydown', function onKeyDown(e) {
+    console.log('key press', e);
     e.preventDefault();
     if (e.keyCode === 13) {
       callback();
