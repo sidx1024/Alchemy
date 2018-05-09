@@ -52,6 +52,7 @@
 
   <!-- Access Token: TODO: Replace this with an actual solution. -->
   <script src="js/access-token.js"></script>
+  <script src="js/alchemy/AccessControl.js"></script>
 
   <!-- Custom JS for handling mdc -->
   <script src="js/vendor/mdc-handler.js"></script>
@@ -60,7 +61,34 @@
 <div id="loading-overlay">
   Loading...
 </div>
-<header class="mdc-toolbar mdc-toolbar--fixed mdc-theme--primary-bg">
+<div id="alchemy-login" style="display: none;" class="mdc-layout-grid">
+  <div class="mdc-layout-grid__inner mdc-elevation--z8">
+    <div class="mdc-layout-grid__cell--span-12">
+      <h1 class="mdc-typography mdc-typography--title">Login</h1>
+    </div>
+    <div id="alchemy-login__error" class="mdc-layout-grid__cell--span-12">
+      <h2 class="mdc-typography mdc-typography--subheading1"></h2>
+    </div>
+    <div id="alchemy-login__username"
+         class="mdc-text-field mdc-text-field--focused mdc-layout-grid__cell--span-12">
+      <input type="text" id="alchemy-login__username--input" class="mdc-text-field__input"
+             aria-controls="name-validation-message" autocomplete="off" required minlength=2>
+      <label for="alchemy-login__username--input" class="mdc-floating-label">Username</label>
+    </div>
+    <div id="alchemy-login__password"
+         class="mdc-text-field mdc-text-field--focused mdc-layout-grid__cell--span-12">
+      <input type="password" id="alchemy-login__password--input" class="mdc-text-field__input"
+             aria-controls="name-validation-message" autocomplete="off" required minlength=2>
+      <label for="alchemy-login__password--input" class="mdc-floating-label">Password</label>
+    </div>
+    <div class="mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--align-right">
+      <button id="alchemy-login__login-button" class="mdc-button mdc-button--raised">
+        Login
+      </button>
+    </div>
+  </div>
+</div>
+<header id="alchemy-header" style="display: none;" class="mdc-toolbar mdc-toolbar--fixed mdc-theme--primary-bg">
   <div class="mdc-toolbar__row">
     <div class="mdc-toolbar__section--align-start">
       <span class="mdc-toolbar__title app-title">Alchemy</span>
@@ -68,13 +96,13 @@
     <div class="mdc-toolbar__section--align-start my-modified-toolbar-section">
       <nav id="dynamic-tab-bar" class="mdc-tab-bar custom-indicator-tab-bar-in-toolbar" role="tablist">
         <a role="tab" aria-controls="courses"
-           class="mdc-tab mdc-tab--active">Course</a>
+           class="mdc-tab">Course</a>
         <a role="tab" aria-controls="panel-2"
            class="mdc-tab">Faculty</a>
         <a role="tab" aria-controls="panel-2"
            class="mdc-tab">Location</a>
-        <a role="tab" aria-controls="panel-3"
-           class="mdc-tab">Course Offered</a>
+        <a role="tab" aria-controls="panel-4"
+           class="mdc-tab mdc-tab--active">Course Offered</a>
         <a role="tab" aria-controls="panel-3"
            class="mdc-tab">Time Table</a>
         <a role="tab" aria-controls="panel-3"
@@ -88,11 +116,10 @@
     </div>
   </div>
 </header>
-
-<section>
+<section id="alchemy-body" style="display: none;">
   <main class="mdc-toolbar-fixed-adjust panels">
     <!-- SECTION Course-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-courses"
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-courses"
              role="tabpanel"
              aria-hidden="false">
       <!--
@@ -195,7 +222,7 @@
             <h1 class="mdc-typography--headline">Add Course</h1>
             <form id="alchemy-course-add__form" class="mdc-layout-grid__inner" onsubmit=" ">
               <!-- Course Code -->
-              <div class="mdc-layout-grid__cell--span-4">
+              <div class="mdc-layout-grid__cell--span-3">
                 <div id="alchemy-course-add__course-code"
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="text" id="alchemy-course-add__course-code--input" class="mdc-text-field__input"
@@ -214,7 +241,7 @@
                 </p>
               </div>
               <!-- Course Name -->
-              <div class="mdc-layout-grid__cell--span-4">
+              <div class="mdc-layout-grid__cell--span-6">
                 <div id="alchemy-course-add__course-name"
                      class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
                   <input type="text" id="alchemy-course-add__course-name--input" class="mdc-text-field__input"
@@ -233,7 +260,7 @@
                 </p>
               </div>
               <!-- Course Alias -->
-              <div class="mdc-layout-grid__cell--span-4">
+              <div class="mdc-layout-grid__cell--span-3">
                 <div id="alchemy-course-add__course-alias"
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="text" id="alchemy-course-add__course-alias--input" class="mdc-text-field__input"
@@ -265,7 +292,8 @@
                 </div>
               </div>
               <!-- Course Type -->
-              <div id="alchemy-course-add__course-type" class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
+              <div id="alchemy-course-add__course-type"
+                   class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
                 <span class="mdc-typography--subheading">&nbsp;Course Type:</span>
                 <div class="mdc-form-field">
                   <div id="alchemy-course-add__course-type--normal" class="mdc-radio">
@@ -295,7 +323,8 @@
                 </div>
               </div>
               <!-- Course Person -->
-              <div id="alchemy-course-add__course-person" class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
+              <div id="alchemy-course-add__course-person"
+                   class="mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--align-middle">
                 <span class="mdc-typography--subheading">&nbsp;No. of person:</span>
                 <div class="mdc-form-field">
                   <div id="alchemy-course-add__course-person--one" class="mdc-radio">
@@ -329,7 +358,7 @@
                 <div id="alchemy-course-add__course-lecture"
                      class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-3 mdc-text-field--focused">
                   <input type="number" id="alchemy-course-add__course-lecture--input" class="mdc-text-field__input"
-                         aria-controls="name-validation-message" autocomplete="off" required  min="0" step="1" max="12">
+                         aria-controls="name-validation-message" autocomplete="off" required min="0" step="1" max="12">
                   <label for="alchemy-course-add__course-lecture--input" class="mdc-floating-label">No. of
                     Lectures</label>
                   <div class="mdc-notched-outline">
@@ -369,7 +398,8 @@
                 <div id="alchemy-course-add__course-tutorial"
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="number" id="alchemy-course-add__course-tutorial--input" class="mdc-text-field__input"
-                         aria-controls="name-validation-message" autocomplete="off" value="0" required min="0" step="1" max="12">
+                         aria-controls="name-validation-message" autocomplete="off" value="0" required min="0" step="1"
+                         max="12">
                   <label for="alchemy-course-add__course-tutorial--input"
                          class="mdc-floating-label mdc-floating-label--float-above">No. of
                     Tutorials</label>
@@ -390,7 +420,8 @@
                 <div id="alchemy-course-add__course-credit"
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="number" id="alchemy-course-add__course-credit--input" class="mdc-text-field__input"
-                         aria-controls="name-validation-message" autocomplete="off" value="0" required min="0" step="1" max="24">
+                         aria-controls="name-validation-message" autocomplete="off" value="0" required min="0" step="1"
+                         max="24">
                   <label for="alchemy-course-add__course-tutorial--input"
                          class="mdc-floating-label mdc-floating-label--float-above">Credit</label>
                   <div class="mdc-notched-outline">
@@ -428,7 +459,8 @@
       </div>
     </section>
     <!-- SECTION Faculty-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="panel-2" role="tabpanel" aria-hidden="true">
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="panel-2" role="tabpanel"
+             aria-hidden="true">
       <div class="mdc-layout-grid__inner">
         <div class="mdc-card mdc-theme--background mdc-layout-grid__cell--span-12">
           <div class="mdc-card__actions mdc-card__actions--full-bleed">
@@ -472,7 +504,8 @@
       </div>
     </section>
     <!-- SECTION Location-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="panel-3" role="tabpanel" aria-hidden="true">
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="panel-3" role="tabpanel"
+             aria-hidden="true">
       <!--
     /*
       |--------------------------------------------------------------------------
@@ -578,7 +611,8 @@
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="text" id="alchemy-location-add__location-name--input" class="mdc-text-field__input"
                          aria-controls="name-validation-message" required minlength=2>
-                  <label for="alchemy-location-add__location-name--input" class="mdc-floating-label">Location Name</label>
+                  <label for="alchemy-location-add__location-name--input" class="mdc-floating-label">Location
+                    Name</label>
                   <div class="mdc-notched-outline">
                     <svg>
                       <path class="mdc-notched-outline__path"/>
@@ -597,7 +631,8 @@
                      class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
                   <input type="text" id="alchemy-location-add__location-alias--input" class="mdc-text-field__input"
                          aria-controls="name-validation-message" required minlength=4>
-                  <label for="alchemy-location-add__location-alias--input" class="mdc-floating-label">Location Alias</label>
+                  <label for="alchemy-location-add__location-alias--input" class="mdc-floating-label">Location
+                    Alias</label>
                   <div class="mdc-notched-outline">
                     <svg>
                       <path class="mdc-notched-outline__path"/>
@@ -616,7 +651,8 @@
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="number" id="alchemy-location-add__location-capacity--input" class="mdc-text-field__input"
                          aria-controls="name-validation-message" required minlength=3>
-                  <label for="alchemy-location-add__location-capacity--input" class="mdc-floating-label">Location Capacity</label>
+                  <label for="alchemy-location-add__location-capacity--input" class="mdc-floating-label">Location
+                    Capacity</label>
                   <div class="mdc-notched-outline">
                     <svg>
                       <path class="mdc-notched-outline__path"/>
@@ -696,13 +732,43 @@
 
     </section>
 
+    <!-- SECTION Course Offered-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="panel-4" role="tabpanel">
+      <div class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <h1 class="mdc-typography--headline">Course Offered</h1>
+          <div class="mdc-layout-grid__inner">
+            <div id="alchemy-course-offered__class" class="mdc-select mdc-layout-grid__cell--span-4"
+                 role="listbox">
+              <div class="mdc-select__surface" tabindex="0">
+                <div class="mdc-select__label"></div>
+                <div class="mdc-select__selected-text"></div>
+                <div class="mdc-select__bottom-line"></div>
+              </div>
+              <div class="mdc-menu mdc-select__menu">
+                <ul class="mdc-list mdc-menu__items">
+                </ul>
+              </div>
+            </div>
+            <button id="alchemy-course-offered__view-button" class="mdc-button mdc-button--raised mdc-layout-grid__cell--span-2 mdc-layout-grid__cell--align-middle">View Courses</button>
+          </div>
+          <div class="mdc-layout-grid__inner">
+
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
   <div class="mdc-layout-grid mdc-theme--primary-dark-bg mdc-theme--text-disabled-on-dark">
     <div class="mdc-layout-grid__inner">
-      <div class="mdc-layout-grid__cell">
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-1"></div>
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
         <span class="app-title">Alchemy</span>
       </div>
-      <div class="mdc-layout-grid__cell"></div>
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
+        <button id="alchemy-login__logout-button" class="mdc-button mdc-button--raised mdc-theme--text-primary-on-primary">Logout</button>
+      </div>
     </div>
   </div>
 </section>
@@ -732,11 +798,14 @@
       </h2>
     </header>
     <section class="mdc-dialog__body">
-      Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
+      Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps
+      are running.
     </section>
     <footer class="mdc-dialog__footer">
-      <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">Decline</button>
-      <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">Accept</button>
+      <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">Decline
+      </button>
+      <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">Accept
+      </button>
     </footer>
   </div>
   <div class="mdc-dialog__backdrop"></div>

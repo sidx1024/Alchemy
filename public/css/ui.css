@@ -134,6 +134,7 @@ main {
 
 .panel.active {
   display: block;
+  min-height: 500px;
 }
 
 .my-modified-toolbar-section {
@@ -214,4 +215,26 @@ main {
 #alchemy-toast .alchemy-toast__extra {
   color: var(--mdc-theme-text-secondary-on-primary);
   margin-bottom: 24px;
+}
+
+#alchemy-login {
+  display: flex;
+  align-items: center;
+  padding: 0 5% 0 5%;
+  position: fixed;
+  top:0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--mdc-theme-primary-dark);
+}
+
+#alchemy-login .mdc-layout-grid__inner {
+  width: 360px;
+  background-color: var(--mdc-theme-background);
+  padding: 24px;
+}
+
+#alchemy-login__error h2 {
+  color: #d50000;
 }

@@ -10,6 +10,7 @@
 */
 
 const PERSISTENT_TOAST_TIME = 9999999;
+const HEADER_HEIGHT_OFFSET = 84;
 
 function blurSelection(exclusions, callback, callbackArguments) {
   return (mouseEvent) => {
@@ -28,7 +29,7 @@ function scrollTo(element) {
   if (element && window.scroll) {
     window.scroll({
       behavior: 'smooth',
-      top: element.offsetTop - 84
+      top: element.offsetTop - HEADER_HEIGHT_OFFSET
     });
   }
 }
@@ -91,6 +92,14 @@ function setRadioInput(element, value) {
   });
 }
 
+// Convert name to alias (Data Mining and Business Intelligence --> D.M.B.I.)
+function getAliasFromName(name) {
+  return `${name.split(' ') // Split string by space and return an array of words
+    .filter(c => c !== 'and') // remove the word 'and'
+    .map(c => c[0]) // Take the first letter of each word
+    .join('.')}.`; // join letters by dot and append dot at the end.
+}
+
 function setSelectedItem(table, id) {
   if (!table || !table.element) {
     throw new Error('Table or table element is null.');
@@ -100,7 +109,8 @@ function setSelectedItem(table, id) {
     selectedItem.removeAttribute('selected');
   }
   // eslint-disable-next-line eqeqeq
-  const targetItem = Array.from(table.element.querySelectorAll('tr')).find(d => +d.getAttribute('data-id') === id);
+  const targetItem = Array.from(table.element.querySelectorAll('tr'))
+    .find(d => +d.getAttribute('data-id') === id);
   if (targetItem) {
     targetItem.classList.add('selected');
   } else {
@@ -112,7 +122,59 @@ function fetchStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
+  if (response.status === 401) {
+    accessControl.logout();
+    alchemyCommon.dialog.info({
+      header: 'Unauthorized',
+      body: 'You are logged out because your access token is invalid.',
+      accept: 'Reload',
+      // eslint-disable-next-line no-restricted-globals
+      onAccept: () => (location.reload())
+    }).show();
+  }
   return Promise.reject(response);
+}
+
+function handleResponse(response, callback) {
+  const isJSON = response.headers.get('content-type').indexOf('json') > -1;
+  if (isJSON) {
+    response.json().then(callback);
+  } else {
+    response.text().then(callback);
+  }
+}
+
+function focusListener(element, key, callback) {
+  function onKeyDown(e) {
+    if (e.key === key) {
+      callback();
+    }
+  }
+
+  function onFocus() {
+    window.addEventListener('keydown', onKeyDown);
+  }
+
+  function onBlur() {
+    window.removeEventListener('keydown', onKeyDown);
+  }
+
+  element.addEventListener('focus', onFocus);
+  element.addEventListener('blur', onBlur);
+}
+
+function onEnterKey(target, callback, once = false) {
+  if (!target) throw new Error('Target is null or undefined.');
+  target.addEventListener('keydown', function onKeyDown(e) {
+    console.log('key press', e);
+    e.preventDefault();
+    if (e.keyCode === 13) {
+      callback();
+      if (once) {
+        target.removeEventListener('keydown', onKeyDown);
+      }
+    }
+  });
 }
 
 function removeLoadingOverlay() {
