@@ -86,12 +86,48 @@ class Location extends Model {
       if (typeof searchParams.text !== 'undefined') {
         url += `text=${encodeURI(searchParams.text.toString())}&`;
       }
-      if (typeof searchParams.limit !== 'undefined') {
-        url += `limit=${encodeURI(searchParams.limit.toString())}&`;
+      if (typeof searchParams.type !== 'undefined') {
+        url += `limit=${encodeURI(searchParams.type.toString())}&`;
       }
     }
 
     return super.search(url, successCallback, failCallback);
+  }
+  static transform(data, type) {
+    if (!data) {
+      return [];
+    }
+    switch (type) {
+      case 'table': {
+        const transformedData = [];
+        data.forEach((_location) => {
+          const location = {};
+          location.id = _location.id;
+          location.alias = _location.alias;
+          location.name = _location.name || '&not;';
+          location.capacity = _location.capacity;
+          location.type = _location.type === 0 ? "Classroom" : "Laboratory";
+          location.department_id = _location.department_id;
+          transformedData.push(location);
+        });
+        return transformedData;
+      }
+      case 'short-info': {
+        let location = data;
+        if (Array.isArray(data)) {
+          location = data[0];
+        }
+        return arrayToHtml([
+          location.id,
+          location.alias,
+          location.name || '&not;',
+          location.type === 0 ? "Classroom" : "Laboratory"]);
+      }
+      default: {
+        Logger.error(`Cannot transform data to type ${type}`);
+      }
+    }
+    return transformedData;
   }
 }
 

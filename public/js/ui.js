@@ -176,13 +176,16 @@ function setupCommon() {
   }
 }
 
+
+
 function bootAlchemy() {
   window.alchemy = new Alchemy({
     onReady: () => {
       console.clear();
       setupTabs();
       setupCourseSection();
-      // setupLocationSection();
+      setupLocationSection();
+      //setupFacultySection();
       setupCourseOfferedSection();
       setupTimeTableSection();
       function setupTabs() {
@@ -207,6 +210,7 @@ function bootAlchemy() {
           updatePanel(nthChildIndex);
         });
       }
+
       function setupCourseSection() {
         const alchemyCourseSection = {
           element: document.querySelector('#alchemy-courses'),
@@ -702,17 +706,16 @@ function bootAlchemy() {
           element: document.querySelector('#alchemy-locations'),
           locationView: {
             element: document.querySelector('#alchemy-location-view'),
-            locationAddButton: {
-              element: document.querySelector('#alchemy-location-view__add-button')
-            },
-            locationEditButton: {
-              element: document.querySelector('#alchemy-location-view__edit-button')
-            },
+            locationAddButton: { element: document.querySelector('#alchemy-location-view__add-button') },
+            locationEditButton: { element: document.querySelector('#alchemy-location-view__edit-button') },
             locationDeleteButton: {
               element: document.querySelector('#alchemy-location-view__delete-button')
             },
             locationFilterByText: {
               element: document.querySelector('#alchemy-location-view__filter-by-text')
+            },
+            locationFilterByType: {
+              element: document.querySelector('#alchemy-location-view__filter-by-type')
             },
             locationFilterByBranch: {
               element: document.querySelector('#alchemy-location-view__filter-by-branch')
@@ -720,31 +723,36 @@ function bootAlchemy() {
             locationTable: {
               element: document.querySelector('#alchemy-location-view__table'),
               table: document.querySelector('#alchemy-location-view__table table'),
-              headers: ['Alias', 'Name', 'Capacity', 'Department', 'Type'],
-              headersDataTypes: ['Alias', 'Name', 1, 'Department', 1],
-              headersWidth: [9.5, 40.5],
-              selectedLocationId: null
+              headers: ['Alias', 'Name', 'Capacity', 'Type', 'Department'],
+              headersDataTypes: ['Alias', 'Name', 1, 'type', 1],
+              headersWidth: [12, 25, 16, 15, 20],
+              selectedId: null
             }
           },
           locationAdd: {
             element: document.querySelector('#alchemy-location-add'),
+            mode: 'add',
+            heading: document.querySelector('#alchemy-location-add h1'),
             locationAddForm: { element: document.querySelector('#alchemy-location-add__form') },
-            locationName: { element: document.querySelector('#alchemy-location-add__location-name') },
-            locationAlias: { element: document.querySelector('#alchemy-location-add__location-alias') },
-            locationCapacity: {
-              element: document.querySelector('#alchemy-location-add__location-capacity')
+            locationName: {
+              element: document.querySelector('#alchemy-location-add__location-name'),
+              input: document.querySelector('#alchemy-location-add__location-name input')
             },
+            locationAlias: {
+              element: document.querySelector('#alchemy-location-add__location-alias'),
+              input: document.querySelector('#alchemy-location-add__location-alias input')
+            },
+            locationCapacity: {
+              element: document.querySelector('#alchemy-location-add__location-capacity'),
+              input: document.querySelector('#alchemy-location-add__location-capacity input')
+            },
+            locationType: { element: document.querySelector('#alchemy-location-add__location-type') },
             locationDepartment: {
               element: document.querySelector('#alchemy-location-add__location-department')
             },
-            locationType: { element: document.querySelector('#alchemy-location-add__location-type') },
             locationAddButton: { element: document.querySelector('#alchemy-location-add__add-button') },
-            locationResetButton: {
-              element: document.querySelector('#alchemy-location-add__reset-button')
-            },
-            locationViewButton: {
-              element: document.querySelector('#alchemy-location-add__view-button')
-            }
+            locationResetButton: { element: document.querySelector('#alchemy-location-add__reset-button') },
+            locationViewButton: { element: document.querySelector('#alchemy-location-add__view-button') }
           }
         };
 
@@ -757,12 +765,12 @@ function bootAlchemy() {
           const locationFilter = {
             departmentId: null,
             text: null,
-            limit: null
           };
 
           setupLocationTable();
           setupFilterByText();
           setupFilterByBranch();
+          setupFilterByType();
           setupEvents();
 
           function setupLocationTable() {
@@ -776,7 +784,7 @@ function bootAlchemy() {
                 selectedLocations,
                 item => (item.classList.remove('selected'))
               );
-              locationTable.selectedLocationId = null;
+              locationTable.selectedId = null;
             };
 
             locationTable.refresh = () => {
@@ -784,7 +792,7 @@ function bootAlchemy() {
               alchemy.location.search(filterObject(locationFilter), (data) => {
                 const transformedData = Location.transform(data, 'table');
                 locationTable.mdcDataTableHelper
-                  .setData(transformedData);
+                .setData(transformedData);
                 if (!locationTable.element.querySelector('td')) {
                   locationTable.element.classList.add('alchemy-location-table--empty');
                 } else {
@@ -796,10 +804,41 @@ function bootAlchemy() {
             const { headers, headersDataTypes, headersWidth } = locationTable;
             locationTable.mdcDataTableHelper =
               MDCDataTableHelper
-                .handle(locationTable.element)
-                .setIdKey('id')
-                .setHeaders(headers, headersDataTypes, headersWidth);
+              .handle(locationTable.element)
+              .setIdKey('id')
+              .setHeaders(headers, headersDataTypes, headersWidth);
             locationTable.refresh();
+
+            locationDeleteButton.element.addEventListener('click', () => {
+              if (!locationDeleteButton.element.hasAttribute('disabled')) {
+                alchemy.location.delete(
+                  locationTable.selectedId,
+                  onLocationDeleteSuccess,
+                  onLocationDeleteFail
+                );
+              }
+            });
+          }
+
+          function onLocationDeleteSuccess(deletedLocation) {
+            const message = 'Location deleted successfully.';
+            const extra = Location.transform(deletedLocation, 'short-info');
+            locationTable.refresh();
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onLocationDeleteFail(error) {
+            if (typeof error.json !== 'function') {
+              console.error(error);
+            } else {
+              error.json().then((body) => {
+                alchemyCommon.dialog.info({
+                  header: `Error ${error.status}: ${error.statusText}`,
+                  body: arrayToHtml(Object.values(body)),
+                  accept: 'Okay'
+                }).show();
+              });
+            }
           }
 
           function setupFilterByText() {
@@ -810,7 +849,7 @@ function bootAlchemy() {
               searchInput.addEventListener('input', onSearchInputChange);
 
               function onSearchInputChange(inputEvent) {
-                locationFilter.text = inputEvent.srcElement.value;
+                locationFilter.text = inputEvent.target.value;
                 locationTable.refresh();
               }
             }
@@ -820,25 +859,50 @@ function bootAlchemy() {
             const { locationFilterByBranch } = alchemyLocationSection.locationView;
             locationFilterByBranch.mdcSelectHandler =
               MDCSelectHandler
-                .handle(locationFilterByBranch.element)
-                .clearItems()
-                .init('Select branch', { storeData: true })
-                .disable();
+              .handle(locationFilterByBranch.element)
+              .clearItems()
+              .init('Select branch', { storeData: true })
+              .disable();
 
             const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
             const { departments } = alchemy.current;
 
             locationFilterByBranch.mdcSelectHandler
-              .addItems(
-                departments.concat([allBranchesItem]),
-                { assignments: { valueKey: 'name', idKey: 'alias' } }
-              )
-              .setOnChangeListener(onBranchChange)
-              .enable();
+            .addItems(
+              departments.concat([allBranchesItem]),
+              { assignments: { valueKey: 'name', idKey: 'id' } }
+            )
+            .setOnChangeListener(onBranchChange)
+            .enable();
 
             function onBranchChange() {
               const selectedItem = locationFilterByBranch.mdcSelectHandler.getSelected();
               locationFilter.departmentId = selectedItem.data.id;
+              locationTable.refresh();
+            }
+          }
+
+          function setupFilterByType() {
+            const { locationFilterByType } = alchemyLocationSection.locationView;
+            locationFilterByType.mdcSelectHandler =
+              MDCSelectHandler
+              .handle(locationFilterByType.element)
+              .clearItems()
+              .init('Select Type', { storeData: true })
+              .disable();
+
+            const { programme } = alchemy.current;
+            const allLevelsItem = { id: null, level: 'All' };
+            const levelsList = Programme.transform(programme, 'list').concat([allLevelsItem]);
+
+            locationFilterByType.mdcSelectHandler
+            .addItems(levelsList, { assignments: { valueKey: 'level', idKey: 'id' } })
+            .setOnChangeListener(onTypeChange)
+            .enable();
+
+            function onTypeChange() {
+              const selectedItem = locationFilterByType.mdcSelectHandler.getSelected();
+              locationFilter.level = selectedItem.data.id;
               locationTable.refresh();
             }
           }
@@ -856,7 +920,7 @@ function bootAlchemy() {
               const { target } = mouseEvent;
               if (target.tagName !== 'TD') { return; }
               const selectedLocation = target.parentNode;
-              locationTable.selectedLocationId = selectedLocation.getAttribute('data-id');
+              locationTable.selectedId = selectedLocation.getAttribute('data-id');
               selectedLocation.classList.add('selected');
               locationEditButton.element.removeAttribute('disabled');
               locationDeleteButton.element.removeAttribute('disabled');
@@ -869,70 +933,171 @@ function bootAlchemy() {
               );
             });
 
+            const { locationAdd } = alchemyLocationSection;
+
             locationAddButton.element.addEventListener('click', () => {
-              scrollTo(alchemyLocationSection.locationAdd.element);
+              scrollTo(locationAdd.element);
+              locationAdd.switchMode.add();
+            });
+
+            locationEditButton.element.addEventListener('click', () => {
+              scrollTo(locationAdd.element);
+              locationAdd.switchMode.edit(locationTable.selectedId);
             });
           }
         }
 
         function setupLocationAdd() {
+          const { locationAdd } = alchemyLocationSection;
           const {
             locationAddForm,
-            locationCode,
             locationAlias,
             locationName,
-            locationLecture,
-            locationPractical,
-            locationTutorial,
-            locationCredit,
+            locationDepartment,
+            locationType,
+            locationCapacity,
             locationAddButton,
             locationResetButton,
             locationViewButton,
-            locationDepartment
-          } = alchemyLocationSection.locationAdd;
+          } = locationAdd;
 
-          mdc.textField.MDCTextField.attachTo(locationCode.element);
-          mdc.textField.MDCTextField.attachTo(locationAlias.element);
-          mdc.textField.MDCTextField.attachTo(locationName.element);
-          mdc.textField.MDCTextField.attachTo(locationLecture.element);
-          mdc.textField.MDCTextField.attachTo(locationPractical.element);
-          mdc.textField.MDCTextField.attachTo(locationTutorial.element);
-          mdc.textField.MDCTextField.attachTo(locationCredit.element);
+          locationAlias.mdc = mdc.textField.MDCTextField.attachTo(locationAlias.element);
+          locationName.mdc = mdc.textField.MDCTextField.attachTo(locationName.element);
+          locationCapacity.mdc = mdc.textField.MDCTextField.attachTo(locationCapacity.element);
+
+          locationAdd.switchMode = {
+            add: () => {
+              locationAdd.editMode = false;
+              locationAdd.heading.innerText = 'Add Location';
+              locationAddButton.element.innerText = 'ADD LOCATION';
+              delete locationAdd.editItemId;
+            },
+            edit: (id) => {
+              locationAdd.editMode = true;
+              locationAdd.heading.innerText = 'Edit Location';
+              locationAddButton.element.innerText = 'UPDATE LOCATION';
+
+              alchemy.location.get(id, onLocationGetSuccess, onLocationGetFail);
+
+              function onLocationGetSuccess(location) {
+                locationAdd.heading.innerText += ` (ID: ${location.id})`;
+                locationAdd.editItemId = location.id;
+                setTextFieldInput(locationName, location.name);
+                setTextFieldInput(locationAlias, location.alias);
+                setTextFieldInput(locationCapacity, location.capacity);
+                setRadioInput(locationType.element, location.type);
+                locationDepartment.mdcSelectHandler.setSelected(location.department_id);
+              }
+
+              function onLocationGetFail(error) {
+                if (typeof error.json !== 'function') {
+                  console.error(error);
+                } else {
+                  error.json().then((body) => {
+                    const message = `Error ${error.status}: ${error.statusText}`;
+                    const extra = arrayToHtml(Object.values(body));
+                    alchemyCommon.toast({ message }, extra);
+                  });
+                }
+              }
+            }
+          };
+
           setupLocationDepartment();
-
-          locationAddButton.element.addEventListener('click', () => {
-            const selectedDepartment = getSelectedDepartment();
-            const isFormValid = locationAddForm.element.checkValidity() && selectedDepartment !==
-              false;
-            if (!isFormValid) { return false; }
-
-            return true;
-          });
-
-          locationResetButton.element.addEventListener('click', () => {
-
-          });
 
           locationViewButton.element.addEventListener('click', () => {
             scrollTo(alchemyLocationSection.locationView.element);
           });
 
+          locationAddButton.element.addEventListener('click', () => {
+            const type = locationType.element.querySelector(':checked').getAttribute('value');
+            const department = getSelectedDepartment();
+
+            const isFormValid = locationAddForm.element.checkValidity() && department !== false;
+            if (!isFormValid) {
+              const message = 'Please fill out the form properly.';
+              alchemyCommon.toast({ message });
+              return false;
+            }
+
+            const location = {
+              alias: locationAlias.mdc.input_.value,
+              name: locationName.mdc.input_.value,
+              capacity: Number(locationCapacity.mdc.input_.value),
+              department_id: Number(department.id),
+              type: Number(type)
+            };
+
+            const { editMode } = locationAdd;
+            if (editMode) {
+              location.id = locationAdd.editItemId;
+              alchemy.location.update(
+                location.id,
+                JSON.stringify(location),
+                onLocationUpdateSuccess,
+                onLocationAddFail
+              );
+            } else {
+              alchemy.location.add(JSON.stringify(location), onLocationAddSuccess, onLocationAddFail);
+            }
+            return true;
+          });
+
+          locationResetButton.element.addEventListener('click', () => {
+            locationDepartment.mdcSelectHandler.clearSelection();
+          });
+
+          function onLocationUpdateSuccess(updatedLocation) {
+            const { locationView } = alchemyLocationSection;
+            const { locationTable } = locationView;
+            locationTable.refresh();
+            locationAddForm.element.reset();
+            locationDepartment.mdcSelectHandler.clearSelection();
+            locationAdd.switchMode.add();
+            scrollTo(locationView.element);
+            const extra = Location.transform(updatedLocation, 'short-info');
+            const message = 'Location updated successfully.';
+            debugger;
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onLocationAddSuccess(addedLocation) {
+            const { locationTable } = alchemyLocationSection.locationView;
+            locationTable.refresh();
+            locationAddForm.element.reset();
+            locationDepartment.mdcSelectHandler.clearSelection();
+            const extra = Location.transform(addedLocation, 'short-info');
+            const message = 'Location added successfully.';
+            debugger;
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onLocationAddFail(error) {
+            if (typeof error.json !== 'function') {
+              console.error(error);
+            } else {
+              error.json().then((body) => {
+                alchemyCommon.dialog.info({
+                  header: `Error ${error.status}: ${error.statusText}`,
+                  body: arrayToHtml(Object.values(body)),
+                  accept: 'Okay'
+                }).show();
+              });
+            }
+          }
+
           function setupLocationDepartment() {
             locationDepartment.mdcSelectHandler =
               MDCSelectHandler
-                .handle(locationDepartment.element)
-                .clearItems()
-                .init('Select Department', { storeData: true })
-                .disable();
+              .handle(locationDepartment.element)
+              .clearItems()
+              .init('Select Department', { storeData: true })
+              .disable();
 
             const { departments } = alchemy.current;
-
             locationDepartment.mdcSelectHandler
-              .addItems(
-                departments,
-                { assignments: { valueKey: 'name', idKey: 'alias' } }
-              )
-              .enable();
+            .addItems(departments, { assignments: { valueKey: 'name', idKey: 'id' } })
+            .enable();
           }
 
           function getSelectedDepartment() {
@@ -944,6 +1109,7 @@ function bootAlchemy() {
           }
         }
       }
+
 
       function setupCourseOfferedSection() {
         const alchemyCourseOfferedSection = {

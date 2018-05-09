@@ -9,65 +9,66 @@ use App\Location;
 
 class LocationController extends Controller
 {
-    public function all()
-    {
-        return $this->respond(Response::HTTP_OK, Location::all());
-    }
+  public function all()
+  {
+    return $this->respond(Response::HTTP_OK, Location::all());
+  }
 
-    public function get($id)
-    {
-        $location = Location::find($id);
-        if (is_null($location)) {
-            return response([],Response::HTTP_NOT_FOUND);
-        }
-        return response()->json(
-            $location,
-            Response::HTTP_OK
-        );
+  public function get($id)
+  {
+    $location = Location::find($id);
+    if (is_null($location)) {
+      return response([], Response::HTTP_NOT_FOUND);
     }
+    return response()->json(
+      $location,
+      Response::HTTP_OK
+    );
+  }
 
-    public function add(Request $request)
-    {
-        $this->validate($request, Location::$rules);
-        return response()->json(
-            Location::create(
-                $request->all(),
-                Response::HTTP_CREATED)
-        );
+  public function add(Request $request)
+  {
+    $this->validate($request, Location::$rules);
+    return response()->json(Location::create($request->all(), Response::HTTP_CREATED));
+  }
+
+  public function update(Request $request, $id)
+  {
+    $location = Location::find($id);
+    if (is_null($location)) {
+      return response([], Response::HTTP_NOT_FOUND);
     }
-
-    public function update(Request $request, $id)
-    {
-        $location = Location::find($id);
-        if (is_null($location)) {
-            return response([],Response::HTTP_NOT_FOUND);
-        }
-        $this->validate($request, Location::$rules);
-        return response()->json(
-            $location->update($request->all()),
-            Response::HTTP_OK
-        );
+    $this->validate($request, Location::$rules);
+    if ($location->update($request->all())) {
+      return response()->json(Location::find($id), Response::HTTP_OK);
     }
+    return response()->json(['message' => 'Unknown error while updating the location.'], Response::HTTP_CONFLICT);
+  }
 
-    public function delete($id)
-    {
-        $location = Location::find($id);
-        if (is_null($location)) {
-            return response([],Response::HTTP_NOT_FOUND);
-        }
-        Location::destroy($id);
-        return response([],Response::HTTP_OK);
+  public function delete($id)
+  {
+    $location = Location::find($id);
+    if (is_null($location)) {
+      return response([], Response::HTTP_NOT_FOUND);
     }
-
-    public function search(Request $request) {
-        $query = $request->query();
-        $filter_department = array_key_exists('department_id', $query) ? $query['department_id'] : null;
-        $filter_level = array_key_exists('level', $query) ? $query['level'] : null;
-        $filter_text = array_key_exists('text', $query) ? $query['text'] : null;
-        $filter_limit = array_key_exists('limit', $query) ? $query['limit'] : null;
-
-        return response(
-            Location::Search($filter_department, $filter_level, $filter_text, $filter_limit)->get(),
-            Response::HTTP_OK);
+    $location_is_used = sizeof($location->usages()) > 0;
+    if ($location_is_used) {
+      return response()->json(['message' => 'Used locations cannot be deleted.'], Response::HTTP_CONFLICT);
     }
+    Location::destroy($id);
+    return response()->json($location, Response::HTTP_OK);
+  }
+
+  public function search(Request $request)
+  {
+    $query = $request->query();
+    $filter_department = array_key_exists('department_id', $query) ? $query['department_id'] : null;
+    $filter_type = array_key_exists('type', $query) ? $query['type'] : null;
+    $filter_text = array_key_exists('text', $query) ? $query['text'] : null;
+    $filter_limit = array_key_exists('limit', $query) ? $query['limit'] : null;
+
+    return response(
+      Location::Search($filter_department, $filter_type, $filter_text, $filter_limit)->get(),
+      Response::HTTP_OK);
+  }
 }
