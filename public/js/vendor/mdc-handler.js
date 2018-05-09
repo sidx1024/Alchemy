@@ -240,7 +240,7 @@ class MDCDataTableHelper {
         if (isNumericData) {
           tdElement.classList.add('mdc-data-table--numeric');
         }
-        tdElement.innerText = tuple;
+        tdElement.innerHTML = tuple;
         trElement.appendChild(tdElement);
       });
       tableBody.appendChild(trElement);

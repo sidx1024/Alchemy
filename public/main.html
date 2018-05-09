@@ -539,10 +539,10 @@
                   </ul>
                 </div>
               </div>
-              <div id="alchemy-location-view__filter-by-level" class="mdc-select  mdc-layout-grid__cell--span-2"
+              <div id="alchemy-location-view__filter-by-type" class="mdc-select  mdc-layout-grid__cell--span-2"
                    role="listbox">
                 <div class="mdc-select__surface" tabindex="0">
-                  <div class="mdc-select__label">Select Level</div>
+                  <div class="mdc-select__label">Select Type</div>
                   <div class="mdc-select__selected-text"></div>
                   <div class="mdc-select__bottom-line"></div>
                 </div>
@@ -604,13 +604,13 @@
         <div class="mdc-card mdc-layout-grid__cell--span-12">
           <section class="mdc-card__primary">
             <h1 class="mdc-typography--headline">Add Location</h1>
-            <form id="alchemy-location-add__form" class="mdc-layout-grid__inner">
+            <form id="alchemy-location-add__form" class="mdc-layout-grid__inner" onsubmit=" ">
               <!-- Location Name -->
               <div class="mdc-layout-grid__cell--span-4">
                 <div id="alchemy-location-add__location-name"
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="text" id="alchemy-location-add__location-name--input" class="mdc-text-field__input"
-                         aria-controls="name-validation-message" required minlength=2>
+                         aria-controls="name-validation-message" maxlength=128 autocomplete="off">
                   <label for="alchemy-location-add__location-name--input" class="mdc-floating-label">Location
                     Name</label>
                   <div class="mdc-notched-outline">
@@ -630,7 +630,7 @@
                 <div id="alchemy-location-add__location-alias"
                      class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
                   <input type="text" id="alchemy-location-add__location-alias--input" class="mdc-text-field__input"
-                         aria-controls="name-validation-message" required minlength=4>
+                         aria-controls="name-validation-message" required minlength=2 maxlength="8"  autocomplete="off">
                   <label for="alchemy-location-add__location-alias--input" class="mdc-floating-label">Location
                     Alias</label>
                   <div class="mdc-notched-outline">
@@ -650,7 +650,7 @@
                 <div id="alchemy-location-add__location-capacity"
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="number" id="alchemy-location-add__location-capacity--input" class="mdc-text-field__input"
-                         aria-controls="name-validation-message" required minlength=3>
+                         aria-controls="name-validation-message" required min="0" step="1" max="200" autocomplete="off">
                   <label for="alchemy-location-add__location-capacity--input" class="mdc-floating-label">Location
                     Capacity</label>
                   <div class="mdc-notched-outline">
@@ -679,13 +679,13 @@
                 </div>
               </div>
               <!-- Location Type -->
-              <div class="mdc-layout-grid__cell--span-5 mdc-layout-grid__cell--align-middle">
+              <div id="alchemy-location-add__location-type" class="mdc-layout-grid__cell--span-5 mdc-layout-grid__cell--align-middle">
                 <span class="mdc-typography--subheading">&nbsp;Location Type:</span>
                 <div class="mdc-form-field">
                   <div id="alchemy-location-add__location-type--classroom" class="mdc-radio">
                     <input class="mdc-radio__native-control" type="radio"
                            id="alchemy-location-add__location-type--radio-classroom"
-                           name="alchemy-location-add__location-type--radio" checked>
+                           name="alchemy-location-add__location-type--radio" value="0" checked>
                     <div class="mdc-radio__background">
                       <div class="mdc-radio__outer-circle"></div>
                       <div class="mdc-radio__inner-circle"></div>
@@ -698,7 +698,7 @@
                   <div id="alchemy-location-add__location-type--laboratory" class="mdc-radio">
                     <input class="mdc-radio__native-control" type="radio"
                            id="alchemy-location-add__location-type--radio-laboratory"
-                           name="alchemy-location-add__location-type--radio">
+                           name="alchemy-location-add__location-type--radio" value="1">
                     <div class="mdc-radio__background">
                       <div class="mdc-radio__outer-circle"></div>
                       <div class="mdc-radio__inner-circle"></div>
@@ -710,17 +710,17 @@
               </div>
 
               <div class="mdc-layout-grid__cell--span-6">
-                <button id="alchemy-location-add__add-button" class="mdc-button mdc-button--raised">
+                <button id="alchemy-location-add__add-button" class="mdc-button mdc-button--raised" type="button">
                   <i class="material-icons mdc-button__icon">done</i>
                   ADD LOCATION
                 </button>
-                <button id="alchemy-location-add__reset-button" class="mdc-button">
+                <button id="alchemy-location-add__reset-button" class="mdc-button" type="reset">
                   <i class="material-icons mdc-button__icon">undo</i>
                   RESET FIELDS
                 </button>
               </div>
               <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
-                <button id="alchemy-location-add__view-button" class="mdc-button">
+                <button id="alchemy-location-add__view-button" class="mdc-button" type="">
                   <i class="material-icons mdc-button__icon">remove_red_eye</i>
                   VIEW LOCATIONS
                 </button>
@@ -733,7 +733,7 @@
     </section>
 
     <!-- SECTION Course Offered-->
-    <section class="mdc-layout-grid mdc-layout-grid--full-width panel active" id="panel-4" role="tabpanel">
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="panel-4" role="tabpanel">
       <div class="mdc-layout-grid__inner">
         <div class="mdc-card mdc-layout-grid__cell--span-12">
           <h1 class="mdc-typography--headline">Course Offered</h1>
