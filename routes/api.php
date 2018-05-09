@@ -59,6 +59,12 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->get('/class/all', 'ClassController@all');
         $router->put('/class/update/{id}', 'ClassController@update');
         $router->delete('/class/delete/{id}', 'ClassController@delete');
+        // Course Offered
+        $router->get('/course-offered/get/{id}', 'CourseOfferedController@get');
+        $router->post('/course-offered/add', 'CourseOfferedController@add');
+        $router->get('/course-offered/all', 'CourseOfferedController@all');
+        $router->put('/course-offered/update/{id}', 'CourseOfferedController@update');
+        $router->delete('/course-offered/delete/{id}', 'CourseOfferedController@delete');
     });
 });
 

@@ -5,39 +5,39 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-use App\_Class;
+use App\CourseOffered;
 
-class ClassController extends Controller
+class CourseOfferedController extends Controller
 {
     public function all()
     {
-      $class = _Class::all();
-      if (is_null($class)) {
+      $course_offered = CourseOffered::all();
+      if (is_null($course_offered)) {
         return response([],Response::HTTP_NOT_FOUND);
       }
       return response()->json(
-        $class,
+        $course_offered,
         Response::HTTP_OK
       );
     }
 
     public function get($id)
     {
-        $class = _Class::find($id);
-        if (is_null($class)) {
+        $course_offered = CourseOffered::find($id);
+        if (is_null($course_offered)) {
             return response([],Response::HTTP_NOT_FOUND);
         }
         return response()->json(
-            $class,
+            $course_offered,
             Response::HTTP_OK
         );
     }
 
     public function add(Request $request)
     {
-        $this->validate($request, _Class::$rules);
+        $this->validate($request, CourseOffered::$rules);
         return response()->json(
-            _Class::create(
+            CourseOffered::create(
                 $request->all(),
                 Response::HTTP_CREATED)
         );
@@ -45,24 +45,24 @@ class ClassController extends Controller
 
     public function update(Request $request, $id)
     {
-        $class = _Class::find($id);
-        if (is_null($class)) {
+        $course_offered = CourseOffered::find($id);
+        if (is_null($course_offered)) {
             return response([],Response::HTTP_NOT_FOUND);
         }
-        $this->validate($request, _Class::$rules);
+        $this->validate($request, CourseOffered::$rules);
         return response()->json(
-            $class->update($request->all()),
+            $course_offered->update($request->all()),
             Response::HTTP_OK
         );
     }
 
     public function delete($id)
     {
-        $class = _Class::find($id);
-        if (is_null($class)) {
+        $course_offered = CourseOffered::find($id);
+        if (is_null($course_offered)) {
             return response([],Response::HTTP_NOT_FOUND);
         }
-        _Class::destroy($id);
+        CourseOffered::destroy($id);
         return response([],Response::HTTP_OK);
     }
 }

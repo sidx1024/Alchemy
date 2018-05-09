@@ -177,6 +177,11 @@ function onEnterKey(target, callback, once = false) {
   });
 }
 
+// "Course Offered Faculty" --> "course-offered-faculty"
+function urlFriendlyName(name) {
+  return name.toLowerCase().split(' ').join('-');
+}
+
 function removeLoadingOverlay() {
   const element = document.querySelector('#loading-overlay');
   if (element) {

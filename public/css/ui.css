@@ -151,6 +151,10 @@ main {
   margin-bottom: 24px;
 }
 
+.mdc-layout-grid--full-width {
+  margin: 0;
+}
+
 .mdc-card {
   padding: var(--mdc-layout-grid-gutter-desktop, 24px);
 }

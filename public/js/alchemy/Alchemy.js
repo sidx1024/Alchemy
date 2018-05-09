@@ -135,6 +135,19 @@ class Class_ extends Model {
   }
 }
 
+class CourseOffered extends Model {
+  static transform(courseOffered, type) {
+    const transformedData = [];
+    switch (type) {
+      case 'list':
+        break;
+      default:
+        Logger.error(`Cannot transform data to type ${type}`);
+    }
+    return transformedData;
+  }
+}
+
 // eslint-disable-next-line no-unused-vars
 class Alchemy {
   constructor(options) {
@@ -151,18 +164,18 @@ class Alchemy {
       }
     };
     this.keys = { institute: 1, programme: 1 };
-    this.ready = false;
     this.onReady = options.onReady;
     this.onFail = options.onFail;
     this.current = {
       programme: null, departments: null, classes: null, ONE_PRACTICAL_CREDIT: 1
     };
-    this.course = new Course('course', this.config);
-    this.location = new Location('location', this.config);
-    this.department = new Department('department', this.config);
-    this.faculty = new Faculty('faculty', this.config);
-    this.programme = new Programme('programme', this.config);
-    this.class_ = new Class_('class', this.config);
+    this.course = new Course('Course', this.config);
+    this.location = new Location('Location', this.config);
+    this.department = new Department('Department', this.config);
+    this.faculty = new Faculty('Faculty', this.config);
+    this.programme = new Programme('Programme', this.config);
+    this.class_ = new Class_('Class', this.config);
+    this.courseOffered = new CourseOffered('Course Offered', this.config);
     this.pingAPI(this.init.bind(this), this.onFail);
   }
 

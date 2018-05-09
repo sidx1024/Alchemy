@@ -15,7 +15,7 @@ class Model {
   constructor(modelName, config) {
     this.config = config;
     this.modelName = modelName;
-    this.uri = `${this.config.api.path}/${modelName.toLowerCase()}/`;
+    this.uri = `${this.config.api.path}/${urlFriendlyName(modelName)}/`;
     this.actions = {
       all: { path: `${this.uri}all`, method: 'GET', verb: 'getting all' },
       get: { path: `${this.uri}get/{id}`, method: 'GET', verb: 'getting' },
