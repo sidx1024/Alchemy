@@ -59,7 +59,10 @@ function setupLoginSection() {
         body: 'Are you sure you want to logout?',
         accept: 'Logout',
         cancel: 'Cancel',
-        onAccept: () => { onLogout(); location.reload(); }
+        onAccept: () => {
+          onLogout();
+          location.reload();
+        }
       }).show();
     }
 
@@ -95,11 +98,13 @@ function setupCommon() {
   function setupAccessEvents() {
     const { header, body, login } = alchemyCommon;
     alchemyCommon.logoutState = () => {
-      header.style.display = 'none'; body.style.display = 'none';
+      header.style.display = 'none';
+      body.style.display = 'none';
       login.style.display = 'flex';
     };
     alchemyCommon.loginState = () => {
-      header.style.display = 'block'; body.style.display = 'block';
+      header.style.display = 'block';
+      body.style.display = 'block';
       login.style.display = 'none';
     };
   }
@@ -176,8 +181,6 @@ function setupCommon() {
   }
 }
 
-
-
 function bootAlchemy() {
   window.alchemy = new Alchemy({
     onReady: () => {
@@ -188,6 +191,7 @@ function bootAlchemy() {
       setupFacultySection();
       setupCourseOfferedSection();
       setupTimeTableSection();
+
       function setupTabs() {
         const alchemyTabs = new mdc.tabs.MDCTabBar(document.querySelector('#dynamic-tab-bar'));
         const panels = document.querySelector('.panels');
@@ -217,7 +221,9 @@ function bootAlchemy() {
           courseView: {
             element: document.querySelector('#alchemy-course-view'),
             courseAddButton: { element: document.querySelector('#alchemy-course-view__add-button') },
-            courseEditButton: { element: document.querySelector('#alchemy-course-view__edit-button') },
+            courseEditButton: {
+              element: document.querySelector('#alchemy-course-view__edit-button')
+            },
             courseDeleteButton: {
               element: document.querySelector('#alchemy-course-view__delete-button')
             },
@@ -278,7 +284,9 @@ function bootAlchemy() {
               input: document.querySelector('#alchemy-course-add__course-credit input')
             },
             courseAddButton: { element: document.querySelector('#alchemy-course-add__add-button') },
-            courseResetButton: { element: document.querySelector('#alchemy-course-add__reset-button') },
+            courseResetButton: {
+              element: document.querySelector('#alchemy-course-add__reset-button')
+            },
             courseViewButton: { element: document.querySelector('#alchemy-course-add__view-button') }
           }
         };
@@ -425,7 +433,10 @@ function bootAlchemy() {
             const levelsList = Programme.transform(programme, 'list').concat([allLevelsItem]);
 
             courseFilterByLevel.mdcSelectHandler
-              .addItems(levelsList, { assignments: { valueKey: 'level', idKey: 'id' } })
+              .addItems(
+                levelsList,
+                { assignments: { valueKey: 'level', idKey: 'id' } }
+              )
               .setOnChangeListener(onLevelChange)
               .enable();
 
@@ -706,8 +717,12 @@ function bootAlchemy() {
           element: document.querySelector('#alchemy-locations'),
           locationView: {
             element: document.querySelector('#alchemy-location-view'),
-            locationAddButton: { element: document.querySelector('#alchemy-location-view__add-button') },
-            locationEditButton: { element: document.querySelector('#alchemy-location-view__edit-button') },
+            locationAddButton: {
+              element: document.querySelector('#alchemy-location-view__add-button')
+            },
+            locationEditButton: {
+              element: document.querySelector('#alchemy-location-view__edit-button')
+            },
             locationDeleteButton: {
               element: document.querySelector('#alchemy-location-view__delete-button')
             },
@@ -750,9 +765,15 @@ function bootAlchemy() {
             locationDepartment: {
               element: document.querySelector('#alchemy-location-add__location-department')
             },
-            locationAddButton: { element: document.querySelector('#alchemy-location-add__add-button') },
-            locationResetButton: { element: document.querySelector('#alchemy-location-add__reset-button') },
-            locationViewButton: { element: document.querySelector('#alchemy-location-add__view-button') }
+            locationAddButton: {
+              element: document.querySelector('#alchemy-location-add__add-button')
+            },
+            locationResetButton: {
+              element: document.querySelector('#alchemy-location-add__reset-button')
+            },
+            locationViewButton: {
+              element: document.querySelector('#alchemy-location-add__view-button')
+            }
           }
         };
 
@@ -764,7 +785,7 @@ function bootAlchemy() {
 
           const locationFilter = {
             departmentId: null,
-            text: null,
+            text: null
           };
 
           setupLocationTable();
@@ -792,7 +813,7 @@ function bootAlchemy() {
               alchemy.location.search(filterObject(locationFilter), (data) => {
                 const transformedData = Location.transform(data, 'table');
                 locationTable.mdcDataTableHelper
-                .setData(transformedData);
+                  .setData(transformedData);
                 if (!locationTable.element.querySelector('td')) {
                   locationTable.element.classList.add('alchemy-location-table--empty');
                 } else {
@@ -804,9 +825,9 @@ function bootAlchemy() {
             const { headers, headersDataTypes, headersWidth } = locationTable;
             locationTable.mdcDataTableHelper =
               MDCDataTableHelper
-              .handle(locationTable.element)
-              .setIdKey('id')
-              .setHeaders(headers, headersDataTypes, headersWidth);
+                .handle(locationTable.element)
+                .setIdKey('id')
+                .setHeaders(headers, headersDataTypes, headersWidth);
             locationTable.refresh();
 
             locationDeleteButton.element.addEventListener('click', () => {
@@ -859,21 +880,21 @@ function bootAlchemy() {
             const { locationFilterByBranch } = alchemyLocationSection.locationView;
             locationFilterByBranch.mdcSelectHandler =
               MDCSelectHandler
-              .handle(locationFilterByBranch.element)
-              .clearItems()
-              .init('Select branch', { storeData: true })
-              .disable();
+                .handle(locationFilterByBranch.element)
+                .clearItems()
+                .init('Select branch', { storeData: true })
+                .disable();
 
             const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
             const { departments } = alchemy.current;
 
             locationFilterByBranch.mdcSelectHandler
-            .addItems(
-              departments.concat([allBranchesItem]),
-              { assignments: { valueKey: 'name', idKey: 'id' } }
-            )
-            .setOnChangeListener(onBranchChange)
-            .enable();
+              .addItems(
+                departments.concat([allBranchesItem]),
+                { assignments: { valueKey: 'name', idKey: 'id' } }
+              )
+              .setOnChangeListener(onBranchChange)
+              .enable();
 
             function onBranchChange() {
               const selectedItem = locationFilterByBranch.mdcSelectHandler.getSelected();
@@ -886,19 +907,22 @@ function bootAlchemy() {
             const { locationFilterByType } = alchemyLocationSection.locationView;
             locationFilterByType.mdcSelectHandler =
               MDCSelectHandler
-              .handle(locationFilterByType.element)
-              .clearItems()
-              .init('Select Type', { storeData: true })
-              .disable();
+                .handle(locationFilterByType.element)
+                .clearItems()
+                .init('Select Type', { storeData: true })
+                .disable();
 
             const { programme } = alchemy.current;
             const allLevelsItem = { id: null, level: 'All' };
             const levelsList = Programme.transform(programme, 'list').concat([allLevelsItem]);
 
             locationFilterByType.mdcSelectHandler
-            .addItems(levelsList, { assignments: { valueKey: 'level', idKey: 'id' } })
-            .setOnChangeListener(onTypeChange)
-            .enable();
+              .addItems(
+                levelsList,
+                { assignments: { valueKey: 'level', idKey: 'id' } }
+              )
+              .setOnChangeListener(onTypeChange)
+              .enable();
 
             function onTypeChange() {
               const selectedItem = locationFilterByType.mdcSelectHandler.getSelected();
@@ -958,7 +982,7 @@ function bootAlchemy() {
             locationCapacity,
             locationAddButton,
             locationResetButton,
-            locationViewButton,
+            locationViewButton
           } = locationAdd;
 
           locationAlias.mdc = mdc.textField.MDCTextField.attachTo(locationAlias.element);
@@ -1038,7 +1062,10 @@ function bootAlchemy() {
                 onLocationAddFail
               );
             } else {
-              alchemy.location.add(JSON.stringify(location), onLocationAddSuccess, onLocationAddFail);
+              alchemy.location.add(
+                JSON.stringify(location), onLocationAddSuccess,
+                onLocationAddFail
+              );
             }
             return true;
           });
@@ -1057,7 +1084,7 @@ function bootAlchemy() {
             scrollTo(locationView.element);
             const extra = Location.transform(updatedLocation, 'short-info');
             const message = 'Location updated successfully.';
-            debugger;
+            
             alchemyCommon.toast({ message }, extra);
           }
 
@@ -1068,7 +1095,7 @@ function bootAlchemy() {
             locationDepartment.mdcSelectHandler.clearSelection();
             const extra = Location.transform(addedLocation, 'short-info');
             const message = 'Location added successfully.';
-            debugger;
+            
             alchemyCommon.toast({ message }, extra);
           }
 
@@ -1089,15 +1116,15 @@ function bootAlchemy() {
           function setupLocationDepartment() {
             locationDepartment.mdcSelectHandler =
               MDCSelectHandler
-              .handle(locationDepartment.element)
-              .clearItems()
-              .init('Select Department', { storeData: true })
-              .disable();
+                .handle(locationDepartment.element)
+                .clearItems()
+                .init('Select Department', { storeData: true })
+                .disable();
 
             const { departments } = alchemy.current;
             locationDepartment.mdcSelectHandler
-            .addItems(departments, { assignments: { valueKey: 'name', idKey: 'id' } })
-            .enable();
+              .addItems(departments, { assignments: { valueKey: 'name', idKey: 'id' } })
+              .enable();
           }
 
           function getSelectedDepartment() {
@@ -1115,8 +1142,12 @@ function bootAlchemy() {
           element: document.querySelector('#alchemy-faculty'),
           facultyView: {
             element: document.querySelector('#alchemy-faculty-view'),
-            facultyAddButton: { element: document.querySelector('#alchemy-faculty-view__add-button') },
-            facultyEditButton: { element: document.querySelector('#alchemy-faculty-view__edit-button') },
+            facultyAddButton: {
+              element: document.querySelector('#alchemy-faculty-view__add-button')
+            },
+            facultyEditButton: {
+              element: document.querySelector('#alchemy-faculty-view__edit-button')
+            },
             facultyDeleteButton: {
               element: document.querySelector('#alchemy-faculty-view__delete-button')
             },
@@ -1162,8 +1193,12 @@ function bootAlchemy() {
               element: document.querySelector('#alchemy-faculty-add__faculty-department')
             },
             facultyAddButton: { element: document.querySelector('#alchemy-faculty-add__add-button') },
-            facultyResetButton: { element: document.querySelector('#alchemy-faculty-add__reset-button') },
-            facultyViewButton: { element: document.querySelector('#alchemy-faculty-add__view-button') }
+            facultyResetButton: {
+              element: document.querySelector('#alchemy-faculty-add__reset-button')
+            },
+            facultyViewButton: {
+              element: document.querySelector('#alchemy-faculty-add__view-button')
+            }
           }
         };
 
@@ -1205,7 +1240,7 @@ function bootAlchemy() {
               alchemy.faculty.search(filterObject(facultyFilter), (data) => {
                 const transformedData = Faculty.transform(data, 'table');
                 facultyTable.mdcDataTableHelper
-                .setData(transformedData);
+                  .setData(transformedData);
                 if (!facultyTable.element.querySelector('td')) {
                   facultyTable.element.classList.add('alchemy-faculty-table--empty');
                 } else {
@@ -1217,9 +1252,9 @@ function bootAlchemy() {
             const { headers, headersDataTypes, headersWidth } = facultyTable;
             facultyTable.mdcDataTableHelper =
               MDCDataTableHelper
-              .handle(facultyTable.element)
-              .setIdKey('id')
-              .setHeaders(headers, headersDataTypes, headersWidth);
+                .handle(facultyTable.element)
+                .setIdKey('id')
+                .setHeaders(headers, headersDataTypes, headersWidth);
             facultyTable.refresh();
 
             facultyDeleteButton.element.addEventListener('click', () => {
@@ -1272,21 +1307,21 @@ function bootAlchemy() {
             const { facultyFilterByBranch } = alchemyFacultySection.facultyView;
             facultyFilterByBranch.mdcSelectHandler =
               MDCSelectHandler
-              .handle(facultyFilterByBranch.element)
-              .clearItems()
-              .init('Select branch', { storeData: true })
-              .disable();
+                .handle(facultyFilterByBranch.element)
+                .clearItems()
+                .init('Select branch', { storeData: true })
+                .disable();
 
             const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
             const { departments } = alchemy.current;
 
             facultyFilterByBranch.mdcSelectHandler
-            .addItems(
-              departments.concat([allBranchesItem]),
-              { assignments: { valueKey: 'name', idKey: 'id' } }
-            )
-            .setOnChangeListener(onBranchChange)
-            .enable();
+              .addItems(
+                departments.concat([allBranchesItem]),
+                { assignments: { valueKey: 'name', idKey: 'id' } }
+              )
+              .setOnChangeListener(onBranchChange)
+              .enable();
 
             function onBranchChange() {
               const selectedItem = facultyFilterByBranch.mdcSelectHandler.getSelected();
@@ -1299,21 +1334,21 @@ function bootAlchemy() {
             const { facultyFilterByDesignation } = alchemyFacultySection.facultyView;
             facultyFilterByDesignation.mdcSelectHandler =
               MDCSelectHandler
-              .handle(facultyFilterByDesignation.element)
-              .clearItems()
-              .init('Select Designation', { storeData: true })
-              .disable();
+                .handle(facultyFilterByDesignation.element)
+                .clearItems()
+                .init('Select Designation', { storeData: true })
+                .disable();
 
             const { designations } = alchemy.current;
             const allDesignationsItem = { id: null, name: 'All' };
 
             facultyFilterByDesignation.mdcSelectHandler
-            .addItems(
-              designations.concat([allDesignationsItem]),
-              { assignments: { valueKey: 'name', idKey: 'id' } }
-            )
-            .setOnChangeListener(onDesignationChange)
-            .enable();
+              .addItems(
+                designations.concat([allDesignationsItem]),
+                { assignments: { valueKey: 'name', idKey: 'id' } }
+              )
+              .setOnChangeListener(onDesignationChange)
+              .enable();
 
             function onDesignationChange() {
               const selectedItem = facultyFilterByDesignation.mdcSelectHandler.getSelected();
@@ -1373,7 +1408,7 @@ function bootAlchemy() {
             facultyDepartment,
             facultyAddButton,
             facultyResetButton,
-            facultyViewButton,
+            facultyViewButton
           } = facultyAdd;
 
           facultyName.mdc = mdc.textField.MDCTextField.attachTo(facultyName.element);
@@ -1441,7 +1476,7 @@ function bootAlchemy() {
               name: facultyName.mdc.input_.value,
               code: facultyCode.mdc.input_.value,
               designation_id: Number(designation.id),
-              department_id: Number(department.id),
+              department_id: Number(department.id)
             };
 
             const { editMode } = facultyAdd;
@@ -1483,7 +1518,7 @@ function bootAlchemy() {
             facultyDepartment.mdcSelectHandler.clearSelection();
             const extra = Faculty.transform(addedFaculty, 'short-info');
             const message = 'Faculty added successfully.';
-            debugger;
+            
             alchemyCommon.toast({ message }, extra);
           }
 
@@ -1504,15 +1539,15 @@ function bootAlchemy() {
           function setupFacultyDepartment() {
             facultyDepartment.mdcSelectHandler =
               MDCSelectHandler
-              .handle(facultyDepartment.element)
-              .clearItems()
-              .init('Select Department', { storeData: true })
-              .disable();
+                .handle(facultyDepartment.element)
+                .clearItems()
+                .init('Select Department', { storeData: true })
+                .disable();
 
             const { departments } = alchemy.current;
             facultyDepartment.mdcSelectHandler
-            .addItems(departments, { assignments: { valueKey: 'name', idKey: 'id' } })
-            .enable();
+              .addItems(departments, { assignments: { valueKey: 'name', idKey: 'id' } })
+              .enable();
           }
 
           function getSelectedDepartment() {
@@ -1526,15 +1561,18 @@ function bootAlchemy() {
           function setupFacultyDesignation() {
             facultyDesignation.mdcSelectHandler =
               MDCSelectHandler
-              .handle(facultyDesignation.element)
-              .clearItems()
-              .init('Select Designation', { storeData: true })
-              .disable();
+                .handle(facultyDesignation.element)
+                .clearItems()
+                .init('Select Designation', { storeData: true })
+                .disable();
 
             const { designations } = alchemy.current;
             facultyDesignation.mdcSelectHandler
-            .addItems(designations, { assignments: { valueKey: 'name', idKey: 'id' } })
-            .enable();
+              .addItems(
+                designations,
+                { assignments: { valueKey: 'name', idKey: 'id' } }
+              )
+              .enable();
           }
 
           function getSelectedDesignation() {
@@ -1589,7 +1627,6 @@ function bootAlchemy() {
     }
   });
 }
-
 
 window.addEventListener('load', removeLoadingOverlay);
 setupCommon();
