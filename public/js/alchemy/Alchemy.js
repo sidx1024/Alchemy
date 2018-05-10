@@ -72,7 +72,70 @@ class Course extends Model {
 class Department extends Model {
 }
 
+class Designation extends Model {
+}
+
 class Faculty extends Model {
+  search(searchParams, successCallback, failCallback) {
+    let url = this.actions.search.path;
+
+    if (searchParams) {
+      if (typeof searchParams.departmentId !== 'undefined') {
+        url += `department_id=${encodeURI(searchParams.departmentId.toString())}&`;
+      }
+      if (typeof searchParams.text !== 'undefined') {
+        url += `text=${encodeURI(searchParams.text.toString())}&`;
+      }
+      if (typeof searchParams.designationId !== 'undefined') {
+        url += `designation_id=${encodeURI(searchParams.designationId.toString())}&`;
+      }
+      if (typeof searchParams.limit !== 'undefined') {
+        url += `limit=${encodeURI(searchParams.limit.toString())}&`;
+      }
+    }
+
+    return super.search(url, successCallback, failCallback);
+  }
+
+  static transform(data, type) {
+    if (!data) {
+      return [];
+    }
+    switch (type) {
+      case 'table': {
+        const transformedData = [];
+        data.forEach((_faculty) => {
+          const faculty = {};
+          faculty.id = _faculty.id;
+          faculty.code = _faculty.code;
+          faculty.alias = _faculty.alias;
+          faculty.name = _faculty.name;
+          faculty.designation_id = _faculty.designation_id;
+          faculty.department_id = _faculty.department_id;
+          transformedData.push(faculty);
+        });
+        return transformedData;
+      }
+      case 'short-info': {
+        let faculty = data;
+        if (Array.isArray(data)) {
+          faculty = data[0];
+        }
+        return arrayToHtml([
+          faculty.id,
+          faculty.code,
+          faculty.alias,
+          faculty.name,
+          faculty.designation_id,
+          faculty.department_id
+        ]);
+      }
+      default: {
+        Logger.error(`Cannot transform data to type ${type}`);
+      }
+    }
+    return transformedData;
+  }
 }
 
 class Location extends Model {
@@ -93,6 +156,7 @@ class Location extends Model {
 
     return super.search(url, successCallback, failCallback);
   }
+
   static transform(data, type) {
     if (!data) {
       return [];
@@ -106,7 +170,7 @@ class Location extends Model {
           location.alias = _location.alias;
           location.name = _location.name || '&not;';
           location.capacity = _location.capacity;
-          location.type = _location.type === 0 ? "Classroom" : "Laboratory";
+          location.type = _location.type === 0 ? 'Classroom' : 'Laboratory';
           location.department_id = _location.department_id;
           transformedData.push(location);
         });
@@ -121,7 +185,7 @@ class Location extends Model {
           location.id,
           location.alias,
           location.name || '&not;',
-          location.type === 0 ? "Classroom" : "Laboratory"]);
+          location.type === 0 ? 'Classroom' : 'Laboratory']);
       }
       default: {
         Logger.error(`Cannot transform data to type ${type}`);
@@ -203,11 +267,16 @@ class Alchemy {
     this.onReady = options.onReady;
     this.onFail = options.onFail;
     this.current = {
-      programme: null, departments: null, classes: null, ONE_PRACTICAL_CREDIT: 1
+      programme: null,
+      departments: null,
+      classes: null,
+      ONE_PRACTICAL_CREDIT: 1,
+      designations: null
     };
     this.course = new Course('Course', this.config);
     this.location = new Location('Location', this.config);
     this.department = new Department('Department', this.config);
+    this.designation = new Designation('Designation', this.config);
     this.faculty = new Faculty('Faculty', this.config);
     this.programme = new Programme('Programme', this.config);
     this.class_ = new Class_('Class', this.config);
@@ -227,6 +296,8 @@ class Alchemy {
     this.department.all(onDepartmentsReceived.bind(this));
     requestsSent += 1;
     this.class_.all(onClassesReceived.bind(this));
+    requestsSent += 1;
+    this.designation.all(onDesignationsReceived.bind(this));
     requestsSent += 1;
 
     function onRequestReceived(success, response) {
@@ -261,6 +332,9 @@ class Alchemy {
 
     function onDepartmentsReceived(response) {
       if (response) {
+        // const departments = []
+        // response.forEach((department) => { departments[department.id] = department })
+        // console.log("Alchemy JS: ", departments)
         this.current.departments = response;
         onRequestReceived(true);
       } else {
@@ -271,6 +345,15 @@ class Alchemy {
     function onClassesReceived(response) {
       if (response) {
         this.current.classes = response;
+        onRequestReceived(true);
+      } else {
+        onRequestReceived(false, response);
+      }
+    }
+
+    function onDesignationsReceived(response) {
+      if (response) {
+        this.current.designations = response;
         onRequestReceived(true);
       } else {
         onRequestReceived(false, response);

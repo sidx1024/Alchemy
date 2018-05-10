@@ -247,3 +247,25 @@ main {
 #alchemy-login__error h2 {
   color: #d50000;
 }
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Faculty
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-faculty-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-faculty-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-faculty-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-faculty-add .mdc-text-field {
+  width: 100%;
+}
