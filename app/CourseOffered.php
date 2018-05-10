@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CourseOffered extends Model
 {
     //
-    public $timestamps = false;    
+    public $timestamps = false;
     protected $table = 'course_offered';
 
     public function Profile()
@@ -22,7 +22,7 @@ class CourseOffered extends Model
 
     public function Course()
     {
-        return $this->belongsTo('App\Department');
+        return $this->belongsTo('App\Course');
     }
 
     public function Location()

@@ -28,7 +28,7 @@ class CourseOfferedController extends Controller
             return response([],Response::HTTP_NOT_FOUND);
         }
         return response()->json(
-            $course_offered,
+            $course_offered->with('course', 'faculty', 'location', '_class')->first(),
             Response::HTTP_OK
         );
     }

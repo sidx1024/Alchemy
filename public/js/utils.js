@@ -177,6 +177,40 @@ function onEnterKey(target, callback, once = false) {
   });
 }
 
+function mdcListItem(primary, secondary, tertiary) {
+  const tertiaryHTML = tertiary ?
+    `<span class="mdc-list-item__secondary-text">
+       ${tertiary}
+     </span>
+    ` : '';
+  const element =
+    `<li class="mdc-list-item">
+      <span class="mdc-list-item__text">        
+        <span class="mdc-list-item__secondary-text">
+          ${secondary}
+        </span>        
+        ${tertiaryHTML}${primary}
+      </span>
+    </li>`;
+  return element;
+}
+
+function arrayToMdcList(array, methods) {
+  return array.map((item) => {
+    const listItemText = [];
+    if (typeof methods.primary === 'function') {
+      listItemText.push(methods.primary(item));
+    }
+    if (typeof methods.secondary === 'function') {
+      listItemText.push(methods.secondary(item));
+    }
+    if (typeof methods.tertiary === 'function') {
+      listItemText.push(methods.tertiary(item));
+    }
+    return mdcListItem(...listItemText);
+  });
+}
+
 // "Course Offered Faculty" --> "course-offered-faculty"
 function urlFriendlyName(name) {
   return name.toLowerCase().split(' ').join('-');
