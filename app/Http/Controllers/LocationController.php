@@ -32,18 +32,7 @@ class LocationController extends Controller
     return response()->json(Location::create($request->all(), Response::HTTP_CREATED));
   }
 
-  public function update(Request $request, $id)
-  {
-    $location = Location::find($id);
-    if (is_null($location)) {
-      return response([], Response::HTTP_NOT_FOUND);
-    }
-    $this->validate($request, Location::$rules);
-    if ($location->update($request->all())) {
-      return response()->json(Location::find($id), Response::HTTP_OK);
-    }
-    return response()->json(['message' => 'Unknown error while updating the location.'], Response::HTTP_CONFLICT);
-  }
+
 
   public function delete($id)
   {

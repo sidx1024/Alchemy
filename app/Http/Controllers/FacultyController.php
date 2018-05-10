@@ -49,15 +49,18 @@ class FacultyController extends Controller
     return response()->json(['message' => 'Unknown error while updating the faculty.'], Response::HTTP_CONFLICT);
   }
 
-
   public function delete($id)
   {
     $faculty = Faculty::find($id);
     if (is_null($faculty)) {
       return response([], Response::HTTP_NOT_FOUND);
     }
+    $faculty_is_assigned = sizeof($faculty->usages()) > 0;
+    if ($faculty_is_assigned) {
+      return response()->json(['message' => 'Faculty is already assigned.'], Response::HTTP_CONFLICT);
+    }
     Faculty::destroy($id);
-    return response([], Response::HTTP_OK);
+    return response()->json($faculty, Response::HTTP_OK);
   }
 
   public function search(Request $request)
