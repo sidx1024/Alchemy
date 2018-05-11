@@ -938,32 +938,17 @@
         </div>
         <div class="mdc-layout-grid__inner">
           <div class="mdc-card mdc-layout-grid__cell--span-4">
-            <ul class="mdc-list mdc-list--two-line">
-              <li class="mdc-list-item">
-                <span class="mdc-list-item__text">
-                  Two-line item
-                  <span class="mdc-list-item__secondary-text">Secondary text</span>
-                </span>
-                <span class="mdc-list-item__meta">$10.00</span>
-              </li>
-              <li class="mdc-list-item">
-                <span class="mdc-list-item__text">
-                  Two-line item
-                  <span class="mdc-list-item__secondary-text">Secondary text</span>
-                </span>
-                <span class="mdc-list-item__meta">$20.00</span>
-              </li>
-              <li class="mdc-list-item">
-                <span class="mdc-list-item__text">
-                  Two-line item
-                  <span class="mdc-list-item__secondary-text">Secondary text</span>
-                </span>
-                <span class="mdc-list-item__meta">$30.00</span>
-              </li>
+            <ul id="alchemy-course-offered__list" class="mdc-list mdc-list--two-line">
             </ul>
           </div>
           <div class="mdc-card mdc-layout-grid__cell--span-8">
-
+            <div id="alchemy-course-offered__courses"
+                 class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
+              <i class="material-icons mdc-text-field__icon" tabindex="0">search</i>
+              <input type="text" id="alchemy-course-offered__courses--input" class="mdc-text-field__input">
+              <label class="mdc-floating-label" for="my-text-field">Search</label>
+              <div class="mdc-line-ripple"></div>
+            </div>
           </div>
         </div>
       </section>

@@ -216,7 +216,6 @@ class Class_ extends Model {
     const transformedData = [];
     switch (type) {
       case 'list':
-        console.log('classes', classes);
         classes.forEach((class_) => {
           const classItem = Object.assign({}, class_);
           const { division: div } = classItem;
@@ -230,21 +229,42 @@ class Class_ extends Model {
       default:
         Logger.error(`Cannot transform data to type ${type}`);
     }
-    console.log('transformed', transformedData);
     return transformedData;
   }
 }
 
 class CourseOffered extends Model {
-  static transform(courseOffered, type) {
+  static transform(courseOfferedList, type) {
     const transformedData = [];
     switch (type) {
       case 'list':
         break;
+      case 'group-by-course': {
+        const uniqueItems = [];
+        const courseIndexes = [];
+        courseOfferedList.forEach((item) => {
+          if (courseIndexes.indexOf(item.course_id) === -1) {
+            uniqueItems.push(item);
+            courseIndexes.push(item.course_id);
+          }
+        });
+        return uniqueItems;
+      }
       default:
         Logger.error(`Cannot transform data to type ${type}`);
     }
     return transformedData;
+  }
+  search(searchParams, successCallback, failCallback) {
+    let url = this.actions.search.path;
+
+    if (searchParams) {
+      if (typeof searchParams.classId !== 'undefined') {
+        url += `class_id=${encodeURI(searchParams.classId.toString())}&`;
+      }
+    }
+
+    return super.search(url, successCallback, failCallback);
   }
 }
 

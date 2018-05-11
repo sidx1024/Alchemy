@@ -65,6 +65,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->get('/course-offered/all', 'CourseOfferedController@all');
         $router->put('/course-offered/update/{id}', 'CourseOfferedController@update');
         $router->delete('/course-offered/delete/{id}', 'CourseOfferedController@delete');
+        $router->get('/course-offered/search', 'CourseOfferedController@search');
         // Designation
         $router->get('/designation/get/{id}', 'DesignationController@get');
         $router->post('/designation/add', 'DesignationController@add');

@@ -65,12 +65,4 @@ class ClassController extends Controller
         _Class::destroy($id);
         return response([],Response::HTTP_OK);
     }
-
-    public function getCourseOffered($id) {
-      $class = _Class::find($id);
-      if (is_null($class)) {
-        return response([],Response::HTTP_NOT_FOUND);
-      }
-      $course_offered = $class->CourseOffered;
-    }
 }
