@@ -62,4 +62,11 @@ class Faculty extends Model
   {
     return $this->hasManyThrough('App\TimeTable', 'App\CourseOfferedFaculty', 'faculty_id', 'course_offered_id', 'id', 'course_offered_id');
   }
+
+  public function usages()
+  {
+    $course_offered_faculty_usages = CourseOfferedFaculty::where('faculty_id', $this->id)->get()->all();
+    $history_course_offered_faculty_usages = HistoryCourseOfferedFaculty::where('faculty_id', $this->id)->get()->all();
+    return array_merge($course_offered_faculty_usages, $history_course_offered_faculty_usages);
+  }
 }

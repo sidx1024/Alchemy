@@ -1,4 +1,5 @@
-/* eslint-disable no-undef,no-underscore-dangle,no-use-before-define,no-inner-declarations,no-restricted-globals,no-trailing-spaces */
+/* eslint-disable no-undef,no-underscore-dangle,no-use-before-define,no-inner-declarations,
+no-restricted-globals,no-trailing-spaces */
 
 /*
 |--------------------------------------------------------------------------
@@ -381,7 +382,8 @@ function bootAlchemy() {
           function setupFilterByText() {
             const { courseFilterByText } = alchemyCourseSection.courseView;
             if (courseFilterByText.element) {
-              const searchTextField = mdc.textField.MDCTextField.attachTo(courseFilterByText.element);
+              const searchTextField = mdc.textField.MDCTextField
+                .attachTo(courseFilterByText.element);
               const searchInput = searchTextField.input_;
               searchInput.addEventListener('input', onSearchInputChange);
 
@@ -795,7 +797,8 @@ function bootAlchemy() {
           setupEvents();
 
           function setupLocationTable() {
-            const { locationEditButton, locationDeleteButton } = alchemyLocationSection.locationView;
+            const { locationEditButton, locationDeleteButton } =
+              alchemyLocationSection.locationView;
 
             locationTable.deselectLocations = () => {
               const selectedLocations = locationTable.element.querySelectorAll('tr.selected');
@@ -865,7 +868,8 @@ function bootAlchemy() {
           function setupFilterByText() {
             const { locationFilterByText } = alchemyLocationSection.locationView;
             if (locationFilterByText.element) {
-              const searchTextField = mdc.textField.MDCTextField.attachTo(locationFilterByText.element);
+              const searchTextField = mdc.textField.MDCTextField
+                .attachTo(locationFilterByText.element);
               const searchInput = searchTextField.input_;
               searchInput.addEventListener('input', onSearchInputChange);
 
@@ -1084,7 +1088,7 @@ function bootAlchemy() {
             scrollTo(locationView.element);
             const extra = Location.transform(updatedLocation, 'short-info');
             const message = 'Location updated successfully.';
-            
+
             alchemyCommon.toast({ message }, extra);
           }
 
@@ -1095,7 +1099,7 @@ function bootAlchemy() {
             locationDepartment.mdcSelectHandler.clearSelection();
             const extra = Location.transform(addedLocation, 'short-info');
             const message = 'Location added successfully.';
-            
+
             alchemyCommon.toast({ message }, extra);
           }
 
@@ -1292,7 +1296,8 @@ function bootAlchemy() {
           function setupFilterByText() {
             const { facultyFilterByText } = alchemyFacultySection.facultyView;
             if (facultyFilterByText.element) {
-              const searchTextField = mdc.textField.MDCTextField.attachTo(facultyFilterByText.element);
+              const searchTextField = mdc.textField
+                .MDCTextField.attachTo(facultyFilterByText.element);
               const searchInput = searchTextField.input_;
               searchInput.addEventListener('input', onSearchInputChange);
 
@@ -1518,7 +1523,7 @@ function bootAlchemy() {
             facultyDepartment.mdcSelectHandler.clearSelection();
             const extra = Faculty.transform(addedFaculty, 'short-info');
             const message = 'Faculty added successfully.';
-            
+
             alchemyCommon.toast({ message }, extra);
           }
 

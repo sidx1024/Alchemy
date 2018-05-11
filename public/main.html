@@ -96,20 +96,20 @@
     <div class="mdc-toolbar__section--align-start my-modified-toolbar-section">
       <nav id="dynamic-tab-bar" class="mdc-tab-bar custom-indicator-tab-bar-in-toolbar" role="tablist">
         <a role="tab" aria-controls="courses"
-           class="mdc-tab mdc-tab--active">Course</a>
-        <a role="tab" aria-controls="panel-2"
+           class="mdc-tab">Course</a>
+        <a role="tab" aria-controls="panel-1"
            class="mdc-tab">Faculty</a>
         <a role="tab" aria-controls="panel-2"
            class="mdc-tab">Location</a>
-        <a role="tab" aria-controls="panel-4"
+        <a role="tab" aria-controls="panel-3"
            class="mdc-tab">Course Offered</a>
-        <a role="tab" aria-controls="panel-3"
+        <a role="tab" aria-controls="panel-4"
            class="mdc-tab">Time Table</a>
-        <a role="tab" aria-controls="panel-3"
+        <a role="tab" aria-controls="panel-5"
            class="mdc-tab">Profile</a>
-        <a role="tab" aria-controls="panel-3"
-           class="mdc-tab">Other</a>
-        <a role="tab" aria-controls="panel-3"
+        <a role="tab" aria-controls="panel-6"
+           class="mdc-tab mdc-tab--active">Other</a>
+        <a role="tab" aria-controls="panel-7"
            class="mdc-tab">Settings</a>
         <span class="mdc-tab-bar__indicator modified-mdc-tab-bar__indicator"></span>
       </nav>
@@ -119,7 +119,7 @@
 <section id="alchemy-body" style="display: none;">
   <main class="mdc-toolbar-fixed-adjust panels">
     <!-- SECTION Course-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-courses"
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-courses"
              role="tabpanel"
              aria-hidden="false">
       <!--
@@ -967,6 +967,351 @@
           </div>
         </div>
       </section>
+    </section>
+
+    <!-- SECTION Time Table-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-time-table"
+             role="tabpanel">
+    </section>
+
+    <!-- SECTION Profile-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-profile"
+             role="tabpanel">
+    </section>
+
+    <!-- Section other-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-class"
+             role="tabpanel"
+             aria-hidden="true">
+      <!--
+    /*
+      |--------------------------------------------------------------------------
+      | Class View
+      |--------------------------------------------------------------------------
+      */
+    -->
+      <div id="alchemy-class-view" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">View Class</h1>
+            <div class="mdc-layout-grid__inner">
+
+              <div id="alchemy-class-view__filter-by-text"
+                   class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
+                <i class="material-icons mdc-text-field__icon" tabindex="0">search</i>
+                <input type="text" class="mdc-text-field__input">
+                <label class="mdc-floating-label" for="my-text-field">Search</label>
+                <div class="mdc-line-ripple"></div>
+              </div>
+
+              <div id="alchemy-class-view__filter-by-class" class="mdc-select  mdc-layout-grid__cell--span-3"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <div id="alchemy-class-view__filter-by-branch" class="mdc-select  mdc-layout-grid__cell--span-3"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-3"></div>
+              <div class="mdc-layout-grid__cell--span-9 mdc-layout-grid--align-right">
+                <button id="alchemy-class-view__add-button"
+                        class="mdc-button">
+                  <i class="material-icons mdc-button__icon">add</i>
+                  Add Class
+                </button>
+                <button id="alchemy-class-view__edit-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">edit</i>
+                  Edit Class
+                </button>
+                <button id="alchemy-class-view__delete-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">clear</i>
+                  Delete Class
+                </button>
+              </div>
+            </div>
+            <br/>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-12">
+                <div id="alchemy-class-view__table" class="mdc-data-table">
+                  <table class="mdc-data-table__content">
+                    <thead>
+
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                  </table>
+                  <div class="empty-table">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!--
+      /*
+        |--------------------------------------------------------------------------
+        | Class Add
+        |--------------------------------------------------------------------------
+        */
+      -->
+      <div id="alchemy-class-add" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">Add Class</h1>
+            <form id="alchemy-class-add__form" class="mdc-layout-grid__inner" onsubmit=" ">
+
+              <!-- Class Level -->
+              <div id="alchemy-class-add__level" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Class Division -->
+              <div id="alchemy-class-add__division" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Class Default-class -->
+              <div id="alchemy-class-add__default-class" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Class Branch -->
+              <div id="alchemy-class-add__Branch" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Action button fix --span-8 -->
+              <div id="alchemy-class-add__div-fix" class="mdc-layout-grid__cell--span-8">
+              </div>
+              <div class="mdc-layout-grid__cell--span-6 ">
+                <button id="alchemy-class-add__add-button" class="mdc-button mdc-button--raised"
+                        type="button">
+                  <i class="material-icons mdc-button__icon">done</i>
+                  ADD CLASS
+                </button>
+                <button id="alchemy-class-add__reset-button" class="mdc-button" type="reset">
+                  <i class="material-icons mdc-button__icon">undo</i>
+                  RESET FIELDS
+                </button>
+              </div>
+              <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
+                <button id="alchemy-class-add__view-button" class="mdc-button" type="">
+                  <i class="material-icons mdc-button__icon">remove_red_eye</i>
+                  VIEW CLASS
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+
+
+      <!--
+/*
+|--------------------------------------------------------------------------
+| Designation View
+|--------------------------------------------------------------------------
+*/
+-->
+      <div id="alchemy-designation-view" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">View Designation</h1>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-3"></div>
+              <div class="mdc-layout-grid__cell--span-9 mdc-layout-grid--align-right">
+                <button id="alchemy-designation-view__add-button"
+                        class="mdc-button">
+                  <i class="material-icons mdc-button__icon">add</i>
+                  Add Designation
+                </button>
+                <button id="alchemy-designation-view__edit-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">edit</i>
+                  Edit Designation
+                </button>
+                <button id="alchemy-designation-view__delete-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">clear</i>
+                  Delete Designation
+                </button>
+              </div>
+            </div>
+            <br/>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-12">
+                <div id="alchemy-designation-view__table" class="mdc-data-table">
+                  <table class="mdc-data-table__content">
+                    <thead>
+
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                  </table>
+                  <div class="empty-table">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!--
+      /*
+        |--------------------------------------------------------------------------
+        | Designation Add
+        |--------------------------------------------------------------------------
+        */
+      -->
+      <div id="alchemy-designation-add" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">Add Designation</h1>
+            <form id="alchemy-designation-add__form" class="mdc-layout-grid__inner" onsubmit=" ">
+
+              <!-- Designation Name-->
+              <div id="alchemy-designation-add__name" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Designation Hours-->
+              <div class="mdc-layout-grid__cell--span-3">
+                <div id="alchemy-designation-add__designation-hours"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="number" id="alchemy-designation-add__designation-hours--input" class="mdc-text-field__input"
+                         aria-controls="name-validation-message" autocomplete="off" required min="1" step="1">
+                  <label for="alchemy-designation-add__designation-hours--input" class="mdc-floating-label">Designation Hours</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-designation-add__designation-hours--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+
+              <!-- Class Default-designation -->
+              <div id="alchemy-designation-add__default-program" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Class Branch -->
+              <div id="alchemy-designation-add__Branch" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Action button fix --span-8 -->
+              <div id="alchemy-designation-add__div-fix" class="mdc-layout-grid__cell--span-8">
+              </div>
+              <div class="mdc-layout-grid__cell--span-6 ">
+                <button id="alchemy-designation-add__add-button" class="mdc-button mdc-button--raised"
+                        type="button">
+                  <i class="material-icons mdc-button__icon">done</i>
+                  ADD DESIGNATION
+                </button>
+                <button id="alchemy-designation-add__reset-button" class="mdc-button" type="reset">
+                  <i class="material-icons mdc-button__icon">undo</i>
+                  RESET FIELDS
+                </button>
+              </div>
+              <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
+                <button id="alchemy-class-add__view-button" class="mdc-button" type="">
+                  <i class="material-icons mdc-button__icon">remove_red_eye</i>
+                  VIEW DESIGNATION
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+
+
+
     </section>
   </main>
   <div class="mdc-layout-grid mdc-theme--primary-dark-bg mdc-theme--text-disabled-on-dark">
