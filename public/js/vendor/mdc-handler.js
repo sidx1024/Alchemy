@@ -310,6 +310,7 @@ class AutoCompleteComponent {
     this.selected = null;
     this.focusedItemIndex = null;
     this.onSelect = console.log;
+    this.filterFunction = _ => _;
     //
 
     this.textField.addEventListener('blur', e => this.onBlur(e));
@@ -327,7 +328,7 @@ class AutoCompleteComponent {
     if (!list) throw new Error('List is null.');
     this.list.innerHTML = '';
     this.storage = [];
-    list.forEach((item, i) => {
+    list.filter(this.filterFunction).forEach((item, i) => {
       const listItem = this.itemToHTML(item);
       listItem.setAttribute('data-store-index', i);
       this.list.appendChild(listItem);
@@ -453,9 +454,9 @@ class AutoCompleteComponent {
 
   onMenuClick(e) {
     const { target } = e;
-    if (!target || !(target.tagName === 'LI')) return null;
+    if (!target) return null;
     const storageIndex = Number(target.getAttribute('data-store-index'));
-    if (isNaN(storageIndex)) throw new Error('Got target as NaN');
+    if (isNaN(storageIndex)) throw new Error('Got target as NaN.');
     this.setSelected(storageIndex);
     this.onBlur();
     if (typeof this.onSelect === 'function') {
@@ -466,5 +467,11 @@ class AutoCompleteComponent {
 
   setOnSelectionChange(onSelect) {
     this.onSelect = onSelect;
+    return this;
+  }
+
+  setDataFilter(filterFunction) {
+    this.filterFunction = filterFunction;
+    return this;
   }
 }

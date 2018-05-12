@@ -244,3 +244,11 @@ function removeLoadingOverlay() {
     window.removeEventListener('load', removeLoadingOverlay);
   }
 }
+
+function removeItemsById(exclusions) {
+  return item => (exclusions.indexOf(item.id) === -1);
+}
+
+function subtractArray(a, b, key = 'id') {
+  return a.filter(removeItemsById(b.map(r => r[key])));
+}

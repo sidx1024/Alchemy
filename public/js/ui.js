@@ -1293,7 +1293,8 @@ function bootAlchemy() {
           function setupFilterByText() {
             const { facultyFilterByText } = alchemyFacultySection.facultyView;
             if (facultyFilterByText.element) {
-              const searchTextField = mdc.textField.MDCTextField.attachTo(facultyFilterByText.element);
+              const searchTextField =
+                mdc.textField.MDCTextField.attachTo(facultyFilterByText.element);
               const searchInput = searchTextField.input_;
               searchInput.addEventListener('input', onSearchInputChange);
 
@@ -1600,7 +1601,8 @@ function bootAlchemy() {
             }
           },
           courseOfferedList: {
-            element: document.querySelector('#alchemy-course-offered__list')
+            element: document.querySelector('#alchemy-course-offered__list'),
+            storage: []
           }
         };
 
@@ -1628,14 +1630,17 @@ function bootAlchemy() {
             const { courseOfferedList } = alchemyCourseOfferedSection;
             const selectedClass = classSelect.mdcSelectHandler.getSelected().data;
             alchemy.courseOffered.search({ classId: selectedClass.id }, (courseOfferedArray) => {
-              console.log('courseOfferedArray', courseOfferedArray);
+              courseOfferedList.storage = courseOfferedArray;
+              courseOfferedList.existingItemsFilter =
+                removeItemsById(courseOfferedList.storage.map(r => r.id));
+
               const courseOfferedGroupByCourses = CourseOffered.transform(
                 courseOfferedArray,
                 'group-by-course'
               );
               const listItems = arrayToMdcList(courseOfferedGroupByCourses, {
-                primary: r => (r.course.name),
-                secondary: r => (Course.transform(r.course, 'detail'))
+                primary: r => r.course.name,
+                secondary: r => Course.transform(r.course, 'detail')
               });
               courseOfferedList.element.innerHTML = '';
               listItems.forEach((item) => {
@@ -1647,7 +1652,8 @@ function bootAlchemy() {
 
         function setupCourseSelect() {
           // Auto-complete sample
-          const { courseSelect } = alchemyCourseOfferedSection;
+          const { courseSelect, courseOfferedList } = alchemyCourseOfferedSection;
+          const { existingItemsFilter } = courseOfferedList;
 
           courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
 
@@ -1659,7 +1665,7 @@ function bootAlchemy() {
             if (selected && selected.data) {
               setTextFieldInput(courseSelect, selected.data.name);
             }
-          });
+          }).setDataFilter(existingItemsFilter);
         }
       }
 
