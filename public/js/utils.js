@@ -202,12 +202,6 @@ function createElement(tagName, className, children) {
 }
 
 function mdcListItem(primary, secondary, tertiary) {
-  const tertiaryHTML = tertiary ?
-    `<span class="mdc-list-item__secondary-text">
-       ${tertiary}
-     </span>
-    ` : '';
-
   const spanSecondaryText = createElement('span', 'mdc-list-item__secondary-text');
   spanSecondaryText.innerHTML = secondary || '';
   if (tertiary) {

@@ -197,6 +197,15 @@ i.alchemy-select__cancel {
 
 i.alchemy-select__cancel--visible {
   display: block;
+  opacity: 0.3;
+}
+
+i.alchemy-select__cancel--visible:hover {
+  opacity: 1.0;
+}
+
+i.alchemy-select__cancel--visible:focus {
+  opacity: 1.0;
 }
 
 /*

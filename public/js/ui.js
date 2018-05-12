@@ -1,4 +1,5 @@
-/* eslint-disable no-undef,no-underscore-dangle,no-use-before-define,no-inner-declarations,no-restricted-globals,no-trailing-spaces */
+/* eslint-disable no-undef,no-underscore-dangle,no-use-before-define,
+no-inner-declarations,no-restricted-globals,no-trailing-spaces */
 
 /*
 |--------------------------------------------------------------------------
