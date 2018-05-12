@@ -298,3 +298,61 @@ main {
   width: 100%;
 }
 
+/*
+|--------------------------------------------------------------------------
+| Alchemy Designation
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-designation-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-designation-add .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-designation-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-designation-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-designation-add .mdc-text-field {
+  width: 100%;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Department
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-department-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-department-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-department-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-department-add .mdc-text-field {
+  width: 100%;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Other
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-other-view .mdc-select {
+  margin-top: 16px;
+}
