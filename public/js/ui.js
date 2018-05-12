@@ -414,6 +414,7 @@ function bootAlchemy() {
 
             function onBranchChange() {
               const selectedItem = courseFilterByBranch.mdcSelectHandler.getSelected();
+              console.log(selectedItem);
               courseFilter.departmentId = selectedItem.data.id;
               courseTable.refresh();
             }
@@ -1590,7 +1591,12 @@ function bootAlchemy() {
             element: document.querySelector('#alchemy-course-offered__class')
           },
           courseSelect: {
-            element: document.querySelector('#alchemy-course-offered__courses')
+            element: document.querySelector('#alchemy-course-offered__courses'),
+            clearSelectionButton: document.querySelector('#alchemy-course-offered__courses .alchemy-select__cancel'),
+            menu: {
+              element: document.querySelector('#alchemy-course-offered__courses--menu'),
+              list: document.querySelector('alchemy-course-offered__courses--menu .mdc-list')
+            }
           },
           courseOfferedList: {
             element: document.querySelector('#alchemy-course-offered__list')
@@ -1622,20 +1628,40 @@ function bootAlchemy() {
             const selectedClass = classSelect.mdcSelectHandler.getSelected().data;
             alchemy.courseOffered.search({ classId: selectedClass.id }, (courseOfferedArray) => {
               console.log('courseOfferedArray', courseOfferedArray);
-              const courseOfferedGroupByCourses = CourseOffered.transform(courseOfferedArray, 'group-by-course');
+              const courseOfferedGroupByCourses = CourseOffered.transform(
+                courseOfferedArray,
+                'group-by-course'
+              );
               const listItems = arrayToMdcList(courseOfferedGroupByCourses, {
                 primary: r => (r.course.name),
-                secondary: r => (`${r.course.code} &bull; ${r.course.alias}`)
+                secondary: r => (Course.transform(r.course, 'detail'))
               });
               courseOfferedList.element.innerHTML = '';
               listItems.forEach((item) => {
                 courseOfferedList.element.appendChild(item);
               });
-
             });
           }
         }
-        function setupCourseSelect() {}
+
+        function setupCourseSelect() {
+          // Auto-complete sample
+          const { courseSelect } = alchemyCourseOfferedSection;
+
+          courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
+
+          AutoCompleteComponent.attachTo(
+            courseSelect.mdc.input_,
+            courseSelect.menu.element,
+            courseSelect.clearSelectionButton,
+            course => mdcListItem(course.name, Course.transform(course, 'detail')),
+            (text, callback) => alchemy.course.search({ text }, callback)
+          ).setOnSelectionChange((selected) => {
+            if (selected && selected.data) {
+              setTextFieldInput(courseSelect, selected.data.name);
+            }
+          });
+        }
       }
 
       function setupTimeTableSection() {}

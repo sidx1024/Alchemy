@@ -942,12 +942,17 @@
             </ul>
           </div>
           <div class="mdc-card mdc-layout-grid__cell--span-8">
+            <!-- Auto-complete example -->
             <div id="alchemy-course-offered__courses"
-                 class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
-              <i class="material-icons mdc-text-field__icon" tabindex="0">search</i>
+                 class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6">
+              <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
               <input type="text" id="alchemy-course-offered__courses--input" class="mdc-text-field__input">
-              <label class="mdc-floating-label" for="my-text-field">Search</label>
+              <label class="mdc-floating-label" for="my-text-field">Select course</label>
               <div class="mdc-line-ripple"></div>
+            </div>
+            <div id="alchemy-course-offered__courses--menu" class="mdc-menu mdc-select__menu">
+              <ul class="mdc-list mdc-menu__items">
+              </ul>
             </div>
           </div>
         </div>

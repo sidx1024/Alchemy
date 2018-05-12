@@ -61,6 +61,10 @@ class Course extends Model {
         }
         return arrayToHtml([course.id, course.code, course.alias, course.name]);
       }
+      case 'detail': {
+        const course = data;
+        return `${course.code} &bull; ${course.alias}`;
+      }
       default: {
         Logger.error(`Cannot transform data to type ${type}`);
       }

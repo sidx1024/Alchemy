@@ -207,18 +207,9 @@ function mdcListItem(primary, secondary, tertiary) {
        ${tertiary}
      </span>
     ` : '';
-  const element =
-    `SS<li class="mdc-list-item">
-         <span class="mdc-list-item__text">        
-           <span class="mdc-list-item__secondary-text">
-             ${secondary}
-           </span>        
-           ${tertiaryHTML}${primary}
-         </span>
-       </li>XX`;
 
   const spanSecondaryText = createElement('span', 'mdc-list-item__secondary-text');
-  spanSecondaryText.innerHTML = secondary;
+  spanSecondaryText.innerHTML = secondary || '';
   if (tertiary) {
     const spanTertiaryText = createElement('span', 'mdc-list-item__secondary-text');
     spanTertiaryText.innerHTML = tertiary;

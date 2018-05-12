@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals,no-undef,no-unused-vars */
+/* eslint-disable no-restricted-globals,no-undef,no-unused-vars,prefer-template */
 class MDCSelectHandler {
   constructor(mdcSelect) {
     if (!mdcSelect) { return; }
@@ -46,7 +46,7 @@ class MDCSelectHandler {
   setSelected(id) {
     const items = Array.from(this.mdcSelect.querySelectorAll('li'));
     if (items.length > 0) {
-      const matchingItemIndex = items.findIndex(item => (+item.getAttribute('data-id') === id));
+      const matchingItemIndex = items.findIndex(item => (+item.getAttribute('data-store-index') === id));
       if (matchingItemIndex > -1) {
         this.select.selectedIndex = matchingItemIndex;
         this.floatLabelAbove();
@@ -110,7 +110,7 @@ class MDCSelectHandler {
 
   addItem(item, options) {
     const defaultOptions = {
-      idAttribute: 'data-id'
+      idAttribute: 'data-store-index'
     };
     options = Object.assign({}, defaultOptions, options);
 
@@ -229,7 +229,7 @@ class MDCDataTableHelper {
     data.forEach((row) => {
       const trElement = document.createElement('tr');
       if (row.hasOwnProperty(idKey)) {
-        trElement.setAttribute('data-id', row[idKey]);
+        trElement.setAttribute('data-store-index', row[idKey]);
       }
       Object.values(row).forEach((tuple, index) => {
         if (this.idKey && index < 1) {
@@ -287,5 +287,175 @@ class MDCExpansionPanelAccordionHelper {
       return Array.from(items).map(item => MDCExpansionPanelAccordionHelper.handle(item));
     }
     return MDCExpansionPanelAccordionHelper.handle(items);
+  }
+}
+
+class AutoCompleteComponent {
+  constructor(textField, menu, clearSelectionButton, itemToHTML, dataRetriever) {
+    if (!(textField && menu && itemToHTML && dataRetriever)) throw new Error('Either of the elements is null.');
+    this.textField = textField;
+    this.menu = menu;
+    this.list = menu.querySelector('ul');
+    if (!this.list) throw new Error('Cannot find ul element.');
+    this.dataRetriever = dataRetriever;
+    this.itemToHTML = itemToHTML;
+    this.storage = null;
+    this.selected = null;
+    this.onSelect = console.log;
+    this.focusedItemIndex = null;
+    this.clearSelectionButton = clearSelectionButton;
+    //
+    this.textField.addEventListener('blur', e => this.onBlur(e));
+    this.textField.addEventListener('keydown', e => this.keyDown(e));
+    this.menu.addEventListener('click', e => this.onMenuClick(e));
+    this.clearSelectionButton.addEventListener('click', (e) => {
+      this.clearSelected(e);
+      this.textField.value = '';
+      this.textField.focus();
+    });
+  }
+
+  static attachTo() {
+    // eslint-disable-next-line prefer-rest-params
+    return new AutoCompleteComponent(...arguments);
+  }
+
+  setList(list) {
+    if (!list) throw new Error('List is null.');
+    this.list.innerHTML = '';
+    this.storage = [];
+    list.forEach((item, i) => {
+      const listItem = this.itemToHTML(item);
+      listItem.setAttribute('data-store-index', i);
+      this.list.appendChild(listItem);
+      this.storage[i] = { data: item, item: listItem };
+    });
+    this.clearSelected();
+    this.setFocus(0);
+  }
+
+  openMenu() {
+    this.fitMenu();
+    this.menu.classList.add('mdc-menu--open');
+  }
+
+  hideMenu() {
+    this.menu.classList.remove('mdc-menu--open');
+  }
+
+  fitMenu() {
+    const bounds = this.textField.getBoundingClientRect();
+    this.menu.style.top = bounds.top + bounds.height + 'px';
+    this.menu.style.left = bounds.left + 'px';
+    this.menu.style.width = bounds.width + 'px';
+  }
+
+  keyDown(e) {
+    if (e instanceof KeyboardEvent) {
+      if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') { // typing one letter
+        if (this.textField.value.length > 1) {
+          this.dataRetriever(this.textField.value, list => this.setList(list));
+          this.openMenu();
+        } else {
+          this.hideMenu();
+        }
+      } else { // navigation
+        switch (e.key) {
+          case 'ArrowDown':
+            this.focusNext();
+            break;
+          case 'ArrowUp':
+            this.focusPrev();
+            break;
+          case 'Enter':
+            this.setSelected(this.focusedItemIndex);
+            this.onBlur();
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }
+
+  getSelected() {
+    return this.selected;
+  }
+
+  setSelected(storageIndex) {
+    if (storageIndex === null) {
+      this.clearSelected();
+      return;
+    }
+    this.selected = this.storage[storageIndex];
+    this.onSelect(this.selected);
+    this.clearSelectionButton.classList.add('alchemy-select__cancel--visible');
+    this.textField.blur();
+  }
+
+  clearSelected() {
+    this.selected = null;
+    this.clearSelectionButton.classList.remove('alchemy-select__cancel--visible');
+  }
+
+  onBlur() {
+    if (this.selected === null) {
+      this.textField.value = '';
+      this.textField.blur();
+    }
+    setTimeout(() => this.hideMenu(), 250);
+  }
+
+  setFocus(itemIndex) {
+    const item = this.storage[itemIndex];
+    this.clearFocus();
+    if (!item || !item.item) {
+      return;
+    }
+    this.focusedItemIndex = itemIndex;
+    item.item.classList.add('focused');
+  }
+
+  clearFocus() {
+    const focusedItem = this.menu.querySelector('.focused');
+    if (focusedItem) {
+      focusedItem.classList.remove('focused');
+    }
+    this.focusedItemIndex = null;
+  }
+
+  focusNext() {
+    if (this.focusedItemIndex === null) {
+      this.setFocus(0);
+    } else {
+      this.setFocus((this.focusedItemIndex + 1) % this.storage.length);
+    }
+  }
+
+  focusPrev() {
+    if (this.focusedItemIndex === null) {
+      this.setFocus(0); // focus first item
+    } else if (this.focusedItemIndex === 0) { // if first item
+      this.setFocus(this.storage.length - 1); // focus last item
+    } else {
+      this.setFocus(this.focusedItemIndex - 1); // focus previous item
+    }
+  }
+
+  onMenuClick(e) {
+    const { target } = e;
+    if (!target || !(target.tagName === 'LI')) return null;
+    const storageIndex = Number(target.getAttribute('data-store-index'));
+    if (isNaN(storageIndex)) throw new Error('Got target as NaN');
+    this.setSelected(storageIndex);
+    this.onBlur();
+    if (typeof this.onSelect === 'function') {
+      this.onSelect();
+    }
+    return this.selected;
+  }
+
+  setOnSelectionChange(onSelect) {
+    this.onSelect = onSelect;
   }
 }
