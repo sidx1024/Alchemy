@@ -229,7 +229,7 @@ class MDCDataTableHelper {
     data.forEach((row) => {
       const trElement = document.createElement('tr');
       if (row.hasOwnProperty(idKey)) {
-        trElement.setAttribute('data-store-index', row[idKey]);
+        trElement.setAttribute('data-id', row[idKey]);
       }
       Object.values(row).forEach((tuple, index) => {
         if (this.idKey && index < 1) {

@@ -101,16 +101,14 @@
            class="mdc-tab">Faculty</a>
         <a role="tab" aria-controls="panel-2"
            class="mdc-tab">Location</a>
-        <a role="tab" aria-controls="panel-4"
-           class="mdc-tab mdc-tab--active">Course Offered</a>
         <a role="tab" aria-controls="panel-3"
-           class="mdc-tab">Course Offered</a>
+           class="mdc-tab mdc-tab--active">Course Offered</a>
         <a role="tab" aria-controls="panel-4"
            class="mdc-tab">Time Table</a>
         <a role="tab" aria-controls="panel-5"
            class="mdc-tab">Profile</a>
         <a role="tab" aria-controls="panel-6"
-           class="mdc-tab mdc-tab--active">Other</a>
+           class="mdc-tab">Other</a>
         <a role="tab" aria-controls="panel-7"
            class="mdc-tab">Settings</a>
         <span class="mdc-tab-bar__indicator modified-mdc-tab-bar__indicator"></span>
@@ -911,54 +909,50 @@
 
     </section>
 
-    <!-- SECTION Course Offered-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-course-offered"
-             role="tabpanel">
-      <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="panel-4" role="tabpanel">
-        <div class="mdc-layout-grid__inner">
-          <div class="mdc-card mdc-layout-grid__cell--span-12">
-            <h1 class="mdc-typography--headline">Course Offered</h1>
-            <div class="mdc-layout-grid__inner">
-              <div id="alchemy-course-offered__class" class="mdc-select mdc-layout-grid__cell--span-4"
-                   role="listbox">
-                <div class="mdc-select__surface" tabindex="0">
-                  <div class="mdc-select__label"></div>
-                  <div class="mdc-select__selected-text"></div>
-                  <div class="mdc-select__bottom-line"></div>
-                </div>
-                <div class="mdc-menu mdc-select__menu">
-                  <ul class="mdc-list mdc-menu__items">
-                  </ul>
-                </div>
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="panel-4" role="tabpanel">
+      <div class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <h1 class="mdc-typography--headline">Course Offered</h1>
+          <div class="mdc-layout-grid__inner">
+            <div id="alchemy-course-offered__class" class="mdc-select mdc-layout-grid__cell--span-4"
+                 role="listbox">
+              <div class="mdc-select__surface" tabindex="0">
+                <div class="mdc-select__label"></div>
+                <div class="mdc-select__selected-text"></div>
+                <div class="mdc-select__bottom-line"></div>
               </div>
-              <button id="alchemy-course-offered__view-button"
-                      class="mdc-button mdc-button--raised mdc-layout-grid__cell--span-2 mdc-layout-grid__cell--align-middle">
-                View Courses
-              </button>
+              <div class="mdc-menu mdc-select__menu">
+                <ul class="mdc-list mdc-menu__items">
+                </ul>
+              </div>
             </div>
+            <button id="alchemy-course-offered__view-button"
+                    class="mdc-button mdc-button--raised mdc-layout-grid__cell--span-2 mdc-layout-grid__cell--align-middle">
+              View Courses
+            </button>
           </div>
         </div>
-        <div class="mdc-layout-grid__inner">
-          <div class="mdc-card mdc-layout-grid__cell--span-4">
-            <!-- Auto-complete example -->
-            <div id="alchemy-course-offered__courses"
-                 class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6">
-              <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
-              <input type="text" id="alchemy-course-offered__courses--input" class="mdc-text-field__input">
-              <label class="mdc-floating-label" for="my-text-field">Select course</label>
-              <div class="mdc-line-ripple"></div>
-            </div>
-            <div id="alchemy-course-offered__courses--menu" class="mdc-menu mdc-select__menu">
-              <ul class="mdc-list mdc-menu__items">
-              </ul>
-            </div>
-            <ul id="alchemy-course-offered__list" class="mdc-list mdc-list--two-line">
+      </div>
+      <div class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-4">
+          <!-- Auto-complete example -->
+          <div id="alchemy-course-offered__courses"
+               class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6">
+            <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
+            <input type="text" id="alchemy-course-offered__courses--input" class="mdc-text-field__input">
+            <label class="mdc-floating-label" for="my-text-field">Select course</label>
+            <div class="mdc-line-ripple"></div>
+          </div>
+          <div id="alchemy-course-offered__courses--menu" class="mdc-menu mdc-select__menu">
+            <ul class="mdc-list mdc-menu__items">
             </ul>
           </div>
-          <div class="mdc-card mdc-layout-grid__cell--span-8">
-          </div>
+          <ul id="alchemy-course-offered__list" class="mdc-list mdc-list--two-line">
+          </ul>
         </div>
-      </section>
+        <div class="mdc-card mdc-layout-grid__cell--span-8">
+        </div>
+      </div>
     </section>
 
     <!-- SECTION Time Table-->
@@ -971,8 +965,8 @@
              role="tabpanel">
     </section>
 
-    <!-- Section other-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-class"
+    <!-- Section Other-->
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-class"
              role="tabpanel"
              aria-hidden="true">
       <!--
@@ -1218,7 +1212,8 @@
                      class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
                   <input type="text" id="alchemy-designation-add__designation-name--input" class="mdc-text-field__input"
                          aria-controls="name-validation-message" required minlength=2 autocomplete="off">
-                  <label for="alchemy-designation-add__designation-name--input" class="mdc-floating-label">Designation Name</label>
+                  <label for="alchemy-designation-add__designation-name--input" class="mdc-floating-label">Designation
+                    Name</label>
                   <div class="mdc-notched-outline">
                     <svg>
                       <path class="mdc-notched-outline__path"/>
