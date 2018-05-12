@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals,no-undef,no-unused-vars,prefer-template */
+/* eslint-disable no-restricted-globals,no-undef,no-unused-vars,prefer-template,no-underscore-dangle */
 class MDCSelectHandler {
   constructor(mdcSelect) {
     if (!mdcSelect) { return; }
@@ -291,28 +291,31 @@ class MDCExpansionPanelAccordionHelper {
 }
 
 class AutoCompleteComponent {
-  constructor(textField, menu, clearSelectionButton, itemToHTML, dataRetriever) {
-    if (!(textField && menu && itemToHTML && dataRetriever)) throw new Error('Either of the elements is null.');
-    this.textField = textField;
-    this.menu = menu;
-    this.list = menu.querySelector('ul');
+  constructor(element, itemToHTML, dataRetriever) {
+    this.textField = element.mdc.input_;
+    this.menu = element.menu.element;
+    this.clearSelectionButton = element.clearSelectionButton;
+    this.list = this.menu.querySelector('ul');
+
+    if (!this.textField) throw new Error('TextField is null.');
+    if (!this.menu) throw new Error('Menu is null.');
+    if (!this.clearSelectionButton) throw new Error('ClearSelectionButton is null.');
+    if (!this.list) throw new Error('List is null.');
+
+    //
     if (!this.list) throw new Error('Cannot find ul element.');
     this.dataRetriever = dataRetriever;
     this.itemToHTML = itemToHTML;
     this.storage = null;
     this.selected = null;
-    this.onSelect = console.log;
     this.focusedItemIndex = null;
-    this.clearSelectionButton = clearSelectionButton;
+    this.onSelect = console.log;
     //
+
     this.textField.addEventListener('blur', e => this.onBlur(e));
     this.textField.addEventListener('keydown', e => this.keyDown(e));
     this.menu.addEventListener('click', e => this.onMenuClick(e));
-    this.clearSelectionButton.addEventListener('click', (e) => {
-      this.clearSelected(e);
-      this.textField.value = '';
-      this.textField.focus();
-    });
+    this.clearSelectionButton.addEventListener('click', e => this.onClear(e));
   }
 
   static attachTo() {
@@ -332,6 +335,12 @@ class AutoCompleteComponent {
     });
     this.clearSelected();
     this.setFocus(0);
+  }
+
+  onClear(e) {
+    this.clearSelected(e);
+    this.textField.value = '';
+    this.textField.focus();
   }
 
   openMenu() {

@@ -182,6 +182,10 @@ main {
 |--------------------------------------------------------------------------
 */
 
+.mdc-list-item {
+  cursor: pointer;
+}
+
 i.alchemy-select__cancel {
   display: none;
   position: absolute;

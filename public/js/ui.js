@@ -1651,9 +1651,7 @@ function bootAlchemy() {
           courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
 
           AutoCompleteComponent.attachTo(
-            courseSelect.mdc.input_,
-            courseSelect.menu.element,
-            courseSelect.clearSelectionButton,
+            courseSelect,
             course => mdcListItem(course.name, Course.transform(course, 'detail')),
             (text, callback) => alchemy.course.search({ text }, callback)
           ).setOnSelectionChange((selected) => {
