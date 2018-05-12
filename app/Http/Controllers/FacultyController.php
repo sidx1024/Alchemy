@@ -57,7 +57,7 @@ class FacultyController extends Controller
     }
     $faculty_is_assigned = sizeof($faculty->usages()) > 0;
     if ($faculty_is_assigned) {
-      return response()->json(['message' => 'Faculty is already assigned.'], Response::HTTP_CONFLICT);
+      return response()->json(['message' => 'Assigned faculty cannot be deleted.'], Response::HTTP_CONFLICT);
     }
     Faculty::destroy($id);
     return response()->json($faculty, Response::HTTP_OK);

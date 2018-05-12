@@ -40,6 +40,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/programme/get/{id}', 'ProgrammeController@get');
     $router->post('/programme/add', 'ProgrammeController@add');
     $router->put('/programme/update/{id}', 'ProgrammeController@update');
+    $router->get('/programme/all', 'ProgrammeController@all');
     $router->delete('/programme/delete/{id}', 'ProgrammeController@delete');
     // Location
     $router->get('/location/get/{id}', 'LocationController@get');

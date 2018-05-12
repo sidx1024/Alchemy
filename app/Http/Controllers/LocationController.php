@@ -32,8 +32,6 @@ class LocationController extends Controller
     return response()->json(Location::create($request->all(), Response::HTTP_CREATED));
   }
 
-
-
   public function delete($id)
   {
     $location = Location::find($id);

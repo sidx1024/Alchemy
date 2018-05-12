@@ -57,13 +57,15 @@
   --alchemy-theme-selected: rgba(255, 253, 150, 0.58);
 }
 
-
 .custom-indicator-tab-bar-in-toolbar .mdc-tab:not(.mdc-tab--active),
 .custom-tab-bar-in-toolbar .mdc-tab:not(.mdc-tab--active) {
-  color: rgba(255, 255, 255, 0.54); }
+  color: rgba(255, 255, 255, 0.54);
+}
+
 .custom-indicator-tab-bar-in-toolbar .mdc-tab:not(.mdc-tab--active) .mdc-tab__icon,
 .custom-tab-bar-in-toolbar .mdc-tab:not(.mdc-tab--active) .mdc-tab__icon {
-  color: rgba(255, 255, 255, 0.54); }
+  color: rgba(255, 255, 255, 0.54);
+}
 
 .custom-indicator-tab-bar-in-toolbar .mdc-tab--active,
 .custom-indicator-tab-bar-in-toolbar .mdc-tab:hover,
@@ -73,13 +75,15 @@
   color: white;
   color: var(--mdc-theme-text-primary-on-primary, white);
 }
+
 .custom-indicator-tab-bar-in-toolbar .mdc-tab--active .mdc-tab__icon,
 .custom-indicator-tab-bar-in-toolbar .mdc-tab:hover .mdc-tab__icon,
 .custom-tab-bar-in-toolbar .mdc-tab--active .mdc-tab__icon,
 .custom-tab-bar-in-toolbar .mdc-tab:hover .mdc-tab__icon {
   /* @alternate */
   color: white;
-  color: var(--mdc-theme-text-primary-on-primary, white); }
+  color: var(--mdc-theme-text-primary-on-primary, white);
+}
 
 .mdc-select-scroll-lock {
   overflow: visible !important;
@@ -96,7 +100,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-::-webkit-scrollbar { display: none; }
+::-webkit-scrollbar {
+  display: none;
+}
 
 #loading-overlay {
   display: flex;
@@ -109,7 +115,7 @@ body {
   position: fixed;
   width: 100%;
   height: 100%;
-  top : 0;
+  top: 0;
   left: 0;
   z-index: 100;
 }
@@ -267,7 +273,7 @@ i.alchemy-select__cancel--visible:focus {
   align-items: center;
   padding: 0 5% 0 5%;
   position: fixed;
-  top:0;
+  top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
@@ -304,4 +310,85 @@ i.alchemy-select__cancel--visible:focus {
 
 #alchemy-faculty-add .mdc-text-field {
   width: 100%;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Class
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-class-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-class-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-class-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-class-add .mdc-text-field {
+  width: 100%;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Designation
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-designation-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-designation-add .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-designation-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-designation-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-designation-add .mdc-text-field {
+  width: 100%;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Department
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-department-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-department-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-department-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-department-add .mdc-text-field {
+  width: 100%;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Other
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-other-view .mdc-select {
+  margin-top: 16px;
 }

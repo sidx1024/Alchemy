@@ -77,6 +77,43 @@ class Department extends Model {
 }
 
 class Designation extends Model {
+  static transform(data, type) {
+    if (!data) {
+      return [];
+    }
+    switch (type) {
+      case 'table': {
+        const transformedData = [];
+        data.forEach((_designation) => {
+          const designation = {};
+          designation.id = _designation.id;
+
+          designation.name = _designation.name;
+          designation.hours = _designation.hours;
+          designation.programmeId = _designation.programme_id;
+          transformedData.push(designation);
+        });
+        return transformedData;
+      }
+      case 'short-info': {
+        let designation = data;
+        if (Array.isArray(data)) {
+          designation = data[0];
+        }
+        return arrayToHtml([
+          designation.id,
+
+          designation.name,
+          designation.hours,
+          designation.programme_id
+        ]);
+      }
+      default: {
+        Logger.error(`Cannot transform data to type ${type}`);
+      }
+    }
+    return transformedData;
+  }
 }
 
 class Faculty extends Model {
