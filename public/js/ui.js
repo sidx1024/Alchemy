@@ -1634,8 +1634,7 @@ function bootAlchemy() {
           },
           courseOfferedList: {
             element: document.querySelector('#alchemy-course-offered__list'),
-            storage: [],
-            existingItemsFilter: _ => _
+            storage: []
           }
         };
 
@@ -1677,6 +1676,7 @@ function bootAlchemy() {
                 courseOfferedList.element.appendChild(item);
               });
             });
+            scrollTo();
           }
         }
 

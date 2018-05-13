@@ -55,6 +55,7 @@
 
 :root {
   --alchemy-theme-selected: rgba(255, 253, 150, 0.58);
+  --alchemy-line-color: #ddd;
 }
 
 .custom-indicator-tab-bar-in-toolbar .mdc-tab:not(.mdc-tab--active),
@@ -182,6 +183,11 @@ main {
   background-color: var(--alchemy-theme-selected);
 }
 
+hr {
+  border-top: 1px var(--alchemy-line-color) solid;
+  width: 100%;
+}
+
 /*
 |--------------------------------------------------------------------------
 | Alchemy Common
@@ -230,6 +236,10 @@ i.alchemy-select__cancel--visible:hover {
 
 i.alchemy-select__cancel--visible:focus {
   opacity: 1.0;
+}
+
+.mdc-layout-grid__cell--no-gap {
+  margin-bottom: calc(-1 * var(--mdc-layout-grid-gutter-desktop, 24px));
 }
 
 /*
@@ -399,6 +409,20 @@ i.alchemy-select__cancel--visible:focus {
 
 #alchemy-department-add .mdc-text-field {
   width: 100%;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Course Offered
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-course-offered__lecture-section,
+#alchemy-course-offered__practical-section,
+#alchemy-course-offered__tutorial-section {
+  border-top: 1px var(--alchemy-line-color) solid;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 /*
