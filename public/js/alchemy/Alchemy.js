@@ -61,6 +61,10 @@ class Course extends Model {
         }
         return arrayToHtml([course.id, course.code, course.alias, course.name]);
       }
+      case 'detail': {
+        const course = data;
+        return `${course.code} &bull; ${course.alias}`;
+      }
       default: {
         Logger.error(`Cannot transform data to type ${type}`);
       }
@@ -309,7 +313,6 @@ class Class_ extends Model {
     const transformedData = [];
     switch (type) {
       case 'list':
-        console.log('classes', classes);
         classes.forEach((class_) => {
           const classItem = Object.assign({}, class_);
           const { division: div } = classItem;
@@ -323,21 +326,42 @@ class Class_ extends Model {
       default:
         Logger.error(`Cannot transform data to type ${type}`);
     }
-    console.log('transformed', transformedData);
     return transformedData;
   }
 }
 
 class CourseOffered extends Model {
-  static transform(courseOffered, type) {
+  static transform(courseOfferedList, type) {
     const transformedData = [];
     switch (type) {
       case 'list':
         break;
+      case 'group-by-course': {
+        const uniqueItems = [];
+        const courseIndexes = [];
+        courseOfferedList.forEach((item) => {
+          if (courseIndexes.indexOf(item.course_id) === -1) {
+            uniqueItems.push(item);
+            courseIndexes.push(item.course_id);
+          }
+        });
+        return uniqueItems;
+      }
       default:
         Logger.error(`Cannot transform data to type ${type}`);
     }
     return transformedData;
+  }
+  search(searchParams, successCallback, failCallback) {
+    let url = this.actions.search.path;
+
+    if (searchParams) {
+      if (typeof searchParams.classId !== 'undefined') {
+        url += `class_id=${encodeURI(searchParams.classId.toString())}&`;
+      }
+    }
+
+    return super.search(url, successCallback, failCallback);
   }
 }
 
@@ -456,6 +480,7 @@ class Alchemy {
 
   pingAPI(successCallback, failCallback) {
     const url = this.config.api.path;
+    alchemyCommon.loadingBar.queue();
     fetch(url)
       .then(fetchStatus)
       .then(successCallback || Logger.success)

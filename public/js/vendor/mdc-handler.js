@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals,no-undef,no-unused-vars */
+/* eslint-disable no-restricted-globals,no-undef,no-unused-vars,prefer-template,no-underscore-dangle */
 class MDCSelectHandler {
   constructor(mdcSelect) {
     if (!mdcSelect) { return; }
@@ -46,7 +46,7 @@ class MDCSelectHandler {
   setSelected(id) {
     const items = Array.from(this.mdcSelect.querySelectorAll('li'));
     if (items.length > 0) {
-      const matchingItemIndex = items.findIndex(item => (+item.getAttribute('data-id') === id));
+      const matchingItemIndex = items.findIndex(item => (+item.getAttribute('data-store-index') === id));
       if (matchingItemIndex > -1) {
         this.select.selectedIndex = matchingItemIndex;
         this.floatLabelAbove();
@@ -110,7 +110,7 @@ class MDCSelectHandler {
 
   addItem(item, options) {
     const defaultOptions = {
-      idAttribute: 'data-id'
+      idAttribute: 'data-store-index'
     };
     options = Object.assign({}, defaultOptions, options);
 
@@ -287,5 +287,221 @@ class MDCExpansionPanelAccordionHelper {
       return Array.from(items).map(item => MDCExpansionPanelAccordionHelper.handle(item));
     }
     return MDCExpansionPanelAccordionHelper.handle(items);
+  }
+}
+
+class AutoCompleteComponent {
+  constructor(element, itemToHTML, dataRetriever) {
+    this.textField = element.mdc.input_;
+    this.menu = element.menu.element;
+    this.clearSelectionButton = element.clearSelectionButton;
+    this.list = this.menu.querySelector('ul');
+
+    if (!this.textField) throw new Error('TextField is null.');
+    if (!this.menu) throw new Error('Menu is null.');
+    if (!this.clearSelectionButton) throw new Error('ClearSelectionButton is null.');
+    if (!this.list) throw new Error('List is null.');
+
+    //
+    if (!this.list) throw new Error('Cannot find ul element.');
+    this.dataRetriever = dataRetriever;
+    this.itemToHTML = itemToHTML;
+    this.storage = null;
+    this.selected = null;
+    this.focusedItemIndex = null;
+    this.onSelect = console.log;
+    this.getFilter = _ => _;
+    //
+
+    this.textField.addEventListener('blur', e => this.onBlur(e));
+    this.textField.addEventListener('keydown', e => this.keyDown(e));
+    this.textField.addEventListener('input', e => this.onInput(e));
+    this.menu.addEventListener('click', e => this.onMenuClick(e));
+    this.clearSelectionButton.addEventListener('click', e => this.onClear(e));
+  }
+
+  static attachTo() {
+    // eslint-disable-next-line prefer-rest-params
+    return new AutoCompleteComponent(...arguments);
+  }
+
+  setList(list) {
+    if (!list) throw new Error('List is null.');
+    this.list.innerHTML = '';
+    this.storage = [];
+    const dataFilter = this.getFilter();
+    list.filter(dataFilter).forEach((item, i) => {
+      const listItem = this.itemToHTML(item);
+      listItem.setAttribute('data-store-index', i);
+      this.list.appendChild(listItem);
+      this.storage[i] = { data: item, item: listItem };
+    });
+    this.clearSelected();
+    this.setFocus(0);
+  }
+
+  onClear(e) {
+    this.clearSelected(e);
+    this.textField.value = '';
+    this.textField.focus();
+  }
+
+  openMenu() {
+    this.fitMenu();
+    this.menu.classList.add('mdc-menu--open');
+  }
+
+  hideMenu() {
+    this.menu.classList.remove('mdc-menu--open');
+  }
+
+  fitMenu() {
+    const bounds = this.textField.getBoundingClientRect();
+    this.menu.style.top = bounds.top + bounds.height + 'px';
+    this.menu.style.left = bounds.left + 'px';
+    this.menu.style.width = bounds.width + 'px';
+  }
+
+  old_keyDown(e) {
+    if (e instanceof KeyboardEvent) {
+      if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') { // typing one letter
+        if (this.textField.value.length > 1) {
+          this.dataRetriever(this.textField.value, list => this.setList(list));
+          this.openMenu();
+        } else {
+          this.hideMenu();
+        }
+      } else { // navigation
+        switch (e.key) {
+          case 'ArrowDown':
+            this.focusNext();
+            break;
+          case 'ArrowUp':
+            this.focusPrev();
+            break;
+          case 'Enter':
+            this.setSelected(this.focusedItemIndex);
+            this.onBlur();
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }
+
+  keyDown(e) {
+    if (e instanceof KeyboardEvent) {
+      switch (e.key) {
+        case 'ArrowDown':
+          this.focusNext();
+          break;
+        case 'ArrowUp':
+          this.focusPrev();
+          break;
+        case 'Enter':
+          this.setSelected(this.focusedItemIndex);
+          this.onBlur();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  onInput(e) {
+    if (this.textField.value.length > 0) {
+      this.dataRetriever(this.textField.value, list => this.setList(list));
+      this.openMenu();
+    } else {
+      this.hideMenu();
+    }
+  }
+
+  getSelected() {
+    return this.selected;
+  }
+
+  setSelected(storageIndex) {
+    if (storageIndex === null) {
+      this.clearSelected();
+      return;
+    }
+    this.selected = this.storage[storageIndex];
+    this.onSelect(this.selected);
+    this.clearSelectionButton.classList.add('alchemy-select__cancel--visible');
+    this.textField.blur();
+  }
+
+  clearSelected() {
+    this.selected = null;
+    this.clearSelectionButton.classList.remove('alchemy-select__cancel--visible');
+  }
+
+  onBlur() {
+    if (this.selected === null) {
+      this.textField.value = '';
+      this.textField.blur();
+    }
+    setTimeout(() => this.hideMenu(), 250);
+  }
+
+  setFocus(itemIndex) {
+    const item = this.storage[itemIndex];
+    this.clearFocus();
+    if (!item || !item.item) {
+      return;
+    }
+    this.focusedItemIndex = itemIndex;
+    item.item.classList.add('focused');
+  }
+
+  clearFocus() {
+    const focusedItem = this.menu.querySelector('.focused');
+    if (focusedItem) {
+      focusedItem.classList.remove('focused');
+    }
+    this.focusedItemIndex = null;
+  }
+
+  focusNext() {
+    if (this.focusedItemIndex === null) {
+      this.setFocus(0);
+    } else {
+      this.setFocus((this.focusedItemIndex + 1) % this.storage.length);
+    }
+  }
+
+  focusPrev() {
+    if (this.focusedItemIndex === null) {
+      this.setFocus(0); // focus first item
+    } else if (this.focusedItemIndex === 0) { // if first item
+      this.setFocus(this.storage.length - 1); // focus last item
+    } else {
+      this.setFocus(this.focusedItemIndex - 1); // focus previous item
+    }
+  }
+
+  onMenuClick(e) {
+    const target = assertPath(e, 'mdc-list-item');
+    if (!target) return;
+    const storageIndex = target.getAttribute('data-store-index');
+    if (storageIndex === null) throw new Error('Storage index is null', storageIndex);
+    this.setSelected(storageIndex);
+    this.onBlur();
+    if (typeof this.onSelect === 'function') {
+      this.onSelect();
+    }
+    return this.selected;
+  }
+
+  setOnSelectionChange(onSelect) {
+    this.onSelect = onSelect;
+    return this;
+  }
+
+  setDataFilter(getFilterFunction) {
+    this.getFilter = getFilterFunction;
+    return this;
   }
 }

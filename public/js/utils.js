@@ -119,6 +119,7 @@ function setSelectedItem(table, id) {
 }
 
 function fetchStatus(response) {
+  alchemyCommon.loadingBar.dequeue();
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -177,22 +178,42 @@ function onEnterKey(target, callback, once = false) {
   });
 }
 
-function mdcListItem(primary, secondary, tertiary) {
-  const tertiaryHTML = tertiary ?
-    `<span class="mdc-list-item__secondary-text">
-       ${tertiary}
-     </span>
-    ` : '';
-  const element =
-    `<li class="mdc-list-item">
-      <span class="mdc-list-item__text">        
-        <span class="mdc-list-item__secondary-text">
-          ${secondary}
-        </span>        
-        ${tertiaryHTML}${primary}
-      </span>
-    </li>`;
+function createElement(tagName, className, children) {
+  const element = document.createElement(tagName);
+
+  if (className) {
+    if (Array.isArray(className)) {
+      element.classList.add(...className);
+    } else {
+      element.classList.add(className);
+    }
+  }
+
+  if (children) {
+    if (Array.isArray(children)) {
+      children.forEach(() => {
+        element.appendChild(children);
+      });
+    } else {
+      element.appendChild(children);
+    }
+  }
+
   return element;
+}
+
+function mdcListItem(primary, secondary, tertiary) {
+  const spanSecondaryText = createElement('span', 'mdc-list-item__secondary-text');
+  spanSecondaryText.innerHTML = secondary || '';
+  if (tertiary) {
+    const spanTertiaryText = createElement('span', 'mdc-list-item__secondary-text');
+    spanTertiaryText.innerHTML = tertiary;
+    spanSecondaryText.innerHTML += spanTertiaryText;
+  }
+  const spanText = createElement('span', 'mdc-list-item__text', spanSecondaryText);
+  spanText.innerHTML += primary;
+  const listItem = createElement('li', 'mdc-list-item', spanText);
+  return listItem;
 }
 
 function arrayToMdcList(array, methods) {
@@ -207,7 +228,8 @@ function arrayToMdcList(array, methods) {
     if (typeof methods.tertiary === 'function') {
       listItemText.push(methods.tertiary(item));
     }
-    return mdcListItem(...listItemText);
+    const mdcListItemString = mdcListItem(...listItemText);
+    return mdcListItemString;
   });
 }
 
@@ -222,4 +244,23 @@ function removeLoadingOverlay() {
     element.parentNode.removeChild(element);
     window.removeEventListener('load', removeLoadingOverlay);
   }
+}
+
+function removeItemsById(exclusions) {
+  return item => (exclusions.indexOf(item.id) === -1);
+}
+
+function subtractArray(b, key = 'id') {
+  return a => a.filter(removeItemsById(b.map(r => r[key])));
+}
+
+function unique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
+function assertPath(event, className) {
+  if (!event || !event.path || event.path.length === 0) {
+    return null;
+  }
+  return event.path.find(r => r.classList.contains(className));
 }
