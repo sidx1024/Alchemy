@@ -259,7 +259,12 @@ class Location extends Model {
           location.id,
           location.alias,
           location.name || '&not;',
-          location.type === 0 ? 'Classroom' : 'Laboratory']);
+          location.type === 0 ? 'Classroom' : 'Laboratory'
+        ]);
+      }
+      case 'detail': {
+        const location = data;
+        return `${location.name || '-'} &bull; ${location.type === 0 ? 'Classroom' : 'Laboratory'}`;
       }
       default: {
         Logger.error(`Cannot transform data to type ${type}`);
@@ -288,7 +293,6 @@ class Programme extends Model {
 class Class_ extends Model {
   search(searchParams, successCallback, failCallback) {
     let url = this.actions.search.path;
-
     if (searchParams) {
       if (typeof searchParams.departmentId !== 'undefined') {
         url += `department_id=${encodeURI(searchParams.departmentId.toString())}&`;
@@ -309,10 +313,15 @@ class Class_ extends Model {
 
     return super.search(url, successCallback, failCallback);
   }
-  static transform(classes, type) {
-    const transformedData = [];
+
+  static transform(data, type) {
+    if (!data) {
+      return [];
+    }
     switch (type) {
-      case 'list':
+      case 'list': {
+        const transformedData = [];
+        const classes = data;
         classes.forEach((class_) => {
           const classItem = Object.assign({}, class_);
           const { division: div } = classItem;
@@ -322,11 +331,38 @@ class Class_ extends Model {
           classItem.name = `${classItem.level}D${divs}`;
           transformedData.push(classItem);
         });
-        break;
-      default:
+        return transformedData;
+      }
+      case 'table': {
+        const transformedData = [];
+        data.forEach((_class) => {
+          const class_ = {};
+          class_.id = _class.id;
+          class_.level = _class.level;
+          class_.division = _class.division;
+          class_.default_class = _class.default_class.alias;
+          class_.department = _class.department.name;
+          transformedData.push(class_);
+        });
+        return transformedData;
+      }
+      case 'short-info': {
+        let class_ = data;
+        if (Array.isArray(data)) {
+          class_ = data[0];
+        }
+        return arrayToHtml([
+          class_.id,
+          class_.level,
+          class_.division,
+          class_.default_class.alias || class_.default_class,
+          class_.department_id
+        ]);
+      }
+      default: {
         Logger.error(`Cannot transform data to type ${type}`);
+      }
     }
-    return transformedData;
   }
 }
 
@@ -352,6 +388,7 @@ class CourseOffered extends Model {
     }
     return transformedData;
   }
+
   search(searchParams, successCallback, failCallback) {
     let url = this.actions.search.path;
 
@@ -387,6 +424,8 @@ class Alchemy {
       programme: null,
       departments: null,
       classes: null,
+      levels: null,
+      divisions: null,
       ONE_PRACTICAL_CREDIT: 1,
       designations: null
     };
@@ -462,6 +501,14 @@ class Alchemy {
     function onClassesReceived(response) {
       if (response) {
         this.current.classes = response;
+        this.current.levels = alchemy.current.classes
+          .map(r => r.level)
+          .filter(unique)
+          .map(s => ({ id: s, level: s }));
+        this.current.divisions = alchemy.current.classes
+          .map(r => r.division)
+          .filter(unique)
+          .map(s => ({ id: s, division: s > 10 ? `D${s}` : `D0${s}` }));
         onRequestReceived(true);
       } else {
         onRequestReceived(false, response);

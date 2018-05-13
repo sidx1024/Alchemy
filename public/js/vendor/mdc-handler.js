@@ -310,7 +310,7 @@ class AutoCompleteComponent {
     this.selected = null;
     this.focusedItemIndex = null;
     this.onSelect = console.log;
-    this.getFilter = _ => _;
+    this.getFilter = _ => (__ => __);
     //
 
     this.textField.addEventListener('blur', e => this.onBlur(e));
@@ -423,6 +423,11 @@ class AutoCompleteComponent {
   }
 
   setSelected(storageIndex) {
+    if (typeof storageIndex === 'object') {
+      this.storage = [storageIndex];
+      this.setSelected(0);
+      return;
+    }
     if (storageIndex === null) {
       this.clearSelected();
       return;

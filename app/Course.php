@@ -11,6 +11,7 @@ class Course extends Model
     protected $guarded = ['id']; // Protect field 'id' against mass-assignment.
     const DEFAULT_SEARCH_RESULT_LIMIT = 10;
 
+    // TODO: add 'integer| min: |max: | '
     public static $rules = [
         'name' => 'required|max:128',
         'alias' => 'required|max:8',
