@@ -70,6 +70,41 @@ class Course extends Model {
 }
 
 class Department extends Model {
+  static transform(data, type) {
+    if (!data) {
+      return [];
+    }
+    switch (type) {
+      case 'table': {
+        const transformedData = [];
+        data.forEach((_department) => {
+          const department = {};
+          department.id = _department.id;
+          department.name = _department.name;
+          department.alias = _department.alias;
+          department.programmeId = _department.programme_id;
+          transformedData.push(department);
+        });
+        return transformedData;
+      }
+      case 'short-info': {
+        let department = data;
+        if (Array.isArray(data)) {
+          department = data[0];
+        }
+        return arrayToHtml([
+          department.id,
+          department.name,
+          department.alias,
+          department.programme_id
+        ]);
+      }
+      default: {
+        Logger.error(`Cannot transform data to type ${type}`);
+      }
+    }
+    return transformedData;
+  }
 }
 
 class Designation extends Model {
@@ -83,7 +118,6 @@ class Designation extends Model {
         data.forEach((_designation) => {
           const designation = {};
           designation.id = _designation.id;
-
           designation.name = _designation.name;
           designation.hours = _designation.hours;
           designation.programmeId = _designation.programme_id;
@@ -98,7 +132,6 @@ class Designation extends Model {
         }
         return arrayToHtml([
           designation.id,
-
           designation.name,
           designation.hours,
           designation.programme_id
@@ -249,6 +282,29 @@ class Programme extends Model {
 }
 
 class Class_ extends Model {
+  search(searchParams, successCallback, failCallback) {
+    let url = this.actions.search.path;
+
+    if (searchParams) {
+      if (typeof searchParams.departmentId !== 'undefined') {
+        url += `department_id=${encodeURI(searchParams.departmentId.toString())}&`;
+      }
+      if (typeof searchParams.text !== 'undefined') {
+        url += `text=${encodeURI(searchParams.text.toString())}&`;
+      }
+      if (typeof searchParams.level !== 'undefined') {
+        url += `level=${encodeURI(searchParams.level.toString())}&`;
+      }
+      if (typeof searchParams.division !== 'undefined') {
+        url += `division=${encodeURI(searchParams.division.toString())}&`;
+      }
+      if (typeof searchParams.limit !== 'undefined') {
+        url += `limit=${encodeURI(searchParams.limit.toString())}&`;
+      }
+    }
+
+    return super.search(url, successCallback, failCallback);
+  }
   static transform(classes, type) {
     const transformedData = [];
     switch (type) {

@@ -997,14 +997,26 @@
             <div class="mdc-layout-grid__inner">
 
               <div id="alchemy-class-view__filter-by-text"
-                   class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-6">
+                   class="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon mdc-layout-grid__cell--span-5">
                 <i class="material-icons mdc-text-field__icon" tabindex="0">search</i>
                 <input type="text" class="mdc-text-field__input">
                 <label class="mdc-floating-label" for="my-text-field">Search</label>
                 <div class="mdc-line-ripple"></div>
               </div>
 
-              <div id="alchemy-class-view__filter-by-class" class="mdc-select  mdc-layout-grid__cell--span-3"
+              <div id="alchemy-class-view__filter-by-level" class="mdc-select  mdc-layout-grid__cell--span-2"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <div id="alchemy-class-view__filter-by-division" class="mdc-select  mdc-layout-grid__cell--span-2"
                    role="listbox">
                 <div class="mdc-select__surface" tabindex="0">
                   <div class="mdc-select__label"></div>
@@ -1366,8 +1378,7 @@
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="text" id="alchemy-department-add__department-name--input" class="mdc-text-field__input"
                          aria-controls="name-validation-message" autocomplete="off" required minlength=3>
-                  <label for="alchemy-course-add__course-alias--input" class="mdc-floating-label">Level &
-                    Division</label>
+                  <label for="alchemy-department-add__department-name--input" class="mdc-floating-label">Department Name</label>
                   <div class="mdc-notched-outline">
                     <svg>
                       <path class="mdc-notched-outline__path"/>
@@ -1385,7 +1396,7 @@
                 <div id="alchemy-department-add__department-alias"
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="text" id="alchemy-department-add__department-alias--input" class="mdc-text-field__input"
-                         aria-controls="name-validation-message" autocomplete="off" required minlength=3>
+                         aria-controls="name-validation-message" autocomplete="off" required minlength=2>
                   <label for="alchemy-department-add__department-alias--input" class="mdc-floating-label">Department
                     Alias</label>
                   <div class="mdc-notched-outline">
@@ -1401,7 +1412,7 @@
                 </p>
               </div>
               <!-- Department Program-id -->
-              <div id="alchemy-department-add__default-programme" class="mdc-select mdc-layout-grid__cell--span-4"
+              <div id="alchemy-department-add__department-programme" class="mdc-select mdc-layout-grid__cell--span-4"
                    role="listbox">
                 <div class="mdc-select__surface" tabindex="0">
                   <div class="mdc-select__label"></div>

@@ -335,6 +335,10 @@ main {
   margin-top: 16px;
 }
 
+#alchemy-department-add .mdc-select {
+  margin-top: 16px;
+}
+
 #alchemy-department-view__table table tr {
   cursor: pointer;
 }

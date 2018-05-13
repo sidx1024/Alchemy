@@ -56,6 +56,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->delete('/faculty/delete/{id}', 'FacultyController@delete');
     // Class
     $router->get('/class/get/{id}', 'ClassController@get');
+    $router->get('/class/search', 'ClassController@search');
     $router->post('/class/add', 'ClassController@add');
     $router->get('/class/all', 'ClassController@all');
     $router->put('/class/update/{id}', 'ClassController@update');

@@ -11,7 +11,14 @@ class LocationController extends Controller
 {
   public function all()
   {
-    return $this->respond(Response::HTTP_OK, Location::all());
+    $location = Location::all();
+    if (is_null($location)) {
+      return response([],Response::HTTP_NOT_FOUND);
+    }
+    return response()->json(
+      $location,
+      Response::HTTP_OK
+    );
   }
 
   public function get($id)
