@@ -1625,22 +1625,25 @@ function bootAlchemy() {
           classSelect: {
             element: document.querySelector('#alchemy-course-offered__class')
           },
-          courseSelect: {
-            element: document.querySelector('#alchemy-course-offered__courses'),
-            clearSelectionButton: document.querySelector('#alchemy-course-offered__courses .alchemy-select__cancel'),
-            menu: {
-              element: document.querySelector('#alchemy-course-offered__courses--menu'),
-              list: document.querySelector('alchemy-course-offered__courses--menu .mdc-list')
-            }
-          },
           courseOfferedList: {
             element: document.querySelector('#alchemy-course-offered__list'),
             storage: []
+          },
+          courseOfferedAddDialog: {
+            element: document.querySelector('#alchemy-course-offered__add-dialog'),
+            courseSelect: {
+              element: document.querySelector('#alchemy-course-offered__courses'),
+              clearSelectionButton: document.querySelector('#alchemy-course-offered__courses .alchemy-select__cancel'),
+              menu: {
+                element: document.querySelector('#alchemy-course-offered__courses--menu'),
+                list: document.querySelector('alchemy-course-offered__courses--menu .mdc-list')
+              }
+            }
           }
         };
 
         setupClassSelect();
-        setupCourseSelect();
+        setupCourseOfferedAddDialog();
 
         function setupClassSelect() {
           const { classSelect } = alchemyCourseOfferedSection;
@@ -1681,27 +1684,36 @@ function bootAlchemy() {
           }
         }
 
-        function setupCourseSelect() {
-          // Auto-complete sample
-          const { courseSelect, courseOfferedList } = alchemyCourseOfferedSection;
+        function setupCourseOfferedAddDialog() {
+          const { courseOfferedAddDialog } = alchemyCourseOfferedSection;
+          mdc.dialog.MDCDialog.attachTo(courseOfferedAddDialog.element);
 
-          courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
+          setupCourseSelect();
+          function setupCourseSelect() {
+            // Auto-complete sample
+            const { courseOfferedList, courseOfferedAddDialog } = alchemyCourseOfferedSection;
+            const { courseSelect } = courseOfferedAddDialog;
 
-          const getData = (text, callback) => alchemy.course.search({ text }, callback);
-          const getDataFilter = () => {
-            const courseOfferedIds = courseOfferedList.storage.map(r => r.course.id).filter(unique);
-            return removeItemsById(courseOfferedIds);
-          };
-          const transform = course => mdcListItem(course.name, Course.transform(course, 'detail'));
-          const onSelectionChange = (selected) => {
-            if (selected && selected.data) {
-              setTextFieldInput(courseSelect, selected.data.name);
-            }
-          };
+            courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
 
-          AutoCompleteComponent.attachTo(courseSelect, transform, getData)
-            .setDataFilter(getDataFilter)
-            .setOnSelectionChange(onSelectionChange);
+            const getData = (text, callback) => alchemy.course.search({ text }, callback);
+            const getDataFilter = () => {
+              const courseOfferedIds = courseOfferedList.storage
+                .map(r => r.course.id)
+                .filter(unique);
+              return removeItemsById(courseOfferedIds);
+            };
+            const transform = course => mdcListItem(course.name, Course.transform(course, 'detail'));
+            const onSelectionChange = (selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(courseSelect, selected.data.name);
+              }
+            };
+
+            AutoCompleteComponent.attachTo(courseSelect, transform, getData)
+              .setDataFilter(getDataFilter)
+              .setOnSelectionChange(onSelectionChange);
+          }
         }
       }
 
@@ -2378,9 +2390,11 @@ function bootAlchemy() {
 
             alchemy.programme.all((programme) => {
               designationProgramme.mdcSelectHandler
-                                  .addItems(programme,
-                                    {assignments: {valueKey: 'name', idKey: 'id'}})
-                                  .enable();
+                .addItems(
+                  programme,
+                  { assignments: { valueKey: 'name', idKey: 'id' } }
+                )
+                .enable();
               designationProgramme.mdcSelectHandler.setSelected(alchemy.current.programme.id);
             });
           }

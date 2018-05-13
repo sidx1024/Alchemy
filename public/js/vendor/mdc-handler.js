@@ -362,34 +362,6 @@ class AutoCompleteComponent {
     this.menu.style.width = bounds.width + 'px';
   }
 
-  old_keyDown(e) {
-    if (e instanceof KeyboardEvent) {
-      if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') { // typing one letter
-        if (this.textField.value.length > 1) {
-          this.dataRetriever(this.textField.value, list => this.setList(list));
-          this.openMenu();
-        } else {
-          this.hideMenu();
-        }
-      } else { // navigation
-        switch (e.key) {
-          case 'ArrowDown':
-            this.focusNext();
-            break;
-          case 'ArrowUp':
-            this.focusPrev();
-            break;
-          case 'Enter':
-            this.setSelected(this.focusedItemIndex);
-            this.onBlur();
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
-
   keyDown(e) {
     if (e instanceof KeyboardEvent) {
       switch (e.key) {

@@ -942,24 +942,20 @@
       </div>
       <div class="mdc-layout-grid__inner">
         <div id="alchemy-course-offered__course-list-section" class="mdc-card mdc-layout-grid__cell--span-4">
-          <!-- Auto-complete example -->
-          <div id="alchemy-course-offered__courses"
-               class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6">
-            <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
-            <input type="text" id="alchemy-course-offered__courses--input" class="mdc-text-field__input">
-            <label class="mdc-floating-label" for="my-text-field">Offer new course</label>
-            <div class="mdc-line-ripple"></div>
-          </div>
-          <div id="alchemy-course-offered__courses--menu" class="mdc-menu mdc-select__menu">
-            <ul class="mdc-list mdc-menu__items">
-            </ul>
-          </div>
           <ul id="alchemy-course-offered__list" class="mdc-list mdc-list--two-line">
           </ul>
         </div>
         <div id="alchemy-course-offered__course-setting-section" class="mdc-card mdc-layout-grid__cell--span-8">
-          <span id="alchemy-course-offered__course-detail" class="mdc-typography--body1">Course Name</span>
-          <h1 id="alchemy-course-offered__course-name" class="mdc-typography--headline">Course Name</h1>
+          <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid__cell--align-middle">
+              <span id="alchemy-course-offered__course-detail" class="mdc-typography--body1">Course Name</span>
+              <h1 id="alchemy-course-offered__course-name" class="mdc-typography--headline">Course Name</h1>
+            </div>
+            <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid__cell--align-top mdc-layout-grid--align-right">
+              <button class="mdc-button">DELETE</button>
+              <button class="mdc-button mdc-button--raised">SAVE</button>
+            </div>
+          </div>
           <div id="alchemy-course-offered__lecture-section" class="mdc-layout-grid__inner">
             <span
               class="mdc-typography--subtitle1 mdc-layout-grid__cell--span-12 mdc-layout-grid__cell--no-gap mdc-layout-grid__cell--align-middle">Lecture:</span>
@@ -997,7 +993,7 @@
                 <div id="alchemy-course-offered__practical-batch-0" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__practical-batch--radio-batch-0"
-                         name="alchemy-course-offered__practical-batch--radio-batch-0" value="0" checked>
+                         name="alchemy-course-offered__practical-batch" value="0" checked>
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1010,7 +1006,7 @@
                 <div id="alchemy-course-offered__practical-batch-1" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__practical-batch--radio-batch-1"
-                         name="alchemy-course-offered__practical-batch--radio-batch-1" value="1">
+                         name="alchemy-course-offered__practical-batch" value="1">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1023,7 +1019,7 @@
                 <div id="alchemy-course-offered__practical-batch-2" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__practical-batch--radio-batch-2"
-                         name="alchemy-course-offered__practical-batch--radio-batch-2" value="2">
+                         name="alchemy-course-offered__practical-batch" value="2">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1036,7 +1032,7 @@
                 <div id="alchemy-course-offered__practical-batch-3" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__practical-batch--radio-batch-3"
-                         name="alchemy-course-offered__practical-batch--radio-batch-3" value="3">
+                         name="alchemy-course-offered__practical-batch" value="3">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1049,7 +1045,7 @@
                 <div id="alchemy-course-offered__practical-batch-4" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__practical-batch--radio-batch-4"
-                         name="alchemy-course-offered__practical-batch--radio-batch-4" value="4">
+                         name="alchemy-course-offered__practical-batch" value="4">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1062,7 +1058,7 @@
                 <div id="alchemy-course-offered__practical-batch-5" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__practical-batch--radio-batch-5"
-                         name="alchemy-course-offered__practical-batch--radio-batch-5" value="5">
+                         name="alchemy-course-offered__practical-batch" value="5">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1091,7 +1087,7 @@
                 <div id="alchemy-course-offered__tutorial-batch-0" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__tutorial-batch--radio-batch-0"
-                         name="alchemy-course-offered__tutorial-batch--radio-batch-0" value="0" checked>
+                         name="alchemy-course-offered__tutorial-batch--radio" value="0" checked>
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1104,7 +1100,7 @@
                 <div id="alchemy-course-offered__tutorial-batch-1" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__tutorial-batch--radio-batch-1"
-                         name="alchemy-course-offered__tutorial-batch--radio-batch-1" value="1">
+                         name="alchemy-course-offered__tutorial-batch--radio" value="1">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1117,7 +1113,7 @@
                 <div id="alchemy-course-offered__tutorial-batch-2" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__tutorial-batch--radio-batch-2"
-                         name="alchemy-course-offered__tutorial-batch--radio-batch-2" value="2">
+                         name="alchemy-course-offered__tutorial-batch--radio" value="2">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1130,7 +1126,7 @@
                 <div id="alchemy-course-offered__tutorial-batch-3" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__tutorial-batch--radio-batch-3"
-                         name="alchemy-course-offered__tutorial-batch--radio-batch-3" value="3">
+                         name="alchemy-course-offered__tutorial-batch--radio" value="3">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1143,7 +1139,7 @@
                 <div id="alchemy-course-offered__tutorial-batch-4" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__tutorial-batch--radio-batch-4"
-                         name="alchemy-course-offered__tutorial-batch--radio-batch-4" value="4">
+                         name="alchemy-course-offered__tutorial-batch--radio" value="4">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1156,7 +1152,7 @@
                 <div id="alchemy-course-offered__tutorial-batch-5" class="mdc-radio">
                   <input class="mdc-radio__native-control" type="radio"
                          id="alchemy-course-offered__tutorial-batch--radio-batch-5"
-                         name="alchemy-course-offered__tutorial-batch--radio-batch-5" value="5">
+                         name="alchemy-course-offered__tutorial-batch--radio" value="5">
                   <div class="mdc-radio__background">
                     <div class="mdc-radio__outer-circle"></div>
                     <div class="mdc-radio__inner-circle"></div>
@@ -1171,12 +1167,56 @@
                  class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6">
               <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
               <input type="text" id="alchemy-course-offered__tutorial-location--input" class="mdc-text-field__input">
-              <label class="mdc-floating-label" for="my-text-field">Select tutorial location</label>
+              <label class="mdc-floating-label" for="alchemy-course-offered__tutorial-location--input">Select tutorial location</label>
               <div class="mdc-line-ripple"></div>
             </div>
           </div>
         </div>
       </div>
+      <div id="alchemy-course-offered__courses--menu" class="mdc-menu mdc-select__menu" style="z-index: 100;">
+        <ul class="mdc-list mdc-menu__items">
+        </ul>
+      </div>
+      <!-- Alchemy Dialog - Add Course Offered -->
+      <aside id="alchemy-course-offered__add-dialog"
+             class="mdc-dialog mdc-dialog--open"
+             role="alertdialog"
+             aria-labelledby="my-mdc-dialog-label"
+             aria-describedby="my-mdc-dialog-description">
+        <div class="mdc-dialog__surface" style="width: 360px;">
+          <header class="mdc-dialog__header">
+            <h2 class="mdc-dialog__header__title">
+              Offer new course
+            </h2>
+          </header>
+          <section class="mdc-dialog__body mdc-layout-grid__inner">
+            <!-- Auto-complete example -->
+            <div id="alchemy-course-offered__courses"
+                 class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-8">
+              <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
+              <input type="text" id="alchemy-course-offered__courses--input" class="mdc-text-field__input">
+              <label class="mdc-floating-label" for="my-text-field">Search Course</label>
+              <div class="mdc-line-ripple"></div>
+            </div>
+
+            <div id="alchemy-course-offered__no-of-batch"
+                 class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-4">
+              <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
+              <input type="number" id="alchemy-course-offered__no-of-batch--input" class="mdc-text-field__input" min="0" max="6" value="5">
+              <label class="mdc-floating-label" for="my-text-field">No. of Batches</label>
+              <div class="mdc-line-ripple"></div>
+            </div>
+
+          </section>
+          <footer class="mdc-dialog__footer">
+            <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">Decline
+            </button>
+            <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">Accept
+            </button>
+          </footer>
+        </div>
+        <div class="mdc-dialog__backdrop"></div>
+      </aside>
     </section>
 
     <!-- SECTION Time Table-->
