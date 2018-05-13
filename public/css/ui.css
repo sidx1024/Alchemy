@@ -188,6 +188,24 @@ main {
 |--------------------------------------------------------------------------
 */
 
+.alchemy-loading-bar {
+  display: none;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  height: 2px;
+}
+
+.alchemy-loading-bar .mdc-linear-progress__buffer {
+  background-color: var(--mdc-theme-secondary-light);
+}
+
+.alchemy-loading-bar--visible {
+  display: block;
+}
+
 .mdc-list-item {
   cursor: pointer;
 }

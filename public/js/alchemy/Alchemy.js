@@ -424,6 +424,7 @@ class Alchemy {
 
   pingAPI(successCallback, failCallback) {
     const url = this.config.api.path;
+    alchemyCommon.loadingBar.queue();
     fetch(url)
       .then(fetchStatus)
       .then(successCallback || Logger.success)

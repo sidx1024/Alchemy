@@ -36,6 +36,8 @@ class Model {
       headers: this.headers
     };
 
+    alchemyCommon.loadingBar.queue();
+
     return fetch(url, params)
       .then(fetchStatus)
       .then(response => response.json())
@@ -51,6 +53,8 @@ class Model {
       method: action.method,
       headers: this.headers
     };
+
+    alchemyCommon.loadingBar.queue();
 
     return fetch(url, params)
       .then(fetchStatus)
@@ -69,6 +73,8 @@ class Model {
       body: object
     };
 
+    alchemyCommon.loadingBar.queue();
+
     return fetch(url, params)
       .then(fetchStatus)
       .then(response => response.json())
@@ -86,6 +92,8 @@ class Model {
       body: object
     };
 
+    alchemyCommon.loadingBar.queue();
+
     return fetch(url, params)
       .then(fetchStatus)
       .then(response => response.json())
@@ -102,6 +110,8 @@ class Model {
       headers: this.headers
     };
 
+    alchemyCommon.loadingBar.queue();
+
     return fetch(url, params)
       .then(fetchStatus)
       .then(response => response.json())
@@ -117,6 +127,8 @@ class Model {
       method: action.method,
       headers: this.headers
     };
+
+    alchemyCommon.loadingBar.queue();
 
     return fetch(url, params)
       .then(fetchStatus)

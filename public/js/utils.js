@@ -119,6 +119,7 @@ function setSelectedItem(table, id) {
 }
 
 function fetchStatus(response) {
+  alchemyCommon.loadingBar.dequeue();
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -255,4 +256,11 @@ function subtractArray(b, key = 'id') {
 
 function unique(value, index, self) {
   return self.indexOf(value) === index;
+}
+
+function assertPath(event, className) {
+  if (!event || !event.path || event.path.length === 0) {
+    return null;
+  }
+  return event.path.find(r => r.classList.contains(className));
 }

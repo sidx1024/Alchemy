@@ -89,12 +89,38 @@ function setupCommon() {
   window.alchemyCommon = {
     header: document.querySelector('#alchemy-header'),
     body: document.querySelector('#alchemy-body'),
-    login: document.querySelector('#alchemy-login')
+    login: document.querySelector('#alchemy-login'),
+    loadingBar: { element: document.querySelector('.alchemy-loading-bar') }
   };
 
+  setupLoadingBar();
   setupAccessEvents();
   setupToast();
   setupDialog();
+
+  function setupLoadingBar() {
+    const { loadingBar } = alchemyCommon;
+    loadingBar.visible = false;
+    loadingBar.show = () => {
+      if (loadingBar.visible) { return; }
+      loadingBar.element.classList.add('alchemy-loading-bar--visible');
+      loadingBar.visible = true;
+    };
+    loadingBar.hide = () => {
+      if (!loadingBar.visible || loadingBar.data.length > 0) { return; }
+      loadingBar.element.classList.remove('alchemy-loading-bar--visible');
+      loadingBar.visible = false;
+    };
+    loadingBar.data = [];
+    loadingBar.queue = () => {
+      loadingBar.data.unshift(1);
+      loadingBar.show();
+    };
+    loadingBar.dequeue = () => {
+      loadingBar.data.shift();
+      loadingBar.hide();
+    };
+  }
 
   function setupAccessEvents() {
     const { header, body, login } = alchemyCommon;

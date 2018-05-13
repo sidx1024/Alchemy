@@ -315,6 +315,7 @@ class AutoCompleteComponent {
 
     this.textField.addEventListener('blur', e => this.onBlur(e));
     this.textField.addEventListener('keydown', e => this.keyDown(e));
+    this.textField.addEventListener('input', e => this.onInput(e));
     this.menu.addEventListener('click', e => this.onMenuClick(e));
     this.clearSelectionButton.addEventListener('click', e => this.onClear(e));
   }
@@ -361,7 +362,7 @@ class AutoCompleteComponent {
     this.menu.style.width = bounds.width + 'px';
   }
 
-  keyDown(e) {
+  old_keyDown(e) {
     if (e instanceof KeyboardEvent) {
       if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') { // typing one letter
         if (this.textField.value.length > 1) {
@@ -386,6 +387,34 @@ class AutoCompleteComponent {
             break;
         }
       }
+    }
+  }
+
+  keyDown(e) {
+    if (e instanceof KeyboardEvent) {
+      switch (e.key) {
+        case 'ArrowDown':
+          this.focusNext();
+          break;
+        case 'ArrowUp':
+          this.focusPrev();
+          break;
+        case 'Enter':
+          this.setSelected(this.focusedItemIndex);
+          this.onBlur();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  onInput(e) {
+    if (this.textField.value.length > 0) {
+      this.dataRetriever(this.textField.value, list => this.setList(list));
+      this.openMenu();
+    } else {
+      this.hideMenu();
     }
   }
 
@@ -454,10 +483,10 @@ class AutoCompleteComponent {
   }
 
   onMenuClick(e) {
-    const { target } = e;
-    if (!target) return null;
-    const storageIndex = Number(target.getAttribute('data-store-index'));
-    if (isNaN(storageIndex)) throw new Error('Got target as NaN.');
+    const target = assertPath(e, 'mdc-list-item');
+    if (!target) return;
+    const storageIndex = target.getAttribute('data-store-index');
+    if (storageIndex === null) throw new Error('Storage index is null', storageIndex);
     this.setSelected(storageIndex);
     this.onBlur();
     if (typeof this.onSelect === 'function') {
