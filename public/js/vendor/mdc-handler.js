@@ -310,7 +310,7 @@ class AutoCompleteComponent {
     this.selected = null;
     this.focusedItemIndex = null;
     this.onSelect = console.log;
-    this.filterFunction = _ => _;
+    this.getFilter = _ => _;
     //
 
     this.textField.addEventListener('blur', e => this.onBlur(e));
@@ -328,7 +328,8 @@ class AutoCompleteComponent {
     if (!list) throw new Error('List is null.');
     this.list.innerHTML = '';
     this.storage = [];
-    list.filter(this.filterFunction).forEach((item, i) => {
+    const dataFilter = this.getFilter();
+    list.filter(dataFilter).forEach((item, i) => {
       const listItem = this.itemToHTML(item);
       listItem.setAttribute('data-store-index', i);
       this.list.appendChild(listItem);
@@ -470,8 +471,8 @@ class AutoCompleteComponent {
     return this;
   }
 
-  setDataFilter(filterFunction) {
-    this.filterFunction = filterFunction;
+  setDataFilter(getFilterFunction) {
+    this.getFilter = getFilterFunction;
     return this;
   }
 }

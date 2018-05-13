@@ -1608,7 +1608,8 @@ function bootAlchemy() {
           },
           courseOfferedList: {
             element: document.querySelector('#alchemy-course-offered__list'),
-            storage: []
+            storage: [],
+            existingItemsFilter: _ => _
           }
         };
 
@@ -1637,9 +1638,6 @@ function bootAlchemy() {
             const selectedClass = classSelect.mdcSelectHandler.getSelected().data;
             alchemy.courseOffered.search({ classId: selectedClass.id }, (courseOfferedArray) => {
               courseOfferedList.storage = courseOfferedArray;
-              courseOfferedList.existingItemsFilter =
-                removeItemsById(courseOfferedList.storage.map(r => r.id));
-
               const courseOfferedGroupByCourses = CourseOffered.transform(
                 courseOfferedArray,
                 'group-by-course'
@@ -1659,19 +1657,24 @@ function bootAlchemy() {
         function setupCourseSelect() {
           // Auto-complete sample
           const { courseSelect, courseOfferedList } = alchemyCourseOfferedSection;
-          const { existingItemsFilter } = courseOfferedList;
 
           courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
+
+          const existingItemsFilter = () => {
+            const courseOfferedIds = courseOfferedList.storage.map(r => r.course.id).filter(unique);
+            return removeItemsById(courseOfferedIds);
+          };
 
           AutoCompleteComponent.attachTo(
             courseSelect,
             course => mdcListItem(course.name, Course.transform(course, 'detail')),
             (text, callback) => alchemy.course.search({ text }, callback)
-          ).setOnSelectionChange((selected) => {
-            if (selected && selected.data) {
-              setTextFieldInput(courseSelect, selected.data.name);
-            }
-          }).setDataFilter(existingItemsFilter);
+          ).setDataFilter(existingItemsFilter)
+            .setOnSelectionChange((selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(courseSelect, selected.data.name);
+              }
+            });
         }
       }
 
@@ -1742,7 +1745,8 @@ function bootAlchemy() {
           setupEvents();
 
           function setupDesignationTable() {
-            const { designationEditButton, designationDeleteButton } = alchemyDesignationSection.designationView;
+            const { designationEditButton, designationDeleteButton } =
+              alchemyDesignationSection.designationView;
 
             designationTable.deselectDesignation = () => {
               const selectedDesignation = designationTable.element.querySelectorAll('tr.selected');

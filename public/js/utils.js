@@ -249,6 +249,10 @@ function removeItemsById(exclusions) {
   return item => (exclusions.indexOf(item.id) === -1);
 }
 
-function subtractArray(a, b, key = 'id') {
-  return a.filter(removeItemsById(b.map(r => r[key])));
+function subtractArray(b, key = 'id') {
+  return a => a.filter(removeItemsById(b.map(r => r[key])));
+}
+
+function unique(value, index, self) {
+  return self.indexOf(value) === index;
 }
