@@ -1751,7 +1751,7 @@ function bootAlchemy() {
               element: document.querySelector('#alchemy-class-view__table'),
               table: document.querySelector('#alchemy-class-view__table table'),
               headers: ['Level', 'Division', 'Location', 'Department'],
-              headersDataTypes: [1, 'Name', 'Location', 'Department'],
+              headersDataTypes: [1, 1, 'Location', 'Department'],
               headersWidth: [15, 25, 20, 40],
               selectedId: null
             }
@@ -1761,13 +1761,28 @@ function bootAlchemy() {
             mode: 'add',
             heading: document.querySelector('#alchemy-class-add h1'),
             classAddForm: { element: document.querySelector('#alchemy-class-add__form') },
-            classLevel_Division: {
-              element: document.querySelector('#alchemy-class-add__class-level-division'),
-              input: document.querySelector('#alchemy-class-add__class-level-division input')
+            classLevel: {
+              element: document.querySelector('#alchemy-class-add__class-level'),
+              input: document.querySelector('#alchemy-class-add__class-level input')
             },
-            classLocation: { element: document.querySelector('#alchemy-class-add__class-location') },
+            classDivision: {
+              element: document.querySelector('#alchemy-class-add__class-division'),
+              input: document.querySelector('#alchemy-class-add__class-division input')
+            },
+            classLocationSelect: {
+              element: document.querySelector('#alchemy-class__class-location'),
+              clearSelectionButton: document.querySelector('#alchemy-class__class-location .alchemy-select__cancel'),
+              menu: {
+                element: document.querySelector('#alchemy-class__class-location--menu'),
+                list: document.querySelector('alchemy-class__class-location--menu .mdc-list')
+              }
+            },
+            classLocationList: {
+              element: document.querySelector('#alchemy-class-location__list'),
+              storage: []
+            },
             classDepartment: {
-              element: document.querySelector('#alchemy-class-add__class-branch')
+              element: document.querySelector('#alchemy-class-add__class-department')
             },
             classAddButton: {
               element: document.querySelector('#alchemy-class-add__add-button')
@@ -1782,6 +1797,8 @@ function bootAlchemy() {
         };
 
         setupClassView();
+        setupClassAdd();
+
 
         function setupClassView() {
           const { classTable } = alchemyClassSection.classView;
@@ -1839,7 +1856,7 @@ function bootAlchemy() {
 
             classDeleteButton.element.addEventListener('click', () => {
               if (!classDeleteButton.element.hasAttribute('disabled')) {
-                alchemy.class.delete(
+                alchemy.class_.delete(
                   classTable.selectedId,
                   onClassDeleteSuccess,
                   onClassDeleteFail
@@ -1918,13 +1935,13 @@ function bootAlchemy() {
                 .init('Select Level', { storeData: true })
                 .disable();
 
-            const allLevelItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
-            const { classes } = alchemy.current;
+            const allLevelItem = { id: null, level: 'All' };
+            const { levels } = alchemy.current;
 
             classFilterByLevel.mdcSelectHandler
               .addItems(
-                classes.concat([allLevelItem]),
-                { assignments: { valueKey: 'name', idKey: 'id' } }
+                levels.concat([allLevelItem]),
+                { assignments: { valueKey: 'level', idKey: 'id' } }
               )
               .setOnChangeListener(onLevelChange)
               .enable();
@@ -1944,13 +1961,13 @@ function bootAlchemy() {
                 .init('Select division', { storeData: true })
                 .disable();
 
-            const allDivisionItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
-            const { classes } = alchemy.current;
+            const allDivisionItem = { id: null, division: 'All' };
+            const { divisions } = alchemy.current;
 
             classFilterByDivision.mdcSelectHandler
               .addItems(
-                classes.concat([allDivisionItem]),
-                { assignments: { valueKey: 'name', idKey: 'id' } }
+                divisions.concat([allDivisionItem]),
+                { assignments: { valueKey: 'division', idKey: 'id' } }
               )
               .setOnChangeListener(onDivisionChange)
               .enable();
@@ -1972,7 +1989,7 @@ function bootAlchemy() {
 
             classTable.element.addEventListener('click', (mouseEvent) => {
               mouseEvent.stopPropagation();
-              classTable.deselectClasss();
+              classTable.deselectClass();
               const { target } = mouseEvent;
               if (target.tagName !== 'TD') { return; }
               const selectedClass = target.parentNode;
@@ -2000,6 +2017,195 @@ function bootAlchemy() {
               scrollTo(classAdd.element);
               classAdd.switchMode.edit(classTable.selectedId);
             });
+          }
+        }
+        function setupClassAdd() {
+          const { classAdd } = alchemyClassSection;
+          const {
+            classAddForm,
+            classLevel,
+            classDivision,
+            classDepartment,
+            classAddButton,
+            classResetButton,
+            classViewButton
+          } = classAdd;
+
+          classLevel.mdc = mdc.textField.MDCTextField.attachTo(classLevel.element);
+          classDivision.mdc = mdc.textField.MDCTextField.attachTo(classDivision.element);
+
+          classAdd.switchMode = {
+            add: () => {
+              classAdd.editMode = false;
+              classAdd.heading.innerText = 'Add Class';
+              classAddButton.element.innerText = 'ADD CLASS';
+              delete classAdd.editItemId;
+            },
+            edit: (id) => {
+              classAdd.editMode = true;
+              classAdd.heading.innerText = 'Edit Class';
+              classAddButton.element.innerText = 'UPDATE CLASS';
+
+              alchemy.class_.get(id, onClassGetSuccess, onClassGetFail);
+
+              function onClassGetSuccess(class_) {
+                console.log(class_);
+                classAdd.heading.innerText += ` (ID: ${class_.id})`;
+                classAdd.editItemId = class_.id;
+                setTextFieldInput(classLevel, class_.level);
+                setTextFieldInput(classDivision, class_.division);
+                classAdd.classLocationSelect.acc.setSelected({ data: class_.default_class });
+
+                classDepartment.mdcSelectHandler.setSelected(class_.department_id);
+              }
+
+              function onClassGetFail(error) {
+                if (typeof error.json !== 'function') {
+                  console.error(error);
+                } else {
+                  error.json().then((body) => {
+                    const message = `Error ${error.status}: ${error.statusText}`;
+                    const extra = arrayToHtml(Object.values(body));
+                    alchemyCommon.toast({ message }, extra);
+                  });
+                }
+              }
+            }
+          };
+
+          setupClassDepartment();
+          setupClassLocationSelect();
+
+          function setupClassLocationSelect() {
+            // Auto-complete sample
+            const { classLocationSelect } = classAdd;
+
+            classLocationSelect.mdc = mdc.textField.MDCTextField
+              .attachTo(classLocationSelect.element);
+
+            const getData = (text, callback) => alchemy.location.search({ text }, callback);
+            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const onSelectionChange = (selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(classLocationSelect, selected.data.alias);
+              }
+            };
+
+            classLocationSelect.acc = AutoCompleteComponent
+              .attachTo(classLocationSelect, transform, getData)
+              .setOnSelectionChange(onSelectionChange);
+          }
+          classViewButton.element.addEventListener('click', () => {
+            scrollTo(alchemyClassSection.classView.element);
+          });
+
+          classAddButton.element.addEventListener('click', () => {
+            // const location = classLocation.element.querySelector(':checked')
+            // .getAttribute('value');
+            const department = getSelectedDepartment();
+            const location = getSelectedLocation();
+
+            const isFormValid = classAddForm.element.checkValidity() && department !== false;
+            if (!isFormValid) {
+              const message = 'Please fill out the form properly.';
+              alchemyCommon.toast({ message });
+              return false;
+            }
+
+            const class_ = {
+              level: classLevel.mdc.input_.value,
+              division: classDivision.mdc.input_.value,
+              default_class: Number(location.id),
+              department_id: Number(department.id)
+            };
+
+            const { editMode } = classAdd;
+            if (editMode) {
+              class_.id = classAdd.editItemId;
+              alchemy.class_.update(
+                class_.id,
+                JSON.stringify(class_),
+                onClassUpdateSuccess,
+                onClassAddFail
+              );
+            } else {
+              alchemy.class_.add(
+                JSON.stringify(class_), onClassAddSuccess,
+                onClassAddFail
+              );
+            }
+            return true;
+          });
+
+          classResetButton.element.addEventListener('click', () => {
+            classDepartment.mdcSelectHandler.clearSelection();
+          });
+
+          function onClassUpdateSuccess(updatedClass) {
+            const { classView } = alchemyClassSection;
+            const { classTable } = classView;
+            classTable.refresh();
+            classAddForm.element.reset();
+            classDepartment.mdcSelectHandler.clearSelection();
+            classAdd.switchMode.add();
+            scrollTo(classView.element);
+            const extra = Class_.transform(updatedClass, 'short-info');
+            const message = 'Class updated successfully.';
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onClassAddSuccess(addedClass) {
+            const { classTable } = alchemyClassSection.classView;
+            classTable.refresh();
+            classAddForm.element.reset();
+            classDepartment.mdcSelectHandler.clearSelection();
+            const extra = Class_.transform(addedClass, 'short-info');
+            const message = 'Class_ added successfully.';
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onClassAddFail(error) {
+            if (typeof error.json !== 'function') {
+              console.error(error);
+            } else {
+              error.json().then((body) => {
+                alchemyCommon.dialog.info({
+                  header: `Error ${error.status}: ${error.statusText}`,
+                  body: arrayToHtml(Object.values(body)),
+                  accept: 'Okay'
+                }).show();
+              });
+            }
+          }
+
+          function setupClassDepartment() {
+            classDepartment.mdcSelectHandler =
+              MDCSelectHandler
+                .handle(classDepartment.element)
+                .clearItems()
+                .init('Select Department', { storeData: true })
+                .disable();
+
+            const { departments } = alchemy.current;
+            classDepartment.mdcSelectHandler
+              .addItems(departments, { assignments: { valueKey: 'name', idKey: 'id' } })
+              .enable();
+          }
+
+          function getSelectedDepartment() {
+            const selectedDepartment = classDepartment.mdcSelectHandler.getSelected();
+            if (selectedDepartment && selectedDepartment.data) {
+              return selectedDepartment.data;
+            }
+            return false;
+          }
+
+          function getSelectedLocation() {
+            const selectedLocation = classAdd.classLocationSelect.acc.getSelected();
+            if (selectedLocation && selectedLocation.data) {
+              return selectedLocation.data;
+            }
+            return false;
           }
         }
       }
@@ -2130,75 +2336,6 @@ function bootAlchemy() {
                   accept: 'Okay'
                 }).show();
               });
-            }
-          }
-
-          function setupFilterByText() {
-            const { designationFilterByText } = alchemyDesignationSection.designationView;
-            if (designationFilterByText.element) {
-              const searchTextField = mdc.textField
-                .MDCTextField.attachTo(designationFilterByText.element);
-              const searchInput = searchTextField.input_;
-              searchInput.addEventListener('input', onSearchInputChange);
-
-              function onSearchInputChange(inputEvent) {
-                designationFilter.text = inputEvent.target.value;
-                designationTable.refresh();
-              }
-            }
-          }
-
-          function setupFilterByBranch() {
-            const { designationFilterByBranch } = alchemyDesignationSection.designationView;
-            designationFilterByBranch.mdcSelectHandler =
-              MDCSelectHandler
-                .handle(designationFilterByBranch.element)
-                .clearItems()
-                .init('Select branch', { storeData: true })
-                .disable();
-
-            const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
-            const { departments } = alchemy.current;
-
-            designationFilterByBranch.mdcSelectHandler
-              .addItems(
-                departments.concat([allBranchesItem]),
-                { assignments: { valueKey: 'name', idKey: 'id' } }
-              )
-              .setOnChangeListener(onBranchChange)
-              .enable();
-
-            function onBranchChange() {
-              const selectedItem = designationFilterByBranch.mdcSelectHandler.getSelected();
-              designationFilter.departmentId = selectedItem.data.id;
-              designationTable.refresh();
-            }
-          }
-
-          function setupFilterByDesignation() {
-            const { designationFilterByDesignation } = alchemyDesignationSection.designationView;
-            designationFilterByDesignation.mdcSelectHandler =
-              MDCSelectHandler
-                .handle(designationFilterByDesignation.element)
-                .clearItems()
-                .init('Select Designation', { storeData: true })
-                .disable();
-
-            const { designations } = alchemy.current;
-            const allDesignationsItem = { id: null, name: 'All' };
-
-            designationFilterByDesignation.mdcSelectHandler
-              .addItems(
-                designations.concat([allDesignationsItem]),
-                { assignments: { valueKey: 'name', idKey: 'id' } }
-              )
-              .setOnChangeListener(onDesignationChange)
-              .enable();
-
-            function onDesignationChange() {
-              const selectedItem = designationFilterByDesignation.mdcSelectHandler.getSelected();
-              designationFilter.designationId = selectedItem.data.id;
-              designationTable.refresh();
             }
           }
 

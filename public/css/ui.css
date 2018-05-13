@@ -350,6 +350,10 @@ i.alchemy-select__cancel--visible:focus {
   margin-top: 16px;
 }
 
+#alchemy-class-add .mdc-select {
+  margin-top: 16px;
+}
+
 #alchemy-class-view__table table tr {
   cursor: pointer;
 }
