@@ -2013,7 +2013,6 @@ function bootAlchemy() {
             classAddForm,
             classLevel,
             classDivision,
-            classLocation,
             classDepartment,
             classAddButton,
             classResetButton,
@@ -2069,7 +2068,8 @@ function bootAlchemy() {
             // Auto-complete sample
             const { classLocationSelect } = classAdd;
 
-            classLocationSelect.mdc = mdc.textField.MDCTextField.attachTo(classLocationSelect.element);
+            classLocationSelect.mdc = mdc.textField.MDCTextField
+              .attachTo(classLocationSelect.element);
 
             const getData = (text, callback) => alchemy.location.search({ text }, callback);
             const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
@@ -2079,7 +2079,8 @@ function bootAlchemy() {
               }
             };
 
-            classLocationSelect.acc = AutoCompleteComponent.attachTo(classLocationSelect, transform, getData)
+            classLocationSelect.acc = AutoCompleteComponent
+              .attachTo(classLocationSelect, transform, getData)
               .setOnSelectionChange(onSelectionChange);
           }
           classViewButton.element.addEventListener('click', () => {
@@ -2323,75 +2324,6 @@ function bootAlchemy() {
                   accept: 'Okay'
                 }).show();
               });
-            }
-          }
-
-          function setupFilterByText() {
-            const { designationFilterByText } = alchemyDesignationSection.designationView;
-            if (designationFilterByText.element) {
-              const searchTextField = mdc.textField
-                .MDCTextField.attachTo(designationFilterByText.element);
-              const searchInput = searchTextField.input_;
-              searchInput.addEventListener('input', onSearchInputChange);
-
-              function onSearchInputChange(inputEvent) {
-                designationFilter.text = inputEvent.target.value;
-                designationTable.refresh();
-              }
-            }
-          }
-
-          function setupFilterByBranch() {
-            const { designationFilterByBranch } = alchemyDesignationSection.designationView;
-            designationFilterByBranch.mdcSelectHandler =
-              MDCSelectHandler
-                .handle(designationFilterByBranch.element)
-                .clearItems()
-                .init('Select branch', { storeData: true })
-                .disable();
-
-            const allBranchesItem = { id: null, name: 'All', programme_id: alchemy.keys.programme };
-            const { departments } = alchemy.current;
-
-            designationFilterByBranch.mdcSelectHandler
-              .addItems(
-                departments.concat([allBranchesItem]),
-                { assignments: { valueKey: 'name', idKey: 'id' } }
-              )
-              .setOnChangeListener(onBranchChange)
-              .enable();
-
-            function onBranchChange() {
-              const selectedItem = designationFilterByBranch.mdcSelectHandler.getSelected();
-              designationFilter.departmentId = selectedItem.data.id;
-              designationTable.refresh();
-            }
-          }
-
-          function setupFilterByDesignation() {
-            const { designationFilterByDesignation } = alchemyDesignationSection.designationView;
-            designationFilterByDesignation.mdcSelectHandler =
-              MDCSelectHandler
-                .handle(designationFilterByDesignation.element)
-                .clearItems()
-                .init('Select Designation', { storeData: true })
-                .disable();
-
-            const { designations } = alchemy.current;
-            const allDesignationsItem = { id: null, name: 'All' };
-
-            designationFilterByDesignation.mdcSelectHandler
-              .addItems(
-                designations.concat([allDesignationsItem]),
-                { assignments: { valueKey: 'name', idKey: 'id' } }
-              )
-              .setOnChangeListener(onDesignationChange)
-              .enable();
-
-            function onDesignationChange() {
-              const selectedItem = designationFilterByDesignation.mdcSelectHandler.getSelected();
-              designationFilter.designationId = selectedItem.data.id;
-              designationTable.refresh();
             }
           }
 
