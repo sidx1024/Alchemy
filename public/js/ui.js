@@ -1660,21 +1660,21 @@ function bootAlchemy() {
 
           courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
 
-          const existingItemsFilter = () => {
+          const getData = (text, callback) => alchemy.course.search({ text }, callback);
+          const getDataFilter = () => {
             const courseOfferedIds = courseOfferedList.storage.map(r => r.course.id).filter(unique);
             return removeItemsById(courseOfferedIds);
           };
+          const transform = course => mdcListItem(course.name, Course.transform(course, 'detail'));
+          const onSelectionChange = (selected) => {
+            if (selected && selected.data) {
+              setTextFieldInput(courseSelect, selected.data.name);
+            }
+          };
 
-          AutoCompleteComponent.attachTo(
-            courseSelect,
-            course => mdcListItem(course.name, Course.transform(course, 'detail')),
-            (text, callback) => alchemy.course.search({ text }, callback)
-          ).setDataFilter(existingItemsFilter)
-            .setOnSelectionChange((selected) => {
-              if (selected && selected.data) {
-                setTextFieldInput(courseSelect, selected.data.name);
-              }
-            });
+          AutoCompleteComponent.attachTo(courseSelect, transform, getData)
+            .setDataFilter(getDataFilter)
+            .setOnSelectionChange(onSelectionChange);
         }
       }
 
