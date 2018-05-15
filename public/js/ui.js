@@ -9,6 +9,29 @@ no-restricted-globals,no-trailing-spaces */
 | DOM initialization & manipulation.
 |
 */
+function checkConnection(callback) {
+  pingDatabase((response) => {
+    if (response.status >= 200 && response.status < 300) {
+      Logger.success(response);
+      return callback();
+    }
+    handleResponse(response, (json) => {
+      alchemyCommon.dialog.info({
+        header: 'Error establishing connection',
+        body: `${json.message}<br/>${json.error}`,
+        accept: 'Reload',
+        // eslint-disable-next-line no-restricted-globals
+        onAccept: () => (location.reload())
+      }).show();
+    });
+  });
+  function pingDatabase(cbk) {
+    fetch('/api/ping-database')
+      .then(cbk)
+      .catch(cbk);
+  }
+}
+
 function setupLoginSection() {
   const alchemyLoginSection = {
     usernameInput: {
@@ -1639,14 +1662,74 @@ function bootAlchemy() {
                 list: document.querySelector('alchemy-course-offered__courses--menu .mdc-list')
               }
             }
+          },
+          courseListSection: document.querySelector('#alchemy-course-offered__course-list-section'),
+          courseSettingSection: {
+            element: document.querySelector('#alchemy-course-offered__course-setting-section'),
+            courseName: document.querySelector('#alchemy-course-offered__course-name'),
+            courseDetail: document.querySelector('#alchemy-course-offered__course-detail'),
+            deleteButton: document.querySelector('#alchemy-course-offered__delete-button'),
+            saveButton: document.querySelector('#alchemy-course-offered__save-button'),
+            lectureSection: {
+              element: document.querySelector('#alchemy-course-offered__lecture-section'),
+              lectureLocation: {
+                element: document.querySelector('#alchemy-course-offered__lecture-location'),
+                clearSelectionButton: document.querySelector('#alchemy-course-offered__lecture-location .alchemy-select__cancel'),
+                menu: {
+                  element: document.querySelector('#alchemy-course-offered__lecture-location--menu'),
+                  list: document.querySelector('#alchemy-course-offered__lecture-location--menu .mdc-list')
+                }
+              },
+              lectureFaculty: {
+                element: document.querySelector('#alchemy-course-offered__lecture-faculty'),
+                clearSelectionButton: document.querySelector('#alchemy-course-offered__lecture-faculty .alchemy-select__cancel'),
+                menu: {
+                  element: document.querySelector('#alchemy-course-offered__lecture-faculty--menu'),
+                  list: document.querySelector('#alchemy-course-offered__lecture-faculty--menu .mdc-list')
+                }
+              },
+              lectureFaculty2: {
+                element: document.querySelector('#alchemy-course-offered__lecture-faculty-second'),
+                clearSelectionButton: document.querySelector('#alchemy-course-offered__lecture-faculty-second .alchemy-select__cancel'),
+                menu: {
+                  element: document.querySelector('#alchemy-course-offered__lecture-faculty-second--menu'),
+                  list: document.querySelector('#alchemy-course-offered__lecture-faculty-second--menu .mdc-list')
+                }
+              }
+            },
+            practicalSection: {
+              element: document.querySelector('#alchemy-course-offered__practical-section'),
+              practicalLocation: {
+                element: document.querySelector('#alchemy-course-offered__practical-location'),
+                clearSelectionButton: document.querySelector('#alchemy-course-offered__practical-location .alchemy-select__cancel'),
+                menu: {
+                  element: document.querySelector('#alchemy-course-offered__practical-location--menu'),
+                  list: document.querySelector('#alchemy-course-offered__practical-location--menu .mdc-list')
+                }
+              },
+              practicalBatch: document.querySelector('#alchemy-course-offered__practical-batch')
+            },
+            tutorialSection: {
+              element: document.querySelector('#alchemy-course-offered__tutorial-section'),
+              tutorialLocation: {
+                element: document.querySelector('#alchemy-course-offered__tutorial-location'),
+                clearSelectionButton: document.querySelector('#alchemy-course-offered__tutorial-location .alchemy-select__cancel'),
+                menu: {
+                  element: document.querySelector('#alchemy-course-offered__tutorial-location--menu'),
+                  list: document.querySelector('#alchemy-course-offered__tutorial-location--menu .mdc-list')
+                }
+              },
+              tutorialBatch: document.querySelector('#alchemy-course-offered__tutorial-batch')
+            }
           }
         };
 
         setupClassSelect();
         setupCourseOfferedAddDialog();
+        setupCourseSettingSection();
 
         function setupClassSelect() {
-          const { classSelect } = alchemyCourseOfferedSection;
+          const { classSelect, courseListSection, courseSettingSection } = alchemyCourseOfferedSection;
           classSelect.mdcSelectHandler =
             MDCSelectHandler
               .handle(classSelect.element)
@@ -1662,6 +1745,8 @@ function bootAlchemy() {
             .setOnChangeListener(onClassChange)
             .enable();
 
+          setupCourseListEvents();
+
           function onClassChange() {
             const { courseOfferedList } = alchemyCourseOfferedSection;
             const selectedClass = classSelect.mdcSelectHandler.getSelected().data;
@@ -1673,25 +1758,45 @@ function bootAlchemy() {
               );
               const listItems = arrayToMdcList(courseOfferedGroupByCourses, {
                 primary: r => r.course.name,
-                secondary: r => Course.transform(r.course, 'detail')
+                secondary: r => Course.transform(r.course, 'detail'),
+                also: (r, course) => {
+                  r.setAttribute('data-id', course.id);
+                  return r;
+                }
               });
               courseOfferedList.element.innerHTML = '';
               listItems.forEach((item) => {
                 courseOfferedList.element.appendChild(item);
               });
+              courseListSection.style.display = 'block';
+              courseSettingSection.element.style.display = 'none';
+              scrollTo(courseListSection);
             });
-            scrollTo();
+          }
+          function setupCourseListEvents() {
+            const { courseOfferedList } = alchemyCourseOfferedSection;
+            courseOfferedList.element.addEventListener('click', onListItemClick);
+            function onListItemClick(e) {
+              const { storage } = courseOfferedList;
+              const target = assertPath(e, 'mdc-list-item');
+              if (!target) return;
+              const courseOfferedId = target.getAttribute('data-id');
+              if (courseOfferedId === null) throw new Error('Course Offered Id is null');
+              const course = storage.find(r => r.id === (+courseOfferedId));
+              loadCourseOffered(course.course_id);
+            }
           }
         }
 
         function setupCourseOfferedAddDialog() {
           const { courseOfferedAddDialog } = alchemyCourseOfferedSection;
-          mdc.dialog.MDCDialog.attachTo(courseOfferedAddDialog.element);
-
+          courseOfferedAddDialog.mdc =
+            mdc.dialog.MDCDialog.attachTo(courseOfferedAddDialog.element);
+          // courseOfferedAddDialog.mdc.show();
           setupCourseSelect();
           function setupCourseSelect() {
             // Auto-complete sample
-            const { courseOfferedList, courseOfferedAddDialog } = alchemyCourseOfferedSection;
+            const { courseOfferedList } = alchemyCourseOfferedSection;
             const { courseSelect } = courseOfferedAddDialog;
 
             courseSelect.mdc = mdc.textField.MDCTextField.attachTo(courseSelect.element);
@@ -1714,6 +1819,145 @@ function bootAlchemy() {
               .setDataFilter(getDataFilter)
               .setOnSelectionChange(onSelectionChange);
           }
+        }
+
+        function setupCourseSettingSection() {
+          const { courseSettingSection } = alchemyCourseOfferedSection;
+          const { lectureSection, practicalSection, tutorialSection } = courseSettingSection;
+
+          const { lectureLocation, lectureFaculty, lectureFaculty2 } = lectureSection;
+          const { practicalBatch, practicalLocation } = practicalSection;
+          const { tutorialBatch, tutorialLocation } = tutorialSection;
+
+          function setupLectureLocation() {
+            // TODO: Add filter by lab or lecture
+            lectureLocation.mdc = mdc.textField.MDCTextField.attachTo(lectureLocation.element);
+            const getData = (text, callback) => alchemy.location.search({ text }, callback);
+            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const onSelectionChange = (selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(lectureLocation, selected.data.alias);
+              }
+            };
+
+            lectureLocation.acc = AutoCompleteComponent.attachTo(lectureLocation, transform, getData)
+              .setOnSelectionChange(onSelectionChange);
+          }
+          function setupLectureFaculty() {
+            lectureFaculty.mdc = mdc.textField.MDCTextField.attachTo(lectureFaculty.element);
+            lectureFaculty2.mdc = mdc.textField.MDCTextField.attachTo(lectureFaculty2.element);
+
+            const getData = (text, callback) => alchemy.faculty.search({ text }, callback);
+            const transform = faculty => mdcListItem(faculty.alias, Faculty.transform(faculty, 'detail'));
+            const onSelectionChange = (selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(lectureFaculty, selected.data.alias);
+              }
+            };
+            const onSelectionChange2 = (selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(lectureFaculty2, selected.data.alias);
+              }
+            };
+            lectureFaculty.acc = AutoCompleteComponent
+              .attachTo(lectureFaculty, transform, getData)
+              .setOnSelectionChange(onSelectionChange);
+            lectureFaculty2.acc = AutoCompleteComponent
+              .attachTo(lectureFaculty2, transform, getData)
+              .setOnSelectionChange(onSelectionChange2);
+          }
+          function setupPracticalLocation() {
+            practicalLocation.mdc = mdc.textField.MDCTextField.attachTo(practicalLocation.element);
+
+            const getData = (text, callback) => alchemy.location.search({ text }, callback);
+            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const onSelectionChange = (selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(practicalLocation, selected.data.alias);
+              }
+            };
+            practicalLocation.acc = AutoCompleteComponent
+              .attachTo(practicalLocation, transform, getData)
+              .setOnSelectionChange(onSelectionChange);
+          }
+          function setupTutorialLocation() {
+            tutorialLocation.mdc = mdc.textField.MDCTextField.attachTo(tutorialLocation.element);
+
+            const getData = (text, callback) => alchemy.location.search({ text }, callback);
+            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const onSelectionChange = (selected) => {
+              if (selected && selected.data) {
+                setTextFieldInput(tutorialLocation, selected.data.alias);
+              }
+            };
+            tutorialLocation.acc = AutoCompleteComponent
+              .attachTo(tutorialLocation, transform, getData)
+              .setOnSelectionChange(onSelectionChange);
+          }
+
+          setupLectureLocation();
+          setupLectureFaculty();
+          setupPracticalLocation();
+          setupTutorialLocation();
+        }
+
+        function loadCourseOffered(courseId) {
+          const { courseOfferedList, courseSettingSection } = alchemyCourseOfferedSection;
+          const { storage } = courseOfferedList;
+          const { courseName, courseDetail } = courseSettingSection;
+          const { lectureSection, practicalSection, tutorialSection } = courseSettingSection;
+          const { saveButton, deleteButton } = courseSettingSection;
+          const { COURSE_TYPE_PRACTICAL, COURSE_TYPE_TUTORIAL } = alchemy.current;
+
+          const coursesOffered = storage.filter(r => (r.course_id === courseId));
+          if (!coursesOffered) throw new Error('Courses Offered cannot be found in storage.', courseId, storage);
+
+          const [courseOffered] = coursesOffered;
+          const { course } = courseOffered;
+
+          courseSettingSection.element.style.display = 'flex';
+          courseName.innerText = course.name;
+          courseDetail.innerHTML = `${course.code} &bull; ${course.alias}`;
+          scrollTo(courseSettingSection.element);
+
+          const hasLectureComponent = course.lecture > 0;
+
+          const hasPracticalComponent = course.practical > 0;
+          const practicals = coursesOffered.filter(r => r.course_type === COURSE_TYPE_PRACTICAL);
+          const practicalHasCommonLocation = isCommon(practicals.map(r => r.location_id));
+
+          const tutorials = coursesOffered.filter(r => r.course_type === COURSE_TYPE_TUTORIAL);
+          const tutorialHasCommonLocation = isCommon(tutorials.map(r => r.location_id));
+          const hasTutorialComponent = course.tutorial > 0;
+
+          const isTwoPersonCourse = course.persons === 2;
+
+          console.log(course.id, 'practicalHasCommonLocation', practicalHasCommonLocation);
+          console.log(course.id, 'tutorialHasCommonLocation', tutorialHasCommonLocation);
+
+          lectureSection.element.style.display = hasLectureComponent ? 'grid' : 'none';
+          practicalSection.element.style.display = hasPracticalComponent ? 'grid' : 'none';
+          tutorialSection.element.style.display = hasTutorialComponent ? 'grid' : 'none';
+
+          if (hasLectureComponent) {
+            const { lectureLocation, lectureFaculty, lectureFaculty2 } = lectureSection;
+            lectureLocation.acc.setSelected(courseOffered.location);
+            lectureFaculty.acc.setSelected(courseOffered.faculty[0]);
+            if (isTwoPersonCourse) {
+              lectureFaculty2.acc.setSelected(courseOffered.faculty[1]);
+            }
+          }
+
+          if (hasPracticalComponent) {
+            const { practicalLocation } = practicalSection;
+            practicalLocation.acc.setSelected(courseOffered.location);
+          }
+
+          if (hasTutorialComponent) {
+            const { tutorialLocation } = tutorialSection;
+            tutorialLocation.acc.setSelected(courseOffered.location);
+          }
+          // const type = courseType.element.querySelector(':checked').getAttribute('value');
         }
       }
 
@@ -2054,7 +2298,7 @@ function bootAlchemy() {
                 classAdd.editItemId = class_.id;
                 setTextFieldInput(classLevel, class_.level);
                 setTextFieldInput(classDivision, class_.division);
-                classAdd.classLocationSelect.acc.setSelected({ data: class_.default_class });
+                classAdd.classLocationSelect.acc.setSelected(class_.default_class);
 
                 classDepartment.mdcSelectHandler.setSelected(class_.department_id);
               }
@@ -2886,4 +3130,4 @@ function bootAlchemy() {
 
 window.addEventListener('load', removeLoadingOverlay);
 setupCommon();
-setupLoginSection();
+checkConnection(setupLoginSection);

@@ -229,6 +229,9 @@ function arrayToMdcList(array, methods) {
       listItemText.push(methods.tertiary(item));
     }
     const mdcListItemString = mdcListItem(...listItemText);
+    if (typeof methods.also === 'function') {
+      return methods.also(mdcListItemString, item);
+    }
     return mdcListItemString;
   });
 }
@@ -256,6 +259,13 @@ function subtractArray(b, key = 'id') {
 
 function unique(value, index, self) {
   return self.indexOf(value) === index;
+}
+
+function isCommon(arr) {
+  if (!arr || arr.length < 1) {
+    return true;
+  }
+  return arr.filter(unique).length === 1;
 }
 
 function assertPath(event, className) {

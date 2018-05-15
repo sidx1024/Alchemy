@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +18,18 @@ use Illuminate\Http\Request;
 $router->group(['prefix' => 'api'], function () use ($router) {
   $router->get('/', function () use ($router) {
     return "Api is working.";
+  });
+  $router->get('/ping-database', function () use ($router) {
+    try {
+      DB::connection()->getPdo();
+      $body = ['status' => 1, 'message' => 'Database is up.', 'database_name' => DB::connection()->getDatabaseName()];
+      return response()->json($body,Response::HTTP_OK);
+    }
+    catch (PDOException $PDOException) {
+      $message = 'Could not connect to database.' . '(HOST: ' . env("DB_HOST", "*UNKNOWN*") . ')';
+      $body = ['status' => 0, 'message' => $message, 'error' => $PDOException->getMessage()];
+      return response()->json($body,Response::HTTP_OK);
+    }
   });
 
   $router->post('/login', 'LoginController@attemptLogin');

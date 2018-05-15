@@ -933,15 +933,16 @@
                 </ul>
               </div>
             </div>
-            <button id="alchemy-course-offered__view-button"
-                    class="mdc-button mdc-button--raised mdc-layout-grid__cell--span-2 mdc-layout-grid__cell--align-middle">
-              View Courses
-            </button>
           </div>
         </div>
       </div>
       <div class="mdc-layout-grid__inner">
         <div id="alchemy-course-offered__course-list-section" class="mdc-card mdc-layout-grid__cell--span-4">
+          <button id="alchemy-course-offered__course-offer-button"
+                  class="mdc-button mdc-button--raised mdc-layout-grid__cell--span-2">
+            <i class="material-icons mdc-button__icon">add</i>
+            Offer course
+          </button>
           <ul id="alchemy-course-offered__list" class="mdc-list mdc-list--two-line">
           </ul>
         </div>
@@ -952,8 +953,14 @@
               <h1 id="alchemy-course-offered__course-name" class="mdc-typography--headline">Course Name</h1>
             </div>
             <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid__cell--align-top mdc-layout-grid--align-right">
-              <button class="mdc-button">DELETE</button>
-              <button class="mdc-button mdc-button--raised">SAVE</button>
+              <button id="alchemy-course-offered__delete-button" class="mdc-button">
+                <i class="material-icons mdc-button__icon">clear</i>
+                DELETE
+              </button>
+              <button id="alchemy-course-offered__save-button" class="mdc-button mdc-button--raised">
+                <i class="material-icons mdc-button__icon">done</i>
+                SAVE
+              </button>
             </div>
           </div>
           <div id="alchemy-course-offered__lecture-section" class="mdc-layout-grid__inner">
@@ -966,12 +973,18 @@
               <label class="mdc-floating-label" for="my-text-field">Select lecture faculty</label>
               <div class="mdc-line-ripple"></div>
             </div>
+            <div id="alchemy-course-offered__lecture-faculty--menu" class="mdc-menu mdc-select__menu">
+              <ul class="mdc-list mdc-menu__items"></ul>
+            </div>
             <div id="alchemy-course-offered__lecture-location"
                  class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6">
               <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
               <input type="text" id="alchemy-course-offered__lecture-location--input" class="mdc-text-field__input">
               <label class="mdc-floating-label" for="my-text-field">Select lecture location</label>
               <div class="mdc-line-ripple"></div>
+            </div>
+            <div id="alchemy-course-offered__lecture-location--menu" class="mdc-menu mdc-select__menu">
+              <ul class="mdc-list mdc-menu__items"></ul>
             </div>
             <div id="alchemy-course-offered__lecture-faculty-second"
                  class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6"
@@ -981,6 +994,9 @@
                      class="mdc-text-field__input">
               <label class="mdc-floating-label" for="my-text-field">Select lecture faculty 2</label>
               <div class="mdc-line-ripple"></div>
+            </div>
+            <div id="alchemy-course-offered__lecture-faculty-second--menu" class="mdc-menu mdc-select__menu">
+              <ul class="mdc-list mdc-menu__items"></ul>
             </div>
           </div>
           <div id="alchemy-course-offered__practical-section" class="mdc-layout-grid__inner">
@@ -1076,6 +1092,9 @@
               <label class="mdc-floating-label" for="my-text-field">Select practical location</label>
               <div class="mdc-line-ripple"></div>
             </div>
+            <div id="alchemy-course-offered__practical-location--menu" class="mdc-menu mdc-select__menu">
+              <ul class="mdc-list mdc-menu__items"></ul>
+            </div>
           </div>
           <div id="alchemy-course-offered__tutorial-section" class="mdc-layout-grid__inner">
           <span
@@ -1170,6 +1189,9 @@
               <label class="mdc-floating-label" for="alchemy-course-offered__tutorial-location--input">Select tutorial location</label>
               <div class="mdc-line-ripple"></div>
             </div>
+            <div id="alchemy-course-offered__tutorial-location--menu" class="mdc-menu mdc-select__menu">
+              <ul class="mdc-list mdc-menu__items"></ul>
+            </div>
           </div>
         </div>
       </div>
@@ -1179,7 +1201,7 @@
       </div>
       <!-- Alchemy Dialog - Add Course Offered -->
       <aside id="alchemy-course-offered__add-dialog"
-             class="mdc-dialog mdc-dialog--open"
+             class="mdc-dialog"
              role="alertdialog"
              aria-labelledby="my-mdc-dialog-label"
              aria-describedby="my-mdc-dialog-description">

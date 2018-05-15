@@ -127,7 +127,7 @@ main {
 }
 
 #dynamic-tab-bar .mdc-tab {
-  min-width: auto;
+  min-width: initial;
   padding: 0 24px 0 24px;
 }
 
@@ -160,6 +160,10 @@ main {
 
 .mdc-layout-grid--full-width {
   margin: 0;
+}
+
+.mdc-layout-grid--align-center {
+  margin: 0 auto !important;
 }
 
 .mdc-card {
@@ -432,6 +436,14 @@ i.alchemy-select__cancel--visible:focus {
   padding-top: 16px;
   padding-bottom: 16px;
 }
+
+#alchemy-course-offered__course-list-section {
+  display: none;
+}
+#alchemy-course-offered__course-setting-section {
+  display: none;
+}
+
 
 /*
 |--------------------------------------------------------------------------

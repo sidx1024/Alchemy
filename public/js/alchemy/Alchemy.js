@@ -204,6 +204,12 @@ class Faculty extends Model {
           faculty.department_id
         ]);
       }
+      case 'detail': {
+        const faculty = data;
+        const department = alchemy.current.getDepartment(faculty.department_id);
+        const designation = alchemy.current.getDesignation(faculty.designation_id);
+        return `${faculty.name} &bull; ${department.alias} &bull; ${designation.name}`;
+      }
       default: {
         Logger.error(`Cannot transform data to type ${type}`);
       }
@@ -264,7 +270,7 @@ class Location extends Model {
       }
       case 'detail': {
         const location = data;
-        return `${location.name || '-'} &bull; ${location.type === 0 ? 'Classroom' : 'Laboratory'}`;
+        return `${location.name || ''} &bull; ${location.type === 0 ? 'Classroom' : 'Laboratory'}`;
       }
       default: {
         Logger.error(`Cannot transform data to type ${type}`);
@@ -427,7 +433,12 @@ class Alchemy {
       levels: null,
       divisions: null,
       ONE_PRACTICAL_CREDIT: 1,
-      designations: null
+      COURSE_TYPE_LECTURE: 0,
+      COURSE_TYPE_PRACTICAL: 1,
+      COURSE_TYPE_TUTORIAL: 2,
+      designations: null,
+      getDepartment: id => alchemy.current.departments.find(r => r.id === +id),
+      getDesignation: id => alchemy.current.designations.find(r => r.id === +id)
     };
     this.course = new Course('Course', this.config);
     this.location = new Location('Location', this.config);

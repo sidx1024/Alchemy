@@ -17,6 +17,7 @@ class AccessControl {
       throw new Error(errorMessage);
     }
     if (this.currentUser && this.accessToken) { throw new Error('User is already logged in.'); }
+    alchemyCommon.loadingBar.queue();
     const that = this;
     this._attemptLogin(username, password)
       .then(fetchStatus)

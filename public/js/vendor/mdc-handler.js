@@ -395,8 +395,8 @@ class AutoCompleteComponent {
   }
 
   setSelected(storageIndex) {
-    if (typeof storageIndex === 'object') {
-      this.storage = [storageIndex];
+    if (typeof storageIndex === 'object' && storageIndex !== null) {
+      this.storage = [{ data: storageIndex }];
       this.setSelected(0);
       return;
     }
