@@ -230,7 +230,7 @@ class Location extends Model {
         url += `text=${encodeURI(searchParams.text.toString())}&`;
       }
       if (typeof searchParams.type !== 'undefined') {
-        url += `limit=${encodeURI(searchParams.type.toString())}&`;
+        url += `type=${encodeURI(searchParams.type.toString())}&`;
       }
     }
 
@@ -251,7 +251,12 @@ class Location extends Model {
           location.name = _location.name || '&not;';
           location.capacity = _location.capacity;
           location.type = _location.type === 0 ? 'Classroom' : 'Laboratory';
-          location.department_id = _location.department_id;
+          if (typeof _location.department_id === 'number') {
+            location.department_id = alchemy.current.getDepartment(_location.department_id).name;
+          } else {
+            location.department_id = _location.department_id;
+          }
+
           transformedData.push(location);
         });
         return transformedData;

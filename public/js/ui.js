@@ -795,8 +795,8 @@ function bootAlchemy() {
               element: document.querySelector('#alchemy-location-view__table'),
               table: document.querySelector('#alchemy-location-view__table table'),
               headers: ['Alias', 'Name', 'Capacity', 'Type', 'Department'],
-              headersDataTypes: ['Alias', 'Name', 1, 'type', 1],
-              headersWidth: [12, 25, 16, 15, 20],
+              headersDataTypes: ['Alias', 'Name', 1, 'type', '1'],
+              headersWidth: [12, 20, 16, 15, 25],
               selectedId: null
             }
           },
@@ -970,21 +970,20 @@ function bootAlchemy() {
                 .init('Select Type', { storeData: true })
                 .disable();
 
-            const { programme } = alchemy.current;
-            const allLevelsItem = { id: null, level: 'All' };
-            const levelsList = Programme.transform(programme, 'list').concat([allLevelsItem]);
+
+            const typeList = [{ id: 0, type: 'Classroom' }, { id: 1, type: 'Laboratory' }];
 
             locationFilterByType.mdcSelectHandler
               .addItems(
-                levelsList,
-                { assignments: { valueKey: 'level', idKey: 'id' } }
+                typeList,
+                { assignments: { valueKey: 'type', idKey: 'id' } }
               )
               .setOnChangeListener(onTypeChange)
               .enable();
 
             function onTypeChange() {
               const selectedItem = locationFilterByType.mdcSelectHandler.getSelected();
-              locationFilter.level = selectedItem.data.id;
+              locationFilter.type = selectedItem.data.id;
               locationTable.refresh();
             }
           }
