@@ -801,8 +801,8 @@ function bootAlchemy() {
               element: document.querySelector('#alchemy-location-view__table'),
               table: document.querySelector('#alchemy-location-view__table table'),
               headers: ['Alias', 'Name', 'Capacity', 'Type', 'Department'],
-              headersDataTypes: ['Alias', 'Name', 1, 'type', '1'],
-              headersWidth: [12, 20, 16, 15, 25],
+              headersDataTypes: ['Alias', 'Name', 1, 'type', 'Department'],
+              headersWidth: [10, 20, 20, 15, 35],
               selectedId: null
             }
           },
@@ -2696,9 +2696,9 @@ function bootAlchemy() {
             classTable: {
               element: document.querySelector('#alchemy-class-view__table'),
               table: document.querySelector('#alchemy-class-view__table table'),
-              headers: ['Level', 'Division', 'Location', 'Department'],
-              headersDataTypes: [1, 1, 'Location', 'Department'],
-              headersWidth: [15, 25, 20, 40],
+              headers: ['Class', 'Level', 'Division', 'Location', 'Department'],
+              headersDataTypes: ['Class', 1, 1, 'Location', 'Department'],
+              headersWidth: [10, 10, 10, 35, 30],
               selectedId: null
             }
           },
@@ -3517,7 +3517,7 @@ function bootAlchemy() {
               table: document.querySelector('#alchemy-department-view__table table'),
               headers: ['Name', 'Alias', 'Programme'],
               headersDataTypes: ['Name', 'Alias', 1],
-              headersWidth: [30, 30, 40],
+              headersWidth: [50, 30, 20],
               selectedId: null
             }
           },

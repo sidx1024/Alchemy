@@ -179,8 +179,13 @@ main {
   color: #3a3a3a !important;
 }
 
-.mdc-menu .mdc-list-item {
+.mdc-menu .mdc-list-item{
+  padding-top: 2px;
+  padding-bottom: 2px;
   font-size: 0.875rem;
+}
+.mdc-menu .mdc-list-item:not(:last-child) {
+  border-bottom: #ddd 1px solid;
 }
 
 .mdc-list .focused {

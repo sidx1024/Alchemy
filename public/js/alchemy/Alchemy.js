@@ -349,6 +349,9 @@ class Class_ extends Model {
         data.forEach((_class) => {
           const class_ = {};
           class_.id = _class.id;
+          const div = _class.division;
+          const divs = div < 10 ? `${'0'}${div}` : `${div}`;
+          class_.class = `${_class.level}D${divs}`;
           class_.level = _class.level;
           class_.division = _class.division;
           class_.default_class = _class.default_class.alias;
