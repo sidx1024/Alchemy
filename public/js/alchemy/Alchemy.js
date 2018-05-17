@@ -414,7 +414,72 @@ class CourseOffered extends Model {
 }
 
 class Profile extends Model {
+  search(searchParams, successCallback, failCallback) {
+    let url = this.actions.search.path;
 
+    if (searchParams) {
+      if (typeof searchParams.year !== 'undefined') {
+        url += `year=${encodeURI(searchParams.year.toString())}&`;
+      }
+      if (typeof searchParams.programmeId !== 'undefined') {
+        url += `programme=${encodeURI(searchParams.programmeId.toString())}&`;
+      }
+      if (typeof searchParams.limit !== 'undefined') {
+        url += `limit=${encodeURI(searchParams.limit.toString())}&`;
+      }
+    }
+    return super.search(url, successCallback, failCallback);
+  }
+
+  static transform(data, type) {
+    if (!data) {
+      return [];
+    }
+    switch (type) {
+      case 'table': {
+        const transformedData = [];
+        data.forEach((_profile) => {
+          const profile = {};
+          profile.id = _profile.id;
+          profile.name = _profile.name;
+          profile.description = _profile.description;
+          profile.year = _profile.year;
+          profile.semester = _profile.semester ? 'Odd' : 'Even';
+          profile.programmeId = alchemy.current.getProgramme(_profile.programme_id).name;
+          profile.isArchived = _profile.is_archived ? 'No' : 'Yes';
+          transformedData.push(profile);
+        });
+        return transformedData;
+      }
+      case 'short-info': {
+        let profile = data;
+        if (Array.isArray(data)) {
+          profile = data[0];
+        }
+        return arrayToHtml([
+          profile.id,
+          profile.name,
+          profile.description,
+          profile.year,
+          profile.semester ? 'Odd' : 'Even',
+          alchemy.current.getProgramme(profile.programme_id).name,
+          profile.is_archived ? 'No' : 'Yes'
+        ]);
+      }
+      case 'detail': {
+        const profile = data;
+        const semester = alchemy.current.getDepartment(profile.semester);
+        const year = alchemy.current.getDepartment(profile.year);
+        const name = alchemy.current.getDesignation(profile.name);
+        // return `${profile.semester} &bull; ${profile.year} &bull; ${profile.name}`;
+        return `${semester} &bull; ${year} &bull; ${name}`;
+      }
+      default: {
+        Logger.error(`Cannot transform data to type ${type}`);
+      }
+    }
+    return transformedData;
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -437,6 +502,7 @@ class Alchemy {
     this.onFail = options.onFail;
     this.current = {
       programme: null,
+      programmes: null,
       departments: null,
       classes: null,
       levels: null,
@@ -447,7 +513,8 @@ class Alchemy {
       COURSE_TYPE_PRACTICAL: 1,
       COURSE_TYPE_TUTORIAL: 2,
       getDepartment: id => alchemy.current.departments.find(r => r.id === +id),
-      getDesignation: id => alchemy.current.designations.find(r => r.id === +id)
+      getDesignation: id => alchemy.current.designations.find(r => r.id === +id),
+      getProgramme: id => alchemy.current.programmes.find(r => r.id === +id)
     };
     this.profile = new Profile('Profile', this.config);
     this.course = new Course('Course', this.config);
@@ -469,6 +536,8 @@ class Alchemy {
     onRequestReceived = onRequestReceived.bind(this);
 
     this.programme.get(this.keys.programme, onProgrammeReceived.bind(this));
+    requestsSent += 1;
+    this.programme.all(onProgrammesReceived.bind(this));
     requestsSent += 1;
     this.department.all(onDepartmentsReceived.bind(this));
     requestsSent += 1;
@@ -503,6 +572,15 @@ class Alchemy {
     function onProgrammeReceived(response) {
       if (response) {
         this.current.programme = response;
+        onRequestReceived(true);
+      } else {
+        onRequestReceived(false, response);
+      }
+    }
+
+    function onProgrammesReceived(response) {
+      if (response) {
+        this.current.programmes = response;
         onRequestReceived(true);
       } else {
         onRequestReceived(false, response);

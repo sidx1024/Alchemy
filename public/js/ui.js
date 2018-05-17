@@ -30,6 +30,7 @@ function checkConnection(callback) {
       }).show();
     });
   });
+
   function pingDatabase(cbk) {
     fetch('/api/ping-database')
       .then(cbk)
@@ -246,7 +247,7 @@ function bootAlchemy() {
       setupFacultySection();
       setupCourseOfferedSection();
       setupTimeTableSection();
-      // setupProfileSection();
+      setupProfileSection();
       setupClassSection();
       setupDesignationSection();
       setupDepartmentSection();
@@ -974,7 +975,6 @@ function bootAlchemy() {
                 .clearItems()
                 .init('Select Type', { storeData: true })
                 .disable();
-
 
             const typeList = [{ id: 0, type: 'Classroom' }, { id: 1, type: 'Laboratory' }];
 
@@ -1735,7 +1735,8 @@ function bootAlchemy() {
         setupCourseSettingSection();
 
         function setupClassSelect() {
-          const { classSelect, courseListSection, courseSettingSection } = alchemyCourseOfferedSection;
+          const { classSelect, courseListSection, courseSettingSection } =
+            alchemyCourseOfferedSection;
           classSelect.mdcSelectHandler =
             MDCSelectHandler
               .handle(classSelect.element)
@@ -1779,9 +1780,11 @@ function bootAlchemy() {
               scrollTo(courseListSection);
             });
           }
+
           function setupCourseListEvents() {
             const { courseOfferedList } = alchemyCourseOfferedSection;
             courseOfferedList.element.addEventListener('click', onListItemClick);
+
             function onListItemClick(e) {
               const { storage } = courseOfferedList;
               const target = assertPath(e, 'mdc-list-item');
@@ -1802,6 +1805,7 @@ function bootAlchemy() {
             mdc.dialog.MDCDialog.attachTo(courseOfferedAddDialog.element);
           // courseOfferedAddDialog.mdc.show();
           setupCourseSelect();
+
           function setupCourseSelect() {
             // Auto-complete sample
             const { courseOfferedList } = alchemyCourseOfferedSection;
@@ -1816,7 +1820,10 @@ function bootAlchemy() {
                 .filter(unique);
               return removeItemsById(courseOfferedIds);
             };
-            const transform = course => mdcListItem(course.name, Course.transform(course, 'detail'));
+            const transform = course => mdcListItem(
+              course.name,
+              Course.transform(course, 'detail')
+            );
             const onSelectionChange = (selected) => {
               if (selected && selected.data) {
                 setTextFieldInput(courseSelect, selected.data.name);
@@ -1841,7 +1848,10 @@ function bootAlchemy() {
             // TODO: Add filter by lab or lecture
             lectureLocation.mdc = mdc.textField.MDCTextField.attachTo(lectureLocation.element);
             const searchLocations = (text, callback) => alchemy.location.search({ text }, callback);
-            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const transform = location => mdcListItem(
+              location.alias,
+              Location.transform(location, 'detail')
+            );
             const onSelectionChange = (selected) => {
               if (selected && selected.data) {
                 setTextFieldInput(lectureLocation, selected.data.alias);
@@ -1858,7 +1868,10 @@ function bootAlchemy() {
             lectureFaculty2.mdc = mdc.textField.MDCTextField.attachTo(lectureFaculty2.element);
 
             const getData = (text, callback) => alchemy.faculty.search({ text }, callback);
-            const transform = faculty => mdcListItem(faculty.alias, Faculty.transform(faculty, 'detail'));
+            const transform = faculty => mdcListItem(
+              faculty.alias,
+              Faculty.transform(faculty, 'detail')
+            );
             const onSelectionChange = (selected) => {
               if (selected && selected.data) {
                 setTextFieldInput(lectureFaculty, selected.data.alias);
@@ -1876,11 +1889,15 @@ function bootAlchemy() {
               .attachTo(lectureFaculty2, transform, getData)
               .setOnSelectionChange(onSelectionChange2);
           }
+
           function setupPracticalLocation() {
             practicalLocation.mdc = mdc.textField.MDCTextField.attachTo(practicalLocation.element);
 
             const getData = (text, callback) => alchemy.location.search({ text }, callback);
-            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const transform = location => mdcListItem(
+              location.alias,
+              Location.transform(location, 'detail')
+            );
             const onSelectionChange = (selected) => {
               if (selected && selected.data) {
                 setTextFieldInput(practicalLocation, selected.data.alias);
@@ -1890,11 +1907,15 @@ function bootAlchemy() {
               .attachTo(practicalLocation, transform, getData)
               .setOnSelectionChange(onSelectionChange);
           }
+
           function setupTutorialLocation() {
             tutorialLocation.mdc = mdc.textField.MDCTextField.attachTo(tutorialLocation.element);
 
             const getData = (text, callback) => alchemy.location.search({ text }, callback);
-            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const transform = location => mdcListItem(
+              location.alias,
+              Location.transform(location, 'detail')
+            );
             const onSelectionChange = (selected) => {
               if (selected && selected.data) {
                 setTextFieldInput(tutorialLocation, selected.data.alias);
@@ -1920,9 +1941,14 @@ function bootAlchemy() {
           const { COURSE_TYPE_PRACTICAL, COURSE_TYPE_TUTORIAL } = alchemy.current;
 
           const coursesOffered = storage.filter(r => (r.course_id === courseId));
-          courseSettingSection.previousData = { };
+          courseSettingSection.previousData = {};
 
-          if (!coursesOffered) throw new Error('Courses Offered cannot be found in storage.', courseId, storage);
+          if (!coursesOffered) {
+            throw new Error(
+              'Courses Offered cannot be found in storage.',
+              courseId, storage
+            );
+          }
 
           const [courseOffered] = coursesOffered;
           const { course } = courseOffered;
@@ -2077,7 +2103,10 @@ function bootAlchemy() {
             }
             radioElements[0].setAttribute('data-location-id', practicals[0].location_id);
             practicals.forEach((practical) => {
-              radioElements[practical.batch].setAttribute('data-location-id', practical.location_id);
+              radioElements[practical.batch].setAttribute(
+                'data-location-id',
+                practical.location_id
+              );
             });
           }
 
@@ -2198,7 +2227,445 @@ function bootAlchemy() {
 
       function setupTimeTableSection() {}
 
-      // function setupProfileSection() {}
+      function setupProfileSection() {
+        const alchemyProfileSection = {
+          element: document.querySelector('#alchemy-profile'),
+          profileView: {
+            element: document.querySelector('#alchemy-profile-view'),
+            profileAddButton: {
+              element: document.querySelector('#alchemy-profile-view__add-button')
+            },
+            profileEditButton: {
+              element: document.querySelector('#alchemy-profile-view__edit-button')
+            },
+            profileDeleteButton: {
+              element: document.querySelector('#alchemy-profile-view__delete-button')
+            },
+            profileFilterByYear: {
+              element: document.querySelector('#alchemy-profile-view__filter-by-year')
+            },
+            profileFilterByProgramme: {
+              element: document.querySelector('#alchemy-profile-view__filter-by-programme')
+            },
+            profileTable: {
+              element: document.querySelector('#alchemy-profile-view__table'),
+              table: document.querySelector('#alchemy-profile-view__table table'),
+              headers: ['Name', 'Description', 'Year', 'Semester', 'Programme', 'Active'],
+              headersDataTypes: ['Name', 'Description', 1, 1, 'Programme', 'Active'],
+              headersWidth: [15, 30, 15, 10, 20, 10],
+              selectedId: null
+            }
+          },
+          profileAdd: {
+            element: document.querySelector('#alchemy-profile-add'),
+            mode: 'add',
+            heading: document.querySelector('#alchemy-profile-add h1'),
+            profileAddForm: { element: document.querySelector('#alchemy-profile-add__form') },
+            profileName: {
+              element: document.querySelector('#alchemy-profile-add__profile-name'),
+              input: document.querySelector('#alchemy-profile-add__profile-name input')
+            },
+            profileDescription: {
+              element: document.querySelector('#alchemy-profile-add__profile-description'),
+              input: document.querySelector('#alchemy-profile-add__profile-description input')
+            },
+            profileYear: {
+              element: document.querySelector('#alchemy-profile-add__profile-year'),
+              input: document.querySelector('#alchemy-profile-add__profile-year input')
+            },
+            profileSemester: {
+              element: document.querySelector('#alchemy-profile-add__profile-semester'),
+              input: document.querySelector('#alchemy-profile-add__profile-semester input')
+            },
+            profileProgramme: {
+              element: document.querySelector('#alchemy-profile-add__profile-programme')
+            },
+            profileAddButton: { element: document.querySelector('#alchemy-profile-add__add-button') },
+            profileResetButton: {
+              element: document.querySelector('#alchemy-profile-add__reset-button')
+            },
+            profileViewButton: {
+              element: document.querySelector('#alchemy-profile-add__view-button')
+            }
+          }
+        };
+
+        setupProfileView();
+        setupProfileAdd();
+
+        function setupProfileView() {
+          const { profileTable } = alchemyProfileSection.profileView;
+
+          const profileFilter = {
+            year: null,
+            programme: null
+          };
+
+          setupProfileTable();
+          setupFilterByYear();
+          setupFilterByProgramme();
+          setupEvents();
+
+          function setupProfileTable() {
+            const { profileEditButton, profileDeleteButton } = alchemyProfileSection.profileView;
+
+            profileTable.deselectProfile = () => {
+              const selectedProfile = profileTable.element.querySelectorAll('tr.selected');
+              profileEditButton.element.setAttribute('disabled', '');
+              profileDeleteButton.element.setAttribute('disabled', '');
+              Array.prototype.forEach.call(
+                selectedProfile,
+                item => (item.classList.remove('selected'))
+              );
+              profileTable.selectedId = null;
+            };
+
+            profileTable.refresh = () => {
+              profileTable.deselectProfile();
+              alchemy.profile.search(filterObject(profileFilter), (data) => {
+                const transformedData = Profile.transform(data, 'table');
+                profileTable.mdcDataTableHelper
+                  .setData(transformedData);
+                if (!profileTable.element.querySelector('td')) {
+                  profileTable.element.classList.add('alchemy-profile-table--empty');
+                } else {
+                  profileTable.element.classList.remove('alchemy-profile-table--empty');
+                }
+              });
+            };
+
+            const { headers, headersDataTypes, headersWidth } = profileTable;
+            profileTable.mdcDataTableHelper =
+              MDCDataTableHelper
+                .handle(profileTable.element)
+                .setIdKey('id')
+                .setHeaders(headers, headersDataTypes, headersWidth);
+            profileTable.refresh();
+
+            profileDeleteButton.element.addEventListener('click', () => {
+              if (!profileDeleteButton.element.hasAttribute('disabled')) {
+                alchemy.profile.delete(
+                  profileTable.selectedId,
+                  onProfileDeleteSuccess,
+                  onProfileDeleteFail
+                );
+              }
+            });
+          }
+
+          function onProfileDeleteSuccess(deletedProfile) {
+            const message = 'Profile deleted successfully.';
+            const extra = Profile.transform(deletedProfile, 'short-info');
+            profileTable.refresh();
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onProfileDeleteFail(error) {
+            if (typeof error.json !== 'function') {
+              console.error(error);
+            } else {
+              error.json().then((body) => {
+                alchemyCommon.dialog.info({
+                  header: `Error ${error.status}: ${error.statusText}`,
+                  body: arrayToHtml(Object.values(body)),
+                  accept: 'Okay'
+                }).show();
+              });
+            }
+          }
+
+          function setupFilterByYear() {
+            const { profileFilterByYear } = alchemyProfileSection.profileView;
+            profileFilterByYear.mdcSelectHandler =
+              MDCSelectHandler
+                .handle(profileFilterByYear.element)
+                .clearItems()
+                .init('Select year', { storeData: true })
+                .disable();
+
+            alchemy.profile.all((profiles) => {
+              const allYearsItem = {
+                id: null,
+                year: 'All'
+              };
+              const uniqueYears = profiles.map(r => r.year).filter(unique);
+              const years = uniqueYears.map(year => ({ id: null, year }));
+              profileFilterByYear.mdcSelectHandler
+                .addItems(
+                  years.concat([allYearsItem]),
+                  { assignments: { valueKey: 'year', idKey: 'id' } }
+                )
+                .setOnChangeListener(onYearChange)
+                .enable();
+
+              function onYearChange() {
+                const selectedItem = profileFilterByYear.mdcSelectHandler.getSelected();
+                profileFilter.year = selectedItem.data.id;
+                profileTable.refresh();
+              }
+            });
+          }
+
+          function setupFilterByProgramme() {
+            const { profileFilterByProgramme } = alchemyProfileSection.profileView;
+            profileFilterByProgramme.mdcSelectHandler =
+              MDCSelectHandler
+                .handle(profileFilterByProgramme.element)
+                .clearItems()
+                .init('Select Programme', { storeData: true })
+                .disable();
+
+            const { programme } = alchemy.current;
+            const allProgrammeItem = { id: null, name: 'All' };
+
+            profileFilterByProgramme.mdcSelectHandler
+              .addItems(
+                [programme].concat([allProgrammeItem]),
+                { assignments: { valueKey: 'name', idKey: 'id' } }
+              )
+              .setOnChangeListener(onProgrammeChange)
+              .enable();
+
+            function onProgrammeChange() {
+              const selectedItem = profileFilterByProgramme.mdcSelectHandler.getSelected();
+              profileFilter.programme = selectedItem.data.id;
+              profileTable.refresh();
+            }
+          }
+
+          function setupEvents() {
+            const {
+              profileAddButton,
+              profileEditButton,
+              profileDeleteButton
+            } = alchemyProfileSection.profileView;
+
+            profileTable.element.addEventListener('click', (mouseEvent) => {
+              mouseEvent.stopPropagation();
+              profileTable.deselectProfile();
+              const { target } = mouseEvent;
+              if (target.tagName !== 'TD') { return; }
+              const selectedProfile = target.parentNode;
+              profileTable.selectedId = selectedProfile.getAttribute('data-id');
+              selectedProfile.classList.add('selected');
+              profileEditButton.element.removeAttribute('disabled');
+              profileDeleteButton.element.removeAttribute('disabled');
+              window.addEventListener(
+                'click',
+                blurSelection(
+                  [selectedProfile, profileEditButton.element, profileDeleteButton.element],
+                  profileTable.deselectProfile
+                )
+              );
+            });
+
+            const { profileAdd } = alchemyProfileSection;
+
+            profileAddButton.element.addEventListener('click', () => {
+              scrollTo(profileAdd.element);
+              profileAdd.switchMode.add();
+            });
+
+            profileEditButton.element.addEventListener('click', () => {
+              scrollTo(profileAdd.element);
+              profileAdd.switchMode.edit(profileTable.selectedId);
+            });
+          }
+        }
+
+        function setupProfileAdd() {
+          const { profileAdd } = alchemyProfileSection;
+          const {
+            profileAddForm,
+            profileName,
+            profileDescription,
+            profileYear,
+            profileSemester,
+            profileProgramme,
+            profileAddButton,
+            profileResetButton,
+            profileViewButton
+          } = profileAdd;
+
+          profileName.mdc = mdc.textField.MDCTextField.attachTo(profileName.element);
+          profileDescription.mdc = mdc.textField.MDCTextField.attachTo(profileDescription.element);
+          profileYear.mdc = mdc.textField.MDCTextField.attachTo(profileYear.element);
+
+          profileAdd.switchMode = {
+            add: () => {
+              profileAdd.editMode = false;
+              profileAdd.heading.innerText = 'Add Profile';
+              profileAddButton.element.innerText = 'ADD PROFILE';
+              delete profileAdd.editItemId;
+            },
+            edit: (id) => {
+              profileAdd.editMode = true;
+              profileAdd.heading.innerText = 'Edit Profile';
+              profileAddButton.element.innerText = 'UPDATE PROFILE';
+
+              alchemy.profile.get(id, onProfileGetSuccess, onProfileGetFail);
+
+              function onProfileGetSuccess(profile) {
+                profileAdd.heading.innerText += ` (ID: ${profile.id})`;
+                profileAdd.editItemId = profile.id;
+                setTextFieldInput(profileName, profile.name);
+                setTextFieldInput(profileDescription, profile.description);
+                setTextFieldInput(profileYear, profile.year);
+                profileSemester.mdcSelectHandler.setSelected(profile.semester);
+                profileProgramme.mdcSelectHandler.setSelected(profile.programme_id);
+              }
+
+              function onProfileGetFail(error) {
+                if (typeof error.json !== 'function') {
+                  console.error(error);
+                } else {
+                  error.json().then((body) => {
+                    const message = `Error ${error.status}: ${error.statusText}`;
+                    const extra = arrayToHtml(Object.values(body));
+                    alchemyCommon.toast({ message }, extra);
+                  });
+                }
+              }
+            }
+          };
+
+          setupProfileSemester();
+          setupProfileProgramme();
+
+          profileViewButton.element.addEventListener('click', () => {
+            scrollTo(alchemyProfileSection.profileView.element);
+          });
+
+          profileAddButton.element.addEventListener('click', () => {
+            const semester = getSelectedSemester();
+            const programme = getSelectedProgramme();
+
+            const isFormValid = profileAddForm.element.checkValidity()
+              && semester !== false
+              && programme !== false;
+            if (!isFormValid) {
+              const message = 'Please fill out the form properly.';
+              alchemyCommon.toast({ message });
+              return false;
+            }
+
+
+            const profile = {
+              name: profileName.mdc.input_.value,
+              description: profileDescription.mdc.input_.value,
+              year: profileYear.mdc.input_.value,
+              semester: Number(semester.id),
+              programme_id: Number(programme.id)
+            };
+
+            const { editMode } = profileAdd;
+            if (editMode) {
+              profile.id = profileAdd.editItemId;
+              alchemy.profile.update(
+                profile.id,
+                JSON.stringify(profile),
+                onProfileUpdateSuccess,
+                onProfileAddFail
+              );
+            } else {
+              alchemy.profile.add(JSON.stringify(profile), onProfileAddSuccess, onProfileAddFail);
+            }
+            return true;
+          });
+
+          profileResetButton.element.addEventListener('click', () => {
+            profileSemester.mdcSelectHandler.clearSelection();
+            profileProgramme.mdcSelectHandler.clearSelection();
+          });
+
+          function onProfileUpdateSuccess(updatedProfile) {
+            const { profileView } = alchemyProfileSection;
+            const { profileTable } = profileView;
+            profileTable.refresh();
+            profileAddForm.element.reset();
+            profileSemester.mdcSelectHandler.clearSelection();
+            profileProgramme.mdcSelectHandler.clearSelection();
+            profileAdd.switchMode.add();
+            scrollTo(profileView.element);
+            const extra = Profile.transform(updatedProfile, 'short-info');
+            const message = 'Profile updated successfully.';
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onProfileAddSuccess(addedProfile) {
+            const { profileTable } = alchemyProfileSection.profileView;
+            profileTable.refresh();
+            profileAddForm.element.reset();
+            profileSemester.mdcSelectHandler.clearSelection();
+            profileProgramme.mdcSelectHandler.clearSelection();
+            const extra = Profile.transform(addedProfile, 'short-info');
+            const message = 'Profile added successfully.';
+
+            alchemyCommon.toast({ message }, extra);
+          }
+
+          function onProfileAddFail(error) {
+            if (typeof error.json !== 'function') {
+              console.error(error);
+            } else {
+              error.json().then((body) => {
+                alchemyCommon.dialog.info({
+                  header: `Error ${error.status}: ${error.statusText}`,
+                  body: arrayToHtml(Object.values(body)),
+                  accept: 'Okay'
+                }).show();
+              });
+            }
+          }
+
+          function setupProfileSemester() {
+            profileSemester.mdcSelectHandler =
+              MDCSelectHandler
+                .handle(profileSemester.element)
+                .clearItems()
+                .init('Select Semester', { storeData: true })
+                .disable();
+
+            const semesters = [{ id: 0, name: 'Odd' }, { id: 1, name: 'Even' }];
+            profileSemester.mdcSelectHandler
+              .addItems(semesters, { assignments: { valueKey: 'name', idKey: 'id' } })
+              .enable();
+          }
+
+          function getSelectedSemester() {
+            const selectedSemester = profileSemester.mdcSelectHandler.getSelected();
+            if (selectedSemester && selectedSemester.data) {
+              return selectedSemester.data;
+            }
+            return false;
+          }
+
+          function setupProfileProgramme() {
+            profileProgramme.mdcSelectHandler =
+              MDCSelectHandler
+                .handle(profileProgramme.element)
+                .clearItems()
+                .init('Select Programme', { storeData: true })
+                .disable();
+
+            const { programmes } = alchemy.current;
+            profileProgramme.mdcSelectHandler
+              .addItems(
+                programmes,
+                { assignments: { valueKey: 'name', idKey: 'id' } }
+              )
+              .enable();
+          }
+
+          function getSelectedProgramme() {
+            const selectedProgramme = profileProgramme.mdcSelectHandler.getSelected();
+            if (selectedProgramme && selectedProgramme.data) {
+              return selectedProgramme.data;
+            }
+            return false;
+          }
+        }
+      }
 
       function setupClassSection() {
         const alchemyClassSection = {
@@ -2277,7 +2744,6 @@ function bootAlchemy() {
 
         setupClassView();
         setupClassAdd();
-
 
         function setupClassView() {
           const { classTable } = alchemyClassSection.classView;
@@ -2379,6 +2845,7 @@ function bootAlchemy() {
               }
             }
           }
+
           function setupFilterByBranch() {
             const { classFilterByBranch } = alchemyClassSection.classView;
             classFilterByBranch.mdcSelectHandler =
@@ -2405,6 +2872,7 @@ function bootAlchemy() {
               classTable.refresh();
             }
           }
+
           function setupFilterByLevel() {
             const { classFilterByLevel } = alchemyClassSection.classView;
             classFilterByLevel.mdcSelectHandler =
@@ -2431,6 +2899,7 @@ function bootAlchemy() {
               classTable.refresh();
             }
           }
+
           function setupFilterByDivision() {
             const { classFilterByDivision } = alchemyClassSection.classView;
             classFilterByDivision.mdcSelectHandler =
@@ -2457,7 +2926,6 @@ function bootAlchemy() {
               classTable.refresh();
             }
           }
-
 
           function setupEvents() {
             const {
@@ -2498,6 +2966,7 @@ function bootAlchemy() {
             });
           }
         }
+
         function setupClassAdd() {
           const { classAdd } = alchemyClassSection;
           const {
@@ -2563,7 +3032,10 @@ function bootAlchemy() {
               .attachTo(classLocationSelect.element);
 
             const getData = (text, callback) => alchemy.location.search({ text }, callback);
-            const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
+            const transform = location => mdcListItem(
+              location.alias,
+              Location.transform(location, 'detail')
+            );
             const onSelectionChange = (selected) => {
               if (selected && selected.data) {
                 setTextFieldInput(classLocationSelect, selected.data.alias);
@@ -2574,6 +3046,7 @@ function bootAlchemy() {
               .attachTo(classLocationSelect, transform, getData)
               .setOnSelectionChange(onSelectionChange);
           }
+
           classViewButton.element.addEventListener('click', () => {
             scrollTo(alchemyClassSection.classView.element);
           });

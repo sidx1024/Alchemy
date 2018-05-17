@@ -454,3 +454,30 @@ i.alchemy-select__cancel--visible:focus {
 #alchemy-other-view .mdc-select {
   margin-top: 16px;
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| Alchemy Profile
+|--------------------------------------------------------------------------
+*/
+
+#alchemy-profile-view .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-profile-add .mdc-select {
+  margin-top: 16px;
+}
+
+#alchemy-profile-view__table table tr {
+  cursor: pointer;
+}
+
+#alchemy-profile-view__table table tr.selected {
+  background-color: var(--alchemy-theme-selected);
+}
+
+#alchemy-profile-add .mdc-text-field {
+  width: 100%;
+}

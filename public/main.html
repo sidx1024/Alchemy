@@ -113,9 +113,9 @@
         <a role="tab" aria-controls="panel-4"
            class="mdc-tab">Time Table</a>
         <a role="tab" aria-controls="panel-5"
-           class="mdc-tab">Profile</a>
+           class="mdc-tab  mdc-tab--active">Profile</a>
         <a role="tab" aria-controls="panel-6"
-           class="mdc-tab mdc-tab--active">Other</a>
+           class="mdc-tab">Other</a>
         <a role="tab" aria-controls="panel-7"
            class="mdc-tab">Settings</a>
         <span class="mdc-tab-bar__indicator modified-mdc-tab-bar__indicator"></span>
@@ -1186,7 +1186,8 @@
                  class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-6">
               <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
               <input type="text" id="alchemy-course-offered__tutorial-location--input" class="mdc-text-field__input">
-              <label class="mdc-floating-label" for="alchemy-course-offered__tutorial-location--input">Select tutorial location</label>
+              <label class="mdc-floating-label" for="alchemy-course-offered__tutorial-location--input">Select tutorial
+                location</label>
               <div class="mdc-line-ripple"></div>
             </div>
             <div id="alchemy-course-offered__tutorial-location--menu" class="mdc-menu mdc-select__menu">
@@ -1224,16 +1225,19 @@
             <div id="alchemy-course-offered__no-of-batch"
                  class="mdc-text-field mdc-text-field--box mdc-layout-grid__cell--span-4">
               <i class="material-icons alchemy-select__cancel" tabindex="0">cancel</i>
-              <input type="number" id="alchemy-course-offered__no-of-batch--input" class="mdc-text-field__input" min="0" max="6" value="5">
+              <input type="number" id="alchemy-course-offered__no-of-batch--input" class="mdc-text-field__input" min="0"
+                     max="6" value="5">
               <label class="mdc-floating-label" for="my-text-field">No. of Batches</label>
               <div class="mdc-line-ripple"></div>
             </div>
 
           </section>
           <footer class="mdc-dialog__footer">
-            <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">Decline
+            <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">
+              Decline
             </button>
-            <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">Accept
+            <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">
+              Accept
             </button>
           </footer>
         </div>
@@ -1247,12 +1251,219 @@
     </section>
 
     <!-- SECTION Profile-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-profile"
-             role="tabpanel">
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-profile"
+             role="tabpanel"
+             aria-hidden="true">
+      <!--
+    /*
+      |--------------------------------------------------------------------------
+      | Profile View
+      |--------------------------------------------------------------------------
+      */
+    -->
+      <div id="alchemy-profile-view" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">View Profile</h1>
+            <div class="mdc-layout-grid__inner">
+              <div id="alchemy-profile-view__filter-by-year" class="mdc-select  mdc-layout-grid__cell--span-3"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <div id="alchemy-profile-view__filter-by-programme" class="mdc-select  mdc-layout-grid__cell--span-3"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-3"></div>
+              <div class="mdc-layout-grid__cell--span-9 mdc-layout-grid--align-right">
+                <button id="alchemy-profile-view__add-button"
+                        class="mdc-button">
+                  <i class="material-icons mdc-button__icon">add</i>
+                  Add Profile
+                </button>
+                <button id="alchemy-profile-view__edit-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">edit</i>
+                  Edit Profile
+                </button>
+                <button id="alchemy-profile-view__delete-button"
+                        class="mdc-button" disabled>
+                  <i class="material-icons mdc-button__icon">clear</i>
+                  Delete Profile
+                </button>
+              </div>
+            </div>
+            <br/>
+            <div class="mdc-layout-grid__inner">
+              <div class="mdc-layout-grid__cell--span-12">
+                <div id="alchemy-profile-view__table" class="mdc-data-table">
+                  <table class="mdc-data-table__content">
+                    <thead>
+
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                  </table>
+                  <div class="empty-table">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!--
+      /*
+        |--------------------------------------------------------------------------
+        | Profile Add
+        |--------------------------------------------------------------------------
+        */
+      -->
+      <div id="alchemy-profile-add" class="mdc-layout-grid__inner">
+        <div class="mdc-card mdc-layout-grid__cell--span-12">
+          <section class="mdc-card__primary">
+            <h1 class="mdc-typography--headline">Add Profile</h1>
+            <form id="alchemy-profile-add__form" class="mdc-layout-grid__inner" onsubmit=" ">
+              <!-- Profile Name -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-profile-add__profile-name"
+                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
+                  <input type="text" id="alchemy-profile-add__profile-name--input" required
+                         class="mdc-text-field__input"
+                         aria-controls="name-validation-message" maxlength=128 autocomplete="off">
+                  <label for="alchemy-profile-add__profile-name--input" class="mdc-floating-label">Profile
+                    Name</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-profile-add__profile-name--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                   aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Profile Description -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-profile-add__profile-description"
+                     class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
+                  <input type="text" id="alchemy-profile-add__profile-description--input"
+                         class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=2 maxlength="128"
+                         autocomplete="off">
+                  <label for="alchemy-profile-add__profile-description--input" class="mdc-floating-label">Profile
+                    Description</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-profile-add__profile-description--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                   aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Profile year -->
+              <div class="mdc-layout-grid__cell--span-4">
+                <div id="alchemy-profile-add__profile-year"
+                     class="mdc-text-field mdc-text-field--outlined mdc-layout-grid__cell--span-8 mdc-text-field--focused">
+                  <input type="number" id="alchemy-profile-add__profile-year--input"
+                         class="mdc-text-field__input"
+                         aria-controls="name-validation-message" required minlength=2 maxlength="4"
+                         autocomplete="off">
+                  <label for="alchemy-profile-add__profile-year--input" class="mdc-floating-label">Profile
+                    Year</label>
+                  <div class="mdc-notched-outline">
+                    <svg>
+                      <path class="mdc-notched-outline__path"/>
+                    </svg>
+                  </div>
+                  <div class="mdc-notched-outline__idle"></div>
+                </div>
+                <p id="alchemy-profile-add__profile-year--validation-msg"
+                   class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                   aria-hidden="false">
+                  Required.
+                </p>
+              </div>
+              <!-- Profile Semester -->
+              <div id="alchemy-profile-add__profile-semester" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+              <!-- Profile Programme -->
+              <div id="alchemy-profile-add__profile-programme" class="mdc-select mdc-layout-grid__cell--span-4"
+                   role="listbox">
+                <div class="mdc-select__surface" tabindex="0">
+                  <div class="mdc-select__label"></div>
+                  <div class="mdc-select__selected-text"></div>
+                  <div class="mdc-select__bottom-line"></div>
+                </div>
+                <div class="mdc-menu mdc-select__menu">
+                  <ul class="mdc-list mdc-menu__items">
+                  </ul>
+                </div>
+              </div>
+
+              <div class="mdc-layout-grid__cell--span-6">
+                <button id="alchemy-profile-add__add-button" class="mdc-button mdc-button--raised"
+                        type="button">
+                  <i class="material-icons mdc-button__icon">done</i>
+                  ADD PROFILE
+                </button>
+                <button id="alchemy-profile-add__reset-button" class="mdc-button" type="reset">
+                  <i class="material-icons mdc-button__icon">undo</i>
+                  RESET FIELDS
+                </button>
+              </div>
+              <div class="mdc-layout-grid__cell--span-6 mdc-layout-grid--align-right">
+                <button id="alchemy-profile-add__view-button" class="mdc-button" type="">
+                  <i class="material-icons mdc-button__icon">remove_red_eye</i>
+                  VIEW PROFILE
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
     </section>
 
     <!-- Section Other-->
-    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel active" id="alchemy-class"
+    <section class="mdc-layout-grid mdc-layout-grid--fixed-column-width panel" id="alchemy-class"
              role="tabpanel"
              aria-hidden="true">
       <!--
@@ -1668,7 +1879,8 @@
                      class="mdc-text-field mdc-text-field--outlined mdc-text-field--focused">
                   <input type="text" id="alchemy-department-add__department-name--input" class="mdc-text-field__input"
                          aria-controls="name-validation-message" autocomplete="off" required minlength=3>
-                  <label for="alchemy-department-add__department-name--input" class="mdc-floating-label">Department Name</label>
+                  <label for="alchemy-department-add__department-name--input" class="mdc-floating-label">Department
+                    Name</label>
                   <div class="mdc-notched-outline">
                     <svg>
                       <path class="mdc-notched-outline__path"/>

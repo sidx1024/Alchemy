@@ -94,6 +94,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->put('/profile/update/{id}', 'ProfileController@update');
     $router->delete('/profile/delete/{id}', 'ProfileController@delete');
     $router->get('/profile/all', 'ProfileController@all');
+    $router->get('/profile/search', 'ProfileController@search');
   });
 });
 
