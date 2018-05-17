@@ -408,6 +408,10 @@ class CourseOffered extends Model {
   }
 }
 
+class Profile extends Model {
+
+}
+
 // eslint-disable-next-line no-unused-vars
 class Alchemy {
   constructor(options) {
@@ -432,14 +436,15 @@ class Alchemy {
       classes: null,
       levels: null,
       divisions: null,
+      designations: null,
       ONE_PRACTICAL_CREDIT: 1,
       COURSE_TYPE_LECTURE: 0,
       COURSE_TYPE_PRACTICAL: 1,
       COURSE_TYPE_TUTORIAL: 2,
-      designations: null,
       getDepartment: id => alchemy.current.departments.find(r => r.id === +id),
       getDesignation: id => alchemy.current.designations.find(r => r.id === +id)
     };
+    this.profile = new Profile('Profile', this.config);
     this.course = new Course('Course', this.config);
     this.location = new Location('Location', this.config);
     this.department = new Department('Department', this.config);
@@ -465,6 +470,8 @@ class Alchemy {
     this.class_.all(onClassesReceived.bind(this));
     requestsSent += 1;
     this.designation.all(onDesignationsReceived.bind(this));
+    requestsSent += 1;
+    this.profile.all(onProfilesReceived.bind(this));
     requestsSent += 1;
 
     function onRequestReceived(success, response) {
@@ -499,9 +506,6 @@ class Alchemy {
 
     function onDepartmentsReceived(response) {
       if (response) {
-        // const departments = []
-        // response.forEach((department) => { departments[department.id] = department })
-        // console.log("Alchemy JS: ", departments)
         this.current.departments = response;
         onRequestReceived(true);
       } else {
@@ -529,6 +533,15 @@ class Alchemy {
     function onDesignationsReceived(response) {
       if (response) {
         this.current.designations = response;
+        onRequestReceived(true);
+      } else {
+        onRequestReceived(false, response);
+      }
+    }
+
+    function onProfilesReceived(response) {
+      if (response) {
+        this.current.profiles = response;
         onRequestReceived(true);
       } else {
         onRequestReceived(false, response);

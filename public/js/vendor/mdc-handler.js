@@ -400,7 +400,7 @@ class AutoCompleteComponent {
       this.setSelected(0);
       return;
     }
-    if (storageIndex === null) {
+    if (storageIndex === null || storageIndex === undefined) {
       this.clearSelected();
       return;
     }

@@ -28,7 +28,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     catch (PDOException $PDOException) {
       $message = 'Could not connect to database.' . '(HOST: ' . env("DB_HOST", "*UNKNOWN*") . ')';
       $body = ['status' => 0, 'message' => $message, 'error' => $PDOException->getMessage()];
-      return response()->json($body,Response::HTTP_OK);
+      return response()->json($body,Response::HTTP_SERVICE_UNAVAILABLE);
     }
   });
 
@@ -88,6 +88,12 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->put('/designation/update/{id}', 'DesignationController@update');
     $router->delete('/designation/delete/{id}', 'DesignationController@delete');
     $router->get('/designation/all', 'DesignationController@all');
+    // Profile
+    $router->get('/profile/get/{id}', 'ProfileController@get');
+    $router->post('/profile/add', 'ProfileController@add');
+    $router->put('/profile/update/{id}', 'ProfileController@update');
+    $router->delete('/profile/delete/{id}', 'ProfileController@delete');
+    $router->get('/profile/all', 'ProfileController@all');
   });
 });
 
