@@ -9,6 +9,10 @@ use App\CourseOffered;
 
 class CourseOfferedController extends Controller
 {
+
+  // User::find(1)->roles()->detach();
+  // $user->roles()->sync(array(1, 2, 3));
+  // https://laravel.com/docs/4.2/eloquent#inserting-related-models
   public function all()
   {
     $course_offered = CourseOffered::all();

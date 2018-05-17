@@ -92,12 +92,72 @@ function setRadioInput(element, value) {
   });
 }
 
+function getSelectedRadio(element) {
+  return element.querySelector(':checked');
+}
+
+function getSelectedRadioValue(element) {
+  return getSelectedRadio(element).getAttribute('value');
+}
+
+function limitElements(parent, count) {
+  const children = Array.from(parent.children);
+  if (children.length < 1) {
+    throw new Error('Cannot find children.');
+  }
+  for (let i = 0; i < children.length; i += 1) {
+    if (i <= count) {
+      children[i].style.display = 'inline-flex';
+    } else {
+      children[i].style.display = 'none';
+    }
+  }
+}
+
+function enumerateRadioElements(parent) {
+  const children = Array.from(parent.querySelectorAll('input[type=radio]'));
+  if (children.length < 1) {
+    throw new Error('Cannot find children.');
+  }
+  const hashMap = {};
+  children.forEach((r) => {
+    hashMap[r.value] = r;
+  });
+  return hashMap;
+}
+
+function setOnRadioSwitch(parent, action) {
+  const radioButtons = parent.querySelectorAll('input[type=radio]');
+  parent.setAttribute('data-last-selected', getSelectedRadioValue(parent));
+
+  radioButtons.forEach((radio) => {
+    radio.addEventListener('click', (e) => {
+      const target = e.currentTarget;
+      const lastSelected = parent.getAttribute('data-last-selected');
+      if (getSelectedRadioValue(parent) !== lastSelected) {
+        parent.setAttribute('data-last-selected', getSelectedRadioValue(parent));
+        action(getSelectedRadio(parent));
+      }
+    });
+  });
+}
+
 // Convert name to alias (Data Mining and Business Intelligence --> D.M.B.I.)
 function getAliasFromName(name) {
   return `${name.split(' ') // Split string by space and return an array of words
     .filter(c => c !== 'and') // remove the word 'and'
     .map(c => c[0]) // Take the first letter of each word
     .join('.')}.`; // join letters by dot and append dot at the end.
+}
+
+function difference(o1, o2) {
+  return Object.keys(o2).reduce((diff, key) => {
+    if (o1[key] === o2[key]) return diff;
+    return {
+      ...diff,
+      [key]: o2[key]
+    };
+  }, {});
 }
 
 function setSelectedItem(table, id) {

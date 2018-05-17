@@ -9,13 +9,18 @@ no-restricted-globals,no-trailing-spaces */
 | DOM initialization & manipulation.
 |
 */
+
+window.addEventListener('load', removeLoadingOverlay);
+setupCommon();
+checkConnection(setupLoginSection);
+
 function checkConnection(callback) {
   pingDatabase((response) => {
     if (response.status >= 200 && response.status < 300) {
       Logger.success(response);
       return callback();
     }
-    handleResponse(response, (json) => {
+    return handleResponse(response, (json) => {
       alchemyCommon.dialog.info({
         header: 'Error establishing connection',
         body: `${json.message}<br/>${json.error}`,
@@ -1719,7 +1724,9 @@ function bootAlchemy() {
                 }
               },
               tutorialBatch: document.querySelector('#alchemy-course-offered__tutorial-batch')
-            }
+            },
+            previousData: {},
+            nextData: {}
           }
         };
 
@@ -1783,6 +1790,8 @@ function bootAlchemy() {
               if (courseOfferedId === null) throw new Error('Course Offered Id is null');
               const course = storage.find(r => r.id === (+courseOfferedId));
               loadCourseOffered(course.course_id);
+              setData(courseSettingSection.previousData);
+              console.log(getData());
             }
           }
         }
@@ -1831,7 +1840,7 @@ function bootAlchemy() {
           function setupLectureLocation() {
             // TODO: Add filter by lab or lecture
             lectureLocation.mdc = mdc.textField.MDCTextField.attachTo(lectureLocation.element);
-            const getData = (text, callback) => alchemy.location.search({ text }, callback);
+            const searchLocations = (text, callback) => alchemy.location.search({ text }, callback);
             const transform = location => mdcListItem(location.alias, Location.transform(location, 'detail'));
             const onSelectionChange = (selected) => {
               if (selected && selected.data) {
@@ -1839,9 +1848,11 @@ function bootAlchemy() {
               }
             };
 
-            lectureLocation.acc = AutoCompleteComponent.attachTo(lectureLocation, transform, getData)
+            lectureLocation.acc = AutoCompleteComponent
+              .attachTo(lectureLocation, transform, searchLocations)
               .setOnSelectionChange(onSelectionChange);
           }
+
           function setupLectureFaculty() {
             lectureFaculty.mdc = mdc.textField.MDCTextField.attachTo(lectureFaculty.element);
             lectureFaculty2.mdc = mdc.textField.MDCTextField.attachTo(lectureFaculty2.element);
@@ -1900,7 +1911,7 @@ function bootAlchemy() {
           setupTutorialLocation();
         }
 
-        function loadCourseOffered(courseId) {
+        function __loadCourseOffered(courseId) {
           const { courseOfferedList, courseSettingSection } = alchemyCourseOfferedSection;
           const { storage } = courseOfferedList;
           const { courseName, courseDetail } = courseSettingSection;
@@ -1909,6 +1920,8 @@ function bootAlchemy() {
           const { COURSE_TYPE_PRACTICAL, COURSE_TYPE_TUTORIAL } = alchemy.current;
 
           const coursesOffered = storage.filter(r => (r.course_id === courseId));
+          courseSettingSection.previousData = { };
+
           if (!coursesOffered) throw new Error('Courses Offered cannot be found in storage.', courseId, storage);
 
           const [courseOffered] = coursesOffered;
@@ -1920,19 +1933,24 @@ function bootAlchemy() {
           scrollTo(courseSettingSection.element);
 
           const hasLectureComponent = course.lecture > 0;
-
           const hasPracticalComponent = course.practical > 0;
-          const practicals = coursesOffered.filter(r => r.course_type === COURSE_TYPE_PRACTICAL);
-          const practicalHasCommonLocation = isCommon(practicals.map(r => r.location_id));
-
-          const tutorials = coursesOffered.filter(r => r.course_type === COURSE_TYPE_TUTORIAL);
-          const tutorialHasCommonLocation = isCommon(tutorials.map(r => r.location_id));
           const hasTutorialComponent = course.tutorial > 0;
-
           const isTwoPersonCourse = course.persons === 2;
+          const classId = course.class.id;
 
-          console.log(course.id, 'practicalHasCommonLocation', practicalHasCommonLocation);
-          console.log(course.id, 'tutorialHasCommonLocation', tutorialHasCommonLocation);
+          courseSettingSection.previousData = {
+            hasLectureComponent,
+            hasPracticalComponent,
+            hasTutorialComponent,
+            isTwoPersonCourse,
+            courseId,
+            classId,
+            coursesOffered
+          };
+
+          courseSettingSection.nextData = Object.assign({}, courseSettingSection.previousData);
+
+          console.log(courseSettingSection.previousData);
 
           lectureSection.element.style.display = hasLectureComponent ? 'grid' : 'none';
           practicalSection.element.style.display = hasPracticalComponent ? 'grid' : 'none';
@@ -1948,15 +1966,233 @@ function bootAlchemy() {
           }
 
           if (hasPracticalComponent) {
+            const practicals = coursesOffered.filter(r => r.course_type === COURSE_TYPE_PRACTICAL);
+            const practicalHasCommonLocation = isCommon(practicals.map(r => r.location_id));
+            const { practicalBatch } = practicalSection;
             const { practicalLocation } = practicalSection;
+            setRadioInput(practicalBatch, practicalHasCommonLocation ? 0 : 1);
+            setOnRadioSwitch(practicalBatch, console.log);
             practicalLocation.acc.setSelected(courseOffered.location);
           }
 
           if (hasTutorialComponent) {
+            const tutorials = coursesOffered.filter(r => r.course_type === COURSE_TYPE_TUTORIAL);
+            const tutorialHasCommonLocation = isCommon(tutorials.map(r => r.location_id));
+
             const { tutorialLocation } = tutorialSection;
             tutorialLocation.acc.setSelected(courseOffered.location);
           }
-          // const type = courseType.element.querySelector(':checked').getAttribute('value');
+        }
+
+        function loadCourseOffered(courseId) {
+          const { courseSettingSection, courseOfferedList } = alchemyCourseOfferedSection;
+          const { COURSE_TYPE_PRACTICAL, COURSE_TYPE_TUTORIAL } = alchemy.current;
+          const { storage } = courseOfferedList;
+
+          const coursesOffered = storage.filter(r => (r.course_id === courseId));
+          if (!coursesOffered) {
+            throw new Error('Courses Offered cannot be found in storage.', courseId, storage);
+          }
+
+          // eslint-disable-next-line prefer-destructuring
+          const course = coursesOffered[0].course;
+          const _class = coursesOffered[0].__class;
+          const hasLectureComponent = course.lecture > 0;
+          const hasPracticalComponent = course.practical > 0;
+          const hasTutorialComponent = course.tutorial > 0;
+          const isTwoPersonCourse = course.persons === 2;
+          const practicals = coursesOffered.filter(r => r.course_type === COURSE_TYPE_PRACTICAL);
+          const tutorials = coursesOffered.filter(r => r.course_type === COURSE_TYPE_TUTORIAL);
+          const practicalHasCommonLocation = isCommon(practicals.map(r => r.location_id));
+          const tutorialHasCommonLocation = isCommon(tutorials.map(r => r.location_id));
+          const profileId = coursesOffered[0].profile_id;
+
+          courseSettingSection.previousData = {
+            hasLectureComponent,
+            hasPracticalComponent,
+            hasTutorialComponent,
+            practicalHasCommonLocation,
+            tutorialHasCommonLocation,
+            isTwoPersonCourse,
+            course,
+            _class,
+            coursesOffered,
+            profileId,
+            batches: practicals.length || tutorials.length || 0
+          };
+
+          console.log(courseSettingSection.previousData);
+
+          courseSettingSection.nextData = Object.assign({}, courseSettingSection.previousData);
+
+          return courseSettingSection.previousData;
+        }
+
+        function setData(data) {
+          const { courseSettingSection } = alchemyCourseOfferedSection;
+          const { courseName, courseDetail } = courseSettingSection;
+          const { lectureSection, practicalSection, tutorialSection } = courseSettingSection;
+          const { COURSE_TYPE_PRACTICAL, COURSE_TYPE_TUTORIAL } = alchemy.current;
+
+          const {
+            hasLectureComponent,
+            hasPracticalComponent,
+            hasTutorialComponent,
+            practicalHasCommonLocation,
+            tutorialHasCommonLocation,
+            isTwoPersonCourse,
+            course,
+            coursesOffered,
+            batches
+          } = data;
+
+          courseName.innerText = course.name;
+          courseDetail.innerHTML = `${course.code} &bull; ${course.alias}`;
+
+          lectureSection.element.style.display = hasLectureComponent ? 'grid' : 'none';
+          practicalSection.element.style.display = hasPracticalComponent ? 'grid' : 'none';
+          tutorialSection.element.style.display = hasTutorialComponent ? 'grid' : 'none';
+
+          if (hasLectureComponent) {
+            const { lectureLocation, lectureFaculty, lectureFaculty2 } = lectureSection;
+            const courseOffered = coursesOffered[0];
+            lectureLocation.acc.setSelected(courseOffered.location);
+            lectureFaculty.acc.setSelected(courseOffered.faculty[0]);
+            if (isTwoPersonCourse) {
+              lectureFaculty2.acc.setSelected(courseOffered.faculty[1]);
+            }
+          }
+
+          if (hasPracticalComponent) {
+            const practicals = coursesOffered.filter(r => r.course_type === COURSE_TYPE_PRACTICAL);
+            const { practicalLocation, practicalBatch } = practicalSection;
+            setRadioInput(practicalBatch, practicalHasCommonLocation ? 0 : 1);
+            console.log('practicals', practicals, coursesOffered);
+            practicalLocation.acc.setSelected(practicals[0].location);
+            limitElements(practicalBatch, batches);
+
+            const radioElements = enumerateRadioElements(practicalBatch);
+            for (let i = 0; i <= batches; i += 1) {
+              radioElements[i].setAttribute('data-location-id', null);
+            }
+            radioElements[0].setAttribute('data-location-id', practicals[0].location_id);
+            practicals.forEach((practical) => {
+              radioElements[practical.batch].setAttribute('data-location-id', practical.location_id);
+            });
+          }
+
+          if (hasTutorialComponent) {
+            const tutorials = coursesOffered.filter(r => r.course_type === COURSE_TYPE_TUTORIAL);
+            const { tutorialLocation, tutorialBatch } = tutorialSection;
+            setRadioInput(tutorialBatch, tutorialHasCommonLocation ? 0 : 1);
+            tutorialLocation.acc.setSelected(tutorials[0].location);
+            limitElements(tutorialBatch, batches);
+
+            const radioElements = enumerateRadioElements(tutorialBatch);
+            for (let i = 0; i <= batches; i += 1) {
+              radioElements[i].setAttribute('data-location-id', null);
+            }
+            radioElements[0].setAttribute('data-location-id', tutorials[0].location_id);
+            tutorials.forEach((tutorial) => {
+              radioElements[tutorial.batch].setAttribute('data-location-id', tutorial.location_id);
+            });
+          }
+
+          courseSettingSection.element.style.display = 'flex';
+          scrollTo(courseSettingSection.element);
+        }
+
+        function getData() {
+          const { courseSettingSection } = alchemyCourseOfferedSection;
+          const { lectureSection, practicalSection, tutorialSection } = courseSettingSection;
+          const { previousData } = courseSettingSection;
+
+          const {
+            hasLectureComponent,
+            hasPracticalComponent,
+            hasTutorialComponent,
+            isTwoPersonCourse,
+            course,
+            _class,
+            profileId,
+            batches
+          } = previousData;
+
+          const courseOffered = [];
+          const common = {
+            class_id: _class.id,
+            course_id: course.id,
+            profile_id: profileId
+          };
+
+          if (hasLectureComponent) {
+            const { lectureLocation, lectureFaculty, lectureFaculty2 } = lectureSection;
+            const locationId = lectureLocation.acc.getSelected().data.id;
+            const { COURSE_TYPE_LECTURE } = alchemy.current;
+            const faculty = [];
+            const facultyId = lectureFaculty.acc.getSelected().data.id;
+            faculty.push(facultyId);
+            if (isTwoPersonCourse) {
+              const facultyId2 = lectureFaculty2.acc.getSelected().data.id;
+              faculty.push(facultyId2);
+            }
+            const lecture = Object.assign({}, common, {
+              batch: 0,
+              location_id: locationId,
+              course_type: COURSE_TYPE_LECTURE,
+              faculty
+            });
+            courseOffered.push(lecture);
+          }
+          if (hasPracticalComponent) {
+            const practicals = [];
+            const { practicalBatch } = practicalSection;
+            const practicalHasCommonLocation = (+getSelectedRadio(practicalBatch).value) === 0;
+            const { COURSE_TYPE_PRACTICAL } = alchemy.current;
+            const radioElements = enumerateRadioElements(practicalBatch);
+            if (practicalHasCommonLocation) {
+              const locationId = (+radioElements[0].getAttribute('data-location-id') || null);
+              for (let i = 1; i <= batches; i += 1) {
+                const practical = Object.assign({}, common, {
+                  batch: i,
+                  location_id: locationId,
+                  course_type: COURSE_TYPE_PRACTICAL
+                });
+                practicals.push(practical);
+              }
+            } else {
+              for (let i = 1; i <= batches; i += 1) {
+                const locationId = (+radioElements[i].getAttribute('data-location-id') || null);
+                const practical = Object.assign({}, common, {
+                  batch: i,
+                  location_id: locationId,
+                  course_type: COURSE_TYPE_PRACTICAL
+                });
+                practicals.push(practical);
+              }
+            }
+            courseOffered.push(...practicals);
+          }
+          if (hasTutorialComponent) {
+            const tutorials = [];
+            const { tutorialBatch } = tutorialSection;
+            const tutorialHasCommonLocation = (+getSelectedRadio(tutorialBatch).value) === 0;
+            const { COURSE_TYPE_TUTORIAL } = alchemy.current;
+            const radioElements = enumerateRadioElements(tutorialBatch);
+            for (let i = 0; i <= batches; i += 1) {
+              const index = tutorialHasCommonLocation ? 0 : i;
+              const locationId = (+radioElements[index].getAttribute('data-location-id') || null);
+              const tutorial = Object.assign({}, common, {
+                batch: i,
+                location_id: locationId,
+                course_type: COURSE_TYPE_TUTORIAL
+              });
+              tutorials.push(tutorial);
+            }
+            courseOffered.push(...tutorials);
+          }
+
+          return courseOffered;
         }
       }
 
@@ -3126,7 +3362,3 @@ function bootAlchemy() {
     }
   });
 }
-
-window.addEventListener('load', removeLoadingOverlay);
-setupCommon();
-checkConnection(setupLoginSection);
